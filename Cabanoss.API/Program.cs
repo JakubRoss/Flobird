@@ -1,4 +1,8 @@
+using Cabanoss.Core.BussinessLogicService;
+using Cabanoss.Core.BussinessLogicService.Impl;
 using Cabanoss.Core.Data;
+using Cabanoss.Core.Repositories;
+using Cabanoss.Core.Repositories.Impl;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +18,12 @@ builder.Services.AddDbContext<CabanossDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("CabanossDbConnection"));
 });
+
+//base repo service
+builder.Services.AddScoped<IUserBaseRepository,UserBaseRepository>();
+
+//Bussiness Logic Service
+builder.Services.AddScoped<IUserBussinessLogicService,UserBussinessLogicService>();
 
 var app = builder.Build();
 
