@@ -18,4 +18,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Cabanoss.Core\Cabanoss.Core.csproj" />
+  </ItemGroup>
+
 </Project>
