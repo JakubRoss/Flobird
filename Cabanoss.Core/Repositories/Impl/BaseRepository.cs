@@ -36,6 +36,12 @@ namespace Cabanoss.Core.Repositories.Impl
             return await DbSet.Where(predicate).ToListAsync();
         }
 
+        public async Task<List<TEntity>> GetAllAsync()
+        {
+            var list = await DbSet.ToListAsync();
+            return list;
+        }
+
         public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate)
         {
             var entity = await DbSet.Where(predicate).FirstOrDefaultAsync();

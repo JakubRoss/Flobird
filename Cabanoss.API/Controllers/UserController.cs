@@ -1,6 +1,5 @@
 ﻿using Cabanoss.Core.BussinessLogicService;
-using Cabanoss.Core.BussinessLogicService.Impl;
-using Cabanoss.Core.Data.Entities;
+using Cabanoss.Core.Model.User;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -21,35 +20,39 @@ namespace Cabanoss.API.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<UserDto>> GetUsers()
         {
-            return new string[] { "value1", "value2" };
+            var usersDto =await _userBussinessLogicService.GetUsersAsync();
+            return usersDto;
         }
 
-        // GET api/<UserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET api/<UserController>/login
+        [HttpGet("{login}")]
+        public async Task<UserDto> GetUser(string login)
         {
-            return "value";
+            var userDto =await _userBussinessLogicService.GetUserAsync(login);
+            return userDto;
         }
 
         // POST api/<UserController>
         [HttpPost]
-        public async System.Threading.Tasks.Task Post([FromBody] User user)
+        public async System.Threading.Tasks.Task PostUser([FromBody] UserDto user)
         {
-            await _userBussinessLogicService.AddUser(user);
+            await _userBussinessLogicService.AddUserAsync(user);
         }
 
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT api/<UserController>/login
+        [HttpPut("{login}")]
+        public async System.Threading.Tasks.Task<UserDto> PutUser(string login, [FromBody] UserDto user)
         {
+            var updatedUser = await _userBussinessLogicService.UpdateUserAsync(login, user);
+            return updatedUser;
         }
-
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE api/<UserController>/login
+        [HttpDelete("{login}")]
+        public async System.Threading.Tasks.Task DeleteUser(string login)
         {
+            await _userBussinessLogicService.RemoveUserAsync(login);
         }
     }
 }

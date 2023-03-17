@@ -19,11 +19,15 @@ builder.Services.AddDbContext<CabanossDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CabanossDbConnection"));
 });
 
+//builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+//builder.Services.AddAutoMapper(typeof(CabanossMappingProfile));
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 //base repo service
 builder.Services.AddScoped<IUserBaseRepository,UserBaseRepository>();
 
 //Bussiness Logic Service
-builder.Services.AddScoped<IUserBussinessLogicService,UserBussinessLogicService>();
+builder.Services.AddScoped<IUserBussinessLogicService, UserBussinessLogicService>();
 
 var app = builder.Build();
 
