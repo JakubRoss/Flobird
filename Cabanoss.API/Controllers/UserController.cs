@@ -36,14 +36,14 @@ namespace Cabanoss.API.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public async System.Threading.Tasks.Task PostUser([FromBody] UserDto user)
+        public async System.Threading.Tasks.Task PostUser([FromBody] CreateUpdateUserDto user)
         {
             await _userBussinessLogicService.AddUserAsync(user);
         }
 
         // PUT api/<UserController>/login
         [HttpPut("{login}")]
-        public async System.Threading.Tasks.Task<UserDto> PutUser(string login, [FromBody] UpdateUserDto user)
+        public async System.Threading.Tasks.Task<UserDto> PutUser(string login, [FromBody] CreateUpdateUserDto user)
         {
             var updatedUser = await _userBussinessLogicService.UpdateUserAsync(login, user);
             return updatedUser;

@@ -16,6 +16,9 @@ namespace Cabanoss.Core.Common
                 .ForMember(ud => ud.CreatedAt, f => f.MapFrom(u => u.CreatedAt))
                 .ForMember(ud => ud.UpdatedAt, f => f.MapFrom(u => u.UpdatedAt))
                 .ReverseMap();
+            CreateMap<CreateUpdateUserDto,User>()
+                .ForMember(u => u.PasswordHash, f=>f.MapFrom(cud=>cud.Password))
+                .ReverseMap();
             CreateMap<Workspace, WorkspaceDto>().ReverseMap();
             CreateMap<UpdateWorkspaceDto, Workspace>().ReverseMap();
         }

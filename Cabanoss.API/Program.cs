@@ -1,6 +1,7 @@
 using Cabanoss.Core.BussinessLogicService;
 using Cabanoss.Core.BussinessLogicService.Impl;
 using Cabanoss.Core.Data;
+using Cabanoss.Core.MIddleware;
 using Cabanoss.Core.Repositories;
 using Cabanoss.Core.Repositories.Impl;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,8 @@ builder.Services.AddScoped<IWorkspaceBaserepository, WorkspaceBaserepository>();
 builder.Services.AddScoped<IUserBussinessLogicService, UserBussinessLogicService>();
 builder.Services.AddScoped<IWorkspaceBussinessLogicService,  WorkspaceBussinessLogicService>();
 
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,6 +41,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
