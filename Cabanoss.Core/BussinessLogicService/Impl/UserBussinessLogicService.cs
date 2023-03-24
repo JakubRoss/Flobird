@@ -10,11 +10,13 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
     {
         private IUserBaseRepository _userBase;
         private IMapper _mapper;
+        private readonly IWorkspaceBussinessLogicService _workspaceBussiness;
 
-        public UserBussinessLogicService(IUserBaseRepository userBase, IMapper mapper)
+        public UserBussinessLogicService(IUserBaseRepository userBase, IMapper mapper, IWorkspaceBussinessLogicService workspaceBussiness)
         {
             _userBase = userBase;
             _mapper = mapper;
+            _workspaceBussiness = workspaceBussiness;
         }
         private async System.Threading.Tasks.Task<User> GetUser(string login)
         {
@@ -27,7 +29,13 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         public async System.Threading.Tasks.Task AddUserAsync(UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
+
             await _userBase.AddAsync(user);
+
+            var login = user.Login;
+            var workspace = await _workspaceBussiness.GetUserWorkspaceAsync(login);
+            if (workspace is null)
+                await _workspaceBussiness.AddWorkspaceAsync(login);
         }
         public async System.Threading.Tasks.Task<UserDto> GetUserAsync(string login)
         {
@@ -35,7 +43,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }
-        public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(string login,UserDto userDto)
+        public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(string login, UpdateUserDto userDto)
         {
             var user = await GetUser(login);
 

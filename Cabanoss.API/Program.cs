@@ -24,10 +24,11 @@ builder.Services.AddDbContext<CabanossDbContext>(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //base repo service
-builder.Services.AddScoped<IUserBaseRepository,UserBaseRepository>();
-
+builder.Services.AddScoped<IUserBaseRepository, UserBaseRepository>();
+builder.Services.AddScoped<IWorkspaceBaserepository, WorkspaceBaserepository>();
 //Bussiness Logic Service
 builder.Services.AddScoped<IUserBussinessLogicService, UserBussinessLogicService>();
+builder.Services.AddScoped<IWorkspaceBussinessLogicService,  WorkspaceBussinessLogicService>();
 
 var app = builder.Build();
 

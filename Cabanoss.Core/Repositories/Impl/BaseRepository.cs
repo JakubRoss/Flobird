@@ -46,8 +46,6 @@ namespace Cabanoss.Core.Repositories.Impl
         {
             var entity = await DbSet.Where(predicate).FirstOrDefaultAsync();
 
-            if (entity == null) throw new ResourceNotFoundException(typeof(TEntity));
-
             return await DbSet.Where(predicate).FirstOrDefaultAsync();
         }
 

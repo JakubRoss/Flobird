@@ -43,7 +43,7 @@ namespace Cabanoss.API.Controllers
 
         // PUT api/<UserController>/login
         [HttpPut("{login}")]
-        public async System.Threading.Tasks.Task<UserDto> PutUser(string login, [FromBody] UserDto user)
+        public async System.Threading.Tasks.Task<UserDto> PutUser(string login, [FromBody] UpdateUserDto user)
         {
             var updatedUser = await _userBussinessLogicService.UpdateUserAsync(login, user);
             return updatedUser;
