@@ -17,42 +17,21 @@ namespace Cabanoss.API.Controllers
             _workspaceBussinessLogicService = workspaceBussinessLogicService;
         }
 
-        // GET: api/<WorkspaceController>
-        [HttpGet]
-        [Route("/api/[controller]")]
-        public async Task<IEnumerable<WorkspaceDto>> GetWorkSpaces()
-        {
-            var workspaces = await _workspaceBussinessLogicService.GetUserWorkspacesAsync();
-            return workspaces;
-        }
 
-        // GET api/<WorkspaceController>/5
-        //[HttpGet("{id}")]
-        [HttpGet]
+            [HttpGet]
         public async Task<WorkspaceDto> GetUserWorkspace(string login)
         {
             var workspaceDto = await _workspaceBussinessLogicService.GetUserWorkspaceAsync(login);
             return workspaceDto;
         }
 
-        // POST api/<WorkspaceController>
-        [HttpPost]
-        public async Task CreateWorkspaceForUser(string login)   //To sciezka w tej wersji API bedzie bez uzytku
-        {
-            await _workspaceBussinessLogicService.AddWorkspaceAsync(login);
-        }
 
-        // PUT api/<WorkspaceController>/5
+
+        // PUT api/<WorkspaceController>/
         [HttpPut]
         public void Put(string login,[FromBody] UpdateWorkspaceDto updateWorkspaceDto)
         {
             _workspaceBussinessLogicService.UpdateWorkspaceAsync(login, updateWorkspaceDto);
         }
-
-        //// DELETE api/<WorkspaceController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

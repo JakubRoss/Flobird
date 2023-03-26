@@ -21,17 +21,24 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         private async System.Threading.Tasks.Task<User> GetUser(string login)
         {
             var LowLogin = login.ToLower();
-            var user = await _userBase.GetFirstAsync(u => u.Login == LowLogin);
+            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == LowLogin);
             if (user == null)
-                throw new ResourceNotFoundException("Niepoprawna nazwa uzytkownika");
-            if (user.Login == login)
-                throw new ResourceNotFoundException("Login w uzyciu");
+                throw new ResourceNotFoundException("Uzytkownik nie istnieje");
             return user;
         }
-
-        public async System.Threading.Tasks.Task AddUserAsync(CreateUpdateUserDto userDto)
+        private async System.Threading.Tasks.Task IsLoginTaken(string login)
         {
-            userDto.Login = userDto.Login.ToLower();
+            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == login.ToLower());
+            if(user != null) 
+                throw new ResourceNotFoundException($"Nazwa {login} jest zajeta");  
+        }
+
+
+        public async System.Threading.Tasks.Task AddUserAsync(CreateUserDto userDto)
+        {
+            await IsLoginTaken(userDto.Login);
+            if (userDto.Password != userDto.ConfirmPassword)
+                throw new ResourceNotFoundException("Passwords are not equal");
             var user = _mapper.Map<User>(userDto);
             user.CreatedAt = DateTime.Now;
 
@@ -48,15 +55,17 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }
-        public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(string login, CreateUpdateUserDto userDto)
+        public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(string login, UpdateUserDto userDto)
         {
-            if (userDto.Password != userDto.Password)
+            if (userDto.Password != userDto.ConfirmPassword)
                 throw new ResourceNotFoundException("Passwords are not equal");
 
             var user = GetUser(login).Result;
 
+            await IsLoginTaken(userDto.Login);
+
             #region updt_properties
-            if(userDto.Login!=null)
+            if (userDto.Login!=null)
                 user.Login = userDto.Login;
             if (userDto.Password != null)
                 user.PasswordHash = userDto.Password;
@@ -76,6 +85,9 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
                 throw new ResourceNotFoundException("Niepoprawna nazwa uzytkownika");
             await _userBase.DeleteAsync(user);
         }
+
+
+
         public async System.Threading.Tasks.Task<List<UserDto>> GetUsersAsync()
         {
             var users = await _userBase.GetAllAsync();
