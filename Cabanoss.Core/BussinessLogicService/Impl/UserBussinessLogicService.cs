@@ -3,6 +3,7 @@ using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace Cabanoss.Core.BussinessLogicService.Impl
 {
@@ -11,12 +12,14 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         private IUserBaseRepository _userBase;
         private IMapper _mapper;
         private readonly IWorkspaceBussinessLogicService _workspaceBussiness;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UserBussinessLogicService(IUserBaseRepository userBase, IMapper mapper, IWorkspaceBussinessLogicService workspaceBussiness)
+        public UserBussinessLogicService(IUserBaseRepository userBase, IMapper mapper, IWorkspaceBussinessLogicService workspaceBussiness, IPasswordHasher<User>passwordHasher )
         {
             _userBase = userBase;
             _mapper = mapper;
             _workspaceBussiness = workspaceBussiness;
+            _passwordHasher = passwordHasher;
         }
         private async System.Threading.Tasks.Task<User> GetUser(string login)
         {
@@ -39,15 +42,19 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
             await IsLoginTaken(userDto.Login);
             if (userDto.Password != userDto.ConfirmPassword)
                 throw new ResourceNotFoundException("Passwords are not equal");
-            var user = _mapper.Map<User>(userDto);
-            user.CreatedAt = DateTime.Now;
 
+            var user = _mapper.Map<User>(userDto);
+            var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
+            user.PasswordHash = hashedPassword;
+            user.CreatedAt = DateTime.Now;
             await _userBase.AddAsync(user);
 
+            #region Workspace_Init
             var login = user.Login;
             var workspace = await _workspaceBussiness.GetUserWorkspaceAsync(login);
             if (workspace is null)
                 await _workspaceBussiness.AddWorkspaceAsync(login);
+            #endregion
         }
         public async System.Threading.Tasks.Task<UserDto> GetUserAsync(string login)
         {

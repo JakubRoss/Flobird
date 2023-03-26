@@ -1,9 +1,11 @@
 using Cabanoss.Core.BussinessLogicService;
 using Cabanoss.Core.BussinessLogicService.Impl;
 using Cabanoss.Core.Data;
+using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.MIddleware;
 using Cabanoss.Core.Repositories;
 using Cabanoss.Core.Repositories.Impl;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +34,7 @@ builder.Services.AddScoped<IUserBussinessLogicService, UserBussinessLogicService
 builder.Services.AddScoped<IWorkspaceBussinessLogicService,  WorkspaceBussinessLogicService>();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var app = builder.Build();
 
