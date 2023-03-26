@@ -6,7 +6,8 @@ namespace Cabanoss.Core.BussinessLogicService
     {
         Task AddWorkspaceAsync(string login);
         Task<WorkspaceDto> GetUserWorkspaceAsync(string login);
-        Task<IEnumerable<WorkspaceDto>> GetUserWorkspacesAsync();
         Task<WorkspaceDto> UpdateWorkspaceAsync(string login, UpdateWorkspaceDto updateWorkspaceDto);
+
+        //Task<IEnumerable<WorkspaceDto>> GetUsersWorkspacesAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Model.User;
+﻿using Cabanoss.Core.Data.Entities;
+using Cabanoss.Core.Model.User;
 
 namespace Cabanoss.Core.BussinessLogicService
 {

@@ -18,14 +18,12 @@ namespace Cabanoss.API.Controllers
         }
 
 
-            [HttpGet]
+        [HttpGet]
         public async Task<WorkspaceDto> GetUserWorkspace(string login)
         {
             var workspaceDto = await _workspaceBussinessLogicService.GetUserWorkspaceAsync(login);
             return workspaceDto;
         }
-
-
 
         // PUT api/<WorkspaceController>/
         [HttpPut]

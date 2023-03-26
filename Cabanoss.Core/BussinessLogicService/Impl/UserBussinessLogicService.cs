@@ -67,7 +67,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
             if (userDto.Password != userDto.ConfirmPassword)
                 throw new ResourceNotFoundException("Passwords are not equal");
 
-            var user = GetUser(login).Result;
+            var user = await GetUser(login);
 
             await IsLoginTaken(userDto.Login);
 
@@ -87,9 +87,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         }
         public async System.Threading.Tasks.Task RemoveUserAsync(string login)
         {
-            var user = await _userBase.GetFirstAsync(u => u.Login == login.ToLower());
-            if (user == null)
-                throw new ResourceNotFoundException("Niepoprawna nazwa uzytkownika");
+            var user = await GetUser(login);
             await _userBase.DeleteAsync(user);
         }
 
