@@ -3,7 +3,6 @@ using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Workspace;
 using Cabanoss.Core.Repositories;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Cabanoss.Core.BussinessLogicService.Impl
 {
@@ -21,8 +20,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         }
         private async System.Threading.Tasks.Task<User> GetUser(string login)
         {
-            var LowLogin = login.ToLower();
-            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == LowLogin);
+            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == login.ToLower());
             if (user == null)
                 throw new ResourceNotFoundException("Uzytkownik nie istnieje");
             return user;
@@ -55,10 +53,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         #region nieuzywane
         public async System.Threading.Tasks.Task AddWorkspaceAsync(string login)
         {
-            var userWorkspaceDto = GetUserWorkspaceAsync(login).Result;
-            if (userWorkspaceDto != null)
-                return;
-            var user = GetUser(login);
+            var user = await GetUser(login);
             var workspaceDto = new WorkspaceDto
             {
                 Name = $"{login} Workspace",

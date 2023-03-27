@@ -3,8 +3,12 @@ using Cabanoss.Core.BussinessLogicService.Impl;
 using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.MIddleware;
+using Cabanoss.Core.Model.User;
+using Cabanoss.Core.Model.Validators;
 using Cabanoss.Core.Repositories;
 using Cabanoss.Core.Repositories.Impl;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -26,15 +30,19 @@ builder.Services.AddDbContext<CabanossDbContext>(options =>
 //builder.Services.AddAutoMapper(typeof(CabanossMappingProfile));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-//base repo service
+//base repo Services
 builder.Services.AddScoped<IUserBaseRepository, UserBaseRepository>();
 builder.Services.AddScoped<IWorkspaceBaserepository, WorkspaceBaserepository>();
-//Bussiness Logic Service
+//Bussiness Logic Services
 builder.Services.AddScoped<IUserBussinessLogicService, UserBussinessLogicService>();
 builder.Services.AddScoped<IWorkspaceBussinessLogicService,  WorkspaceBussinessLogicService>();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+//Validation Services
+builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
+
 
 var app = builder.Build();
 

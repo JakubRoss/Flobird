@@ -11,15 +11,18 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
     {
         private IUserBaseRepository _userBase;
         private IMapper _mapper;
-        private readonly IWorkspaceBussinessLogicService _workspaceBussiness;
         private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IWorkspaceBussinessLogicService _workspaceBussiness;
 
-        public UserBussinessLogicService(IUserBaseRepository userBase, IMapper mapper, IWorkspaceBussinessLogicService workspaceBussiness, IPasswordHasher<User>passwordHasher )
+        public UserBussinessLogicService(IUserBaseRepository userBase
+            ,IMapper mapper
+            ,IWorkspaceBussinessLogicService workspaceBussiness
+            ,IPasswordHasher<User>passwordHasher)
         {
             _userBase = userBase;
             _mapper = mapper;
-            _workspaceBussiness = workspaceBussiness;
             _passwordHasher = passwordHasher;
+            _workspaceBussiness = workspaceBussiness;
         }
         private async System.Threading.Tasks.Task<User> GetUser(string login)
         {
@@ -29,32 +32,15 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
                 throw new ResourceNotFoundException("Uzytkownik nie istnieje");
             return user;
         }
-        private async System.Threading.Tasks.Task IsLoginTaken(string login)
-        {
-            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == login.ToLower());
-            if(user != null) 
-                throw new ResourceNotFoundException($"Nazwa {login} jest zajeta");  
-        }
-
-
         public async System.Threading.Tasks.Task AddUserAsync(CreateUserDto userDto)
         {
-            await IsLoginTaken(userDto.Login);
-            if (userDto.Password != userDto.ConfirmPassword)
-                throw new ResourceNotFoundException("Passwords are not equal");
-
             var user = _mapper.Map<User>(userDto);
             var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
             user.PasswordHash = hashedPassword;
             user.CreatedAt = DateTime.Now;
             await _userBase.AddAsync(user);
 
-            #region Workspace_Init
-            var login = user.Login;
-            var workspace = await _workspaceBussiness.GetUserWorkspaceAsync(login);
-            if (workspace is null)
-                await _workspaceBussiness.AddWorkspaceAsync(login);
-            #endregion
+            await _workspaceBussiness.AddWorkspaceAsync(user.Login);
         }
         public async System.Threading.Tasks.Task<UserDto> GetUserAsync(string login)
         {
@@ -64,13 +50,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         }
         public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(string login, UpdateUserDto userDto)
         {
-            if (userDto.Password != userDto.ConfirmPassword)
-                throw new ResourceNotFoundException("Passwords are not equal");
-
             var user = await GetUser(login);
-
-            await IsLoginTaken(userDto.Login);
-
             #region updt_properties
             if (userDto.Login!=null)
                 user.Login = userDto.Login;
