@@ -33,10 +33,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 //base repo Services
 builder.Services.AddScoped<IUserBaseRepository, UserBaseRepository>();
 builder.Services.AddScoped<IWorkspaceBaserepository, WorkspaceBaserepository>();
+builder.Services.AddScoped<IBoardBaseRepository, BoardBaseRepository>();
+builder.Services.AddScoped<IBoardUsersBaseRepository, BoardUsersBaseRepository>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserBussinessLogicService, UserBussinessLogicService>();
 builder.Services.AddScoped<IWorkspaceBussinessLogicService,  WorkspaceBussinessLogicService>();
-
+builder.Services.AddScoped<IBoardBussinessLogicService, BoardBussinessLogicService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services

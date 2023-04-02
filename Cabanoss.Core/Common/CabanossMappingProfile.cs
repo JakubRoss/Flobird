@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Cabanoss.Core.Data.Entities;
+using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Workspace;
 
@@ -24,6 +25,7 @@ namespace Cabanoss.Core.Common
                 .ReverseMap();
             CreateMap<Workspace, WorkspaceDto>().ReverseMap();
             CreateMap<UpdateWorkspaceDto, Workspace>().ReverseMap();
+            CreateMap<CreateBoardDto,Board>().ReverseMap();
         }
     }
 }
