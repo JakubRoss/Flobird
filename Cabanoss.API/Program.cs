@@ -11,10 +11,41 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+#region Authetictaion
+var AuthenticationSettings = new Cabanoss.Core.Common.AuthenticationSettings();
+builder.Configuration.GetSection("Authentication").Bind(AuthenticationSettings);
+builder.Services.AddSingleton(AuthenticationSettings);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Bearer";
+
+    options.DefaultScheme = "Bearer";
+
+    options.DefaultChallengeScheme = "Bearer";
+
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = true;
+
+    cfg.SaveToken = true;
+
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+
+        ValidIssuer = AuthenticationSettings.JwtIssuer,
+
+        ValidAudience = AuthenticationSettings.JwtIssuer,
+
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationSettings.JwtKey))
+    };
+});
+#endregion
 
 builder.Services.AddControllers().AddFluentValidation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,6 +87,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
+
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 
