@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using Cabanoss.Core.Common;
 using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Cabanoss.Core.BussinessLogicService.Impl
 {
@@ -44,7 +44,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
             board.WorkspaceId =_dbContext.Workspaces.FirstOrDefault(p => p.UserId == user.Id).Id;
             var sboard = await _boardBaseRepository.AddAsync(board);
             var newBoardUser = new BoardUser { BoardId = sboard.Id, UserId = user.Id };
-            newBoardUser.Role = "user";
+            newBoardUser.Role = Roles.User.ToString();
             await _boardUsersBaseRepository.AddAsync(newBoardUser);
             await _dbContext.SaveChangesAsync();
         }
