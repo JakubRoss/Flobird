@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
+using Cabanoss.Core.Common;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Cabanoss.Core.BussinessLogicService.Impl
 {
@@ -13,23 +18,26 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         private IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IWorkspaceBussinessLogicService _workspaceBussiness;
+        private readonly AuthenticationSettings _authenticationSettings;
 
         public UserBussinessLogicService(IUserBaseRepository userBase
             ,IMapper mapper
             ,IWorkspaceBussinessLogicService workspaceBussiness
-            ,IPasswordHasher<User>passwordHasher)
+            ,IPasswordHasher<User>passwordHasher
+            ,AuthenticationSettings authenticationSettings)
         {
             _userBase = userBase;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _workspaceBussiness = workspaceBussiness;
+            _authenticationSettings = authenticationSettings;
         }
         private async System.Threading.Tasks.Task<User> GetUser(string login)
         {
             var LowLogin = login.ToLower();
             var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == LowLogin);
             if (user == null)
-                throw new ResourceNotFoundException("Uzytkownik nie istnieje");
+                throw new ResourceNotFoundException("Invalid login name");
             return user;
         }
         public async System.Threading.Tasks.Task AddUserAsync(CreateUserDto userDto)
@@ -77,7 +85,7 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         {
             var users = await _userBase.GetAllAsync();
             if(users is null)
-                throw new ResourceNotFoundException();
+                throw new ResourceNotFoundException("Aplikacja nie posiada uzytkownikow");
             var usersDto = new List<UserDto>();
             foreach (var user in users)
             {
@@ -85,6 +93,37 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
                 usersDto.Add(userDto);
             }
             return usersDto;
+        }
+
+        public async System.Threading.Tasks.Task<string> GenerateJwt(UserLoginDto userLoginDto)
+        {
+            var user = await GetUser(userLoginDto.Login);
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userLoginDto.Password);
+
+            if (result == PasswordVerificationResult.Failed)
+            {
+                throw new ResourceNotFoundException("Invalid User name or password");
+            }
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Login),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpiredays);
+
+            var token = new JwtSecurityToken(_authenticationSettings.JwtIssuer,
+                _authenticationSettings.JwtIssuer,
+                claims,
+                expires: expires,
+                signingCredentials: cred);
+
+            var TokenHandler = new JwtSecurityTokenHandler();
+            return TokenHandler.WriteToken(token);
         }
     }
 }

@@ -34,13 +34,6 @@ namespace Cabanoss.API.Controllers
             return userDto;
         }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public async System.Threading.Tasks.Task PostUser([FromBody] CreateUserDto user)
-        {
-            await _userBussinessLogicService.AddUserAsync(user);
-        }
-
         // PUT api/<UserController>/login
         [HttpPut("{login}")]
         public async System.Threading.Tasks.Task<UserDto> PutUser(string login, [FromBody] UpdateUserDto user)

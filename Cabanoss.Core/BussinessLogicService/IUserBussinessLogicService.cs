@@ -10,5 +10,6 @@ namespace Cabanoss.Core.BussinessLogicService
         System.Threading.Tasks.Task<UserDto> UpdateUserAsync(string login, UpdateUserDto user);
         System.Threading.Tasks.Task RemoveUserAsync(string login);
         System.Threading.Tasks.Task<List<UserDto>> GetUsersAsync();
+        System.Threading.Tasks.Task<string> GenerateJwt(UserLoginDto userLoginDto);
     }
 }

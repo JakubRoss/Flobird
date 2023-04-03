@@ -13,12 +13,13 @@ namespace Cabanoss.Core.Model.Validators
                 .Equal(x => x.ConfirmPassword);
 
             RuleFor(e => e.Email)
+                .EmailAddress()
                 .Custom((value, context) =>
                 {
                     var emailInUse = dbContext.Users.Any(x => x.Email == value);
                     if(emailInUse)
                     {
-                        context.AddFailure("Email", "Adres email jest zajety");
+                        context.AddFailure("Email", "Email Adress is taken");
                     }
                 });
 
@@ -28,7 +29,7 @@ namespace Cabanoss.Core.Model.Validators
                     var emailInUse = dbContext.Users.Any(x => x.Login == value);
                     if (emailInUse)
                     {
-                        context.AddFailure("Login", "Login jest zajety");
+                        context.AddFailure("Login", "Login is taken");
                     }
                 })
                 .MinimumLength(4);

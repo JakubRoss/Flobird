@@ -7,6 +7,7 @@ using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Validators;
 using Cabanoss.Core.Repositories;
 using Cabanoss.Core.Repositories.Impl;
+using Cabanoss.Core.Common;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 #region Authetictaion
-var AuthenticationSettings = new Cabanoss.Core.Common.AuthenticationSettings();
+var AuthenticationSettings = new AuthenticationSettings();
 builder.Configuration.GetSection("Authentication").Bind(AuthenticationSettings);
 builder.Services.AddSingleton(AuthenticationSettings);
 builder.Services.AddAuthentication(options =>
@@ -92,7 +93,7 @@ app.UseAuthentication();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 

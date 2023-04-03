@@ -10,6 +10,11 @@ namespace Cabanoss.Core.Common
     {
         public CabanossMappingProfile()
         {
+            CreateMap<Workspace, WorkspaceDto>().ReverseMap();
+            CreateMap<UpdateWorkspaceDto, Workspace>().ReverseMap();
+            CreateMap<CreateBoardDto, Board>().ReverseMap();
+            CreateMap<UserLoginDto, User>().ReverseMap();
+
             CreateMap<UserDto, User>()
                 .ForMember(ud => ud.Login, f => f.MapFrom(u => u.Login))
                 .ForMember(ud => ud.Email, f => f.MapFrom(u => u.Email))
@@ -23,9 +28,6 @@ namespace Cabanoss.Core.Common
             CreateMap<CreateUserDto,User>()
                 .ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
                 .ReverseMap();
-            CreateMap<Workspace, WorkspaceDto>().ReverseMap();
-            CreateMap<UpdateWorkspaceDto, Workspace>().ReverseMap();
-            CreateMap<CreateBoardDto,Board>().ReverseMap();
         }
     }
 }

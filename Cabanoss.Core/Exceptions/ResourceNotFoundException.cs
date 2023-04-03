@@ -11,7 +11,7 @@ namespace Cabanoss.Core.Exceptions
         {
         }
 
-        public ResourceNotFoundException(Type type)
+        private ResourceNotFoundException(Type type)
         {
             this.type = type;
         }
@@ -20,11 +20,11 @@ namespace Cabanoss.Core.Exceptions
         {
         }
 
-        public ResourceNotFoundException(string? message, Exception? innerException) : base(message, innerException)
+        private ResourceNotFoundException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
 
-        protected ResourceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+        private ResourceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
