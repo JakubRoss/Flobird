@@ -1,5 +1,6 @@
-using Cabanoss.Core.BussinessLogicService;
+﻿using Cabanoss.Core.BussinessLogicService;
 using Cabanoss.Core.BussinessLogicService.Impl;
+using Cabanoss.Core.Common;
 using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.MIddleware;
@@ -7,12 +8,12 @@ using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Validators;
 using Cabanoss.Core.Repositories;
 using Cabanoss.Core.Repositories.Impl;
-using Cabanoss.Core.Common;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,15 +52,48 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers().AddFluentValidation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+#region SwaggerConf
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "CabanossAPI", Version = "v1" });
+
+    // Dodanie opisu autoryzacji JWT
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        BearerFormat = "JWT",
+        Scheme = "Bearer",
+        Description = "Specify the authorization token.",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+    };
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    // Dodanie wymagań autoryzacji JWT dla całego API
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+
+});
+#endregion
 
 builder.Services.AddDbContext<CabanossDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("CabanossDbConnection"));
 });
 
-//builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-//builder.Services.AddAutoMapper(typeof(CabanossMappingProfile));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //base repo Services

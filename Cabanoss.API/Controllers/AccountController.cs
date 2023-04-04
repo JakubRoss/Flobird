@@ -1,6 +1,4 @@
 ﻿using Cabanoss.Core.BussinessLogicService;
-using Cabanoss.Core.BussinessLogicService.Impl;
-using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Model.User;
 using Microsoft.AspNetCore.Mvc;
 
