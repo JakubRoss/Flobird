@@ -65,9 +65,6 @@ namespace Cabanoss.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Roles")
-                        .HasColumnType("int");
-
                     b.HasKey("BoardId", "UserId");
 
                     b.HasIndex("UserId");
@@ -149,13 +146,13 @@ namespace Cabanoss.Core.Migrations
                     b.HasOne("Cabanoss.Core.Data.Entities.Board", "Board")
                         .WithMany("BoardUsers")
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Cabanoss.Core.Data.Entities.User", "User")
                         .WithMany("BoardUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Board");

@@ -1,6 +1,4 @@
-﻿using Cabanoss.Core.BussinessLogicService;
-using Cabanoss.Core.BussinessLogicService.Impl;
-using Cabanoss.Core.Common;
+﻿using Cabanoss.Core.Common;
 using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.MIddleware;
@@ -8,6 +6,8 @@ using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Validators;
 using Cabanoss.Core.Repositories;
 using Cabanoss.Core.Repositories.Impl;
+using Cabanoss.Core.Service;
+using Cabanoss.Core.Service.Impl;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
@@ -85,7 +85,6 @@ builder.Services.AddSwaggerGen(c =>
             new string[] {}
         }
     });
-
 });
 #endregion
 
@@ -102,9 +101,9 @@ builder.Services.AddScoped<IWorkspaceBaserepository, WorkspaceBaserepository>();
 builder.Services.AddScoped<IBoardBaseRepository, BoardBaseRepository>();
 builder.Services.AddScoped<IBoardUsersBaseRepository, BoardUsersBaseRepository>();
 //Bussiness Logic Services
-builder.Services.AddScoped<IUserBussinessLogicService, UserBussinessLogicService>();
-builder.Services.AddScoped<IWorkspaceBussinessLogicService,  WorkspaceBussinessLogicService>();
-builder.Services.AddScoped<IBoardBussinessLogicService, BoardBussinessLogicService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();
+builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services
@@ -127,7 +126,7 @@ app.UseAuthentication();
 
 app.UseHttpsRedirection();
 
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllers();
 

@@ -10,19 +10,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Cabanoss.Core.BussinessLogicService.Impl
+namespace Cabanoss.Core.Service.Impl
 {
-    public class UserBussinessLogicService : IUserBussinessLogicService
+    public class UserService : IUserService
     {
         private IUserBaseRepository _userBase;
         private IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IWorkspaceBussinessLogicService _workspaceBussiness;
+        private readonly IWorkspaceService _workspaceBussiness;
         private readonly AuthenticationSettings _authenticationSettings;
 
-        public UserBussinessLogicService(IUserBaseRepository userBase
+        public UserService(IUserBaseRepository userBase
             ,IMapper mapper
-            ,IWorkspaceBussinessLogicService workspaceBussiness
+            , IWorkspaceService workspaceBussiness
             ,IPasswordHasher<User>passwordHasher
             ,AuthenticationSettings authenticationSettings)
         {
@@ -40,6 +40,14 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
                 throw new ResourceNotFoundException("Invalid login name");
             return user;
         }
+        private async System.Threading.Tasks.Task<User> GetUserById(int id)
+        {
+            var user = await _userBase.GetFirstAsync(p => p.Id == id);
+            if (user == null)
+                throw new ResourceNotFoundException("User don't exists");
+            return user;
+        }
+
         public async System.Threading.Tasks.Task AddUserAsync(CreateUserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
@@ -48,17 +56,17 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
             user.CreatedAt = DateTime.Now;
             await _userBase.AddAsync(user);
 
-            await _workspaceBussiness.AddWorkspaceAsync(user.Login);
+            await _workspaceBussiness.AddWorkspaceAsync(user.Id);
         }
-        public async System.Threading.Tasks.Task<UserDto> GetUserAsync(string login)
+        public async System.Threading.Tasks.Task<UserDto> GetUserAsync(int id)
         {
-            var user = await GetUser(login);
+            var user = await GetUserById(id);
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }
-        public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(string login, UpdateUserDto userDto)
+        public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(int id, UpdateUserDto userDto)
         {
-            var user = await GetUser(login);
+            var user = await GetUserById(id);
             #region updt_properties
             if (userDto.Login!=null)
                 user.Login = userDto.Login;
@@ -73,14 +81,11 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
             var updatedDto = _mapper.Map<UserDto>(updated);
             return updatedDto;
         }
-        public async System.Threading.Tasks.Task RemoveUserAsync(string login)
+        public async System.Threading.Tasks.Task RemoveUserAsync(int id)
         {
-            var user = await GetUser(login);
+            var user = await GetUserById(id);
             await _userBase.DeleteAsync(user);
         }
-
-
-
         public async System.Threading.Tasks.Task<List<UserDto>> GetUsersAsync()
         {
             var users = await _userBase.GetAllAsync();

@@ -28,6 +28,10 @@ namespace Cabanoss.Core.Common
             CreateMap<CreateUserDto,User>()
                 .ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
                 .ReverseMap();
+            CreateMap<ResponseUserDto,User>().ReverseMap();
+            CreateMap<ResponseBoardDto, Board>().ReverseMap();
+            CreateMap<ResponseBoardUser, User>().ReverseMap();
+            CreateMap<UpdateBoardDto, Board>().ReverseMap();
         }
     }
 }

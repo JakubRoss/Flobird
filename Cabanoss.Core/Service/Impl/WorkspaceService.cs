@@ -4,45 +4,45 @@ using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Workspace;
 using Cabanoss.Core.Repositories;
 
-namespace Cabanoss.Core.BussinessLogicService.Impl
+namespace Cabanoss.Core.Service.Impl
 {
-    public class WorkspaceBussinessLogicService : IWorkspaceBussinessLogicService
+    public class WorkspaceService : IWorkspaceService
     {
         private readonly IWorkspaceBaserepository _workspaceBaserepository;
         private readonly IMapper _mapper;
         private readonly IUserBaseRepository _userBase;
 
-        public WorkspaceBussinessLogicService(IWorkspaceBaserepository workspaceBaserepository, IMapper mapper, IUserBaseRepository userBaseRepository)
+        public WorkspaceService(IWorkspaceBaserepository workspaceBaserepository, IMapper mapper, IUserBaseRepository userBaseRepository)
         {
             _workspaceBaserepository = workspaceBaserepository;
             _mapper = mapper;
             _userBase = userBaseRepository;
         }
-        private async System.Threading.Tasks.Task<User> GetUser(string login)
+        private async System.Threading.Tasks.Task<User> GetUserById(int id)
         {
-            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == login.ToLower());
+            var user = await _userBase.GetFirstAsync(p => p.Id == id);
             if (user == null)
-                throw new ResourceNotFoundException("Uzytkownik nie istnieje");
+                throw new ResourceNotFoundException("User don't exists");
             return user;
         }
-        private async Task<Workspace> GetWorkspaceAsync(string login)
+        private async Task<Workspace> GetWorkspaceAsync(int id)
         {
-            var user = await GetUser(login);
+            var user = await GetUserById(id);
             var workspace = await _workspaceBaserepository.GetFirstAsync(id => id.UserId == user.Id);
             if (workspace == null)
                 throw new ResourceNotFoundException("Uzytkownik nie posiada przestrzeni roboczej");
             return workspace;
         }
 
-        public async System.Threading.Tasks.Task<WorkspaceDto> GetUserWorkspaceAsync(string login)
+        public async System.Threading.Tasks.Task<WorkspaceDto> GetUserWorkspaceAsync(int id)
         {
-            var workspace = await GetWorkspaceAsync(login);
+            var workspace = await GetWorkspaceAsync(id);
             var workspaceDto = _mapper.Map<WorkspaceDto>(workspace);
             return workspaceDto;
         }
-        public async System.Threading.Tasks.Task<WorkspaceDto> UpdateWorkspaceAsync(string login, UpdateWorkspaceDto updateWorkspaceDto)
+        public async System.Threading.Tasks.Task<WorkspaceDto> UpdateWorkspaceAsync(int id, UpdateWorkspaceDto updateWorkspaceDto)
         {
-            var workspace = await GetWorkspaceAsync(login);
+            var workspace = await GetWorkspaceAsync(id);
             workspace.Name = updateWorkspaceDto.Name;
             workspace.UpdatedAt = DateTime.Now;
             var updatedWorkspace = await _workspaceBaserepository.UpdateAsync(workspace);
@@ -51,24 +51,18 @@ namespace Cabanoss.Core.BussinessLogicService.Impl
         }
 
         #region nieuzywane
-        public async System.Threading.Tasks.Task AddWorkspaceAsync(string login)
+        public async System.Threading.Tasks.Task AddWorkspaceAsync(int id)
         {
-            var user = await GetUser(login);
+            var user = await GetUserById(id);
             var workspaceDto = new WorkspaceDto
             {
-                Name = $"{login} Workspace",
+                Name = $"{user.Login} Workspace",
                 CreatedAt = DateTime.Now,
                 UserId = user.Id,
             };
             var workspace = _mapper.Map<Workspace>(workspaceDto);
             await _workspaceBaserepository.AddAsync(workspace);
         }
-        //public async System.Threading.Tasks.Task<IEnumerable<WorkspaceDto>> GetUsersWorkspacesAsync()
-        //{
-        //    var workspaces = await _workspaceBaserepository.GetAllAsync();
-        //    var workspacesDto = _mapper.Map<List<WorkspaceDto>>(workspaces);
-        //    return workspacesDto;
-        //}
         #endregion
     }
 }

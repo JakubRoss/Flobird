@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cabanoss.Core.Migrations
 {
     [DbContext(typeof(CabanossDbContext))]
-    [Migration("20230404174517_Init")]
-    partial class Init
+    [Migration("20230413212911_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,9 +67,6 @@ namespace Cabanoss.Core.Migrations
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Roles")
-                        .HasColumnType("int");
 
                     b.HasKey("BoardId", "UserId");
 
@@ -152,13 +149,13 @@ namespace Cabanoss.Core.Migrations
                     b.HasOne("Cabanoss.Core.Data.Entities.Board", "Board")
                         .WithMany("BoardUsers")
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Cabanoss.Core.Data.Entities.User", "User")
                         .WithMany("BoardUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Board");

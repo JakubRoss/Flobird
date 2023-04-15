@@ -33,31 +33,31 @@ namespace Cabanoss.Core.Data
                 .HasKey(w => w.Id);
 
             #endregion
-            #region Deleting_Behavior
+            #region Deleting_Behaviour
 
             modelBuilder.Entity<User>()
-                .HasOne(e => e.Workspace)
-                .WithOne(e => e.User)
+                .HasOne(u => u.Workspace)
+                .WithOne(w => w.User)
+                .HasForeignKey<Workspace>(w => w.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Workspace>()
-                .HasMany(e=>e.Boards)
-                .WithOne(e=>e.Workspace)
-                .HasForeignKey(k=>k.WorkspaceId)
+                .HasMany(w => w.Boards)
+                .WithOne(b => b.Workspace)
+                .HasForeignKey(b => b.WorkspaceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // CONF BOARD <-> BOARDUSER
-            modelBuilder.Entity<BoardUser>()
-                .HasOne(e => e.Board)
-                .WithMany(e => e.BoardUsers)
-                .HasForeignKey(k => k.BoardId)
-                .OnDelete(DeleteBehavior.Cascade); //gdy usuwam Board usuwam powiazane z nim BoardUser
-
             modelBuilder.Entity<Board>()
-                .HasMany(e=>e.BoardUsers)
-                .WithOne(e=>e.Board)
-                .HasForeignKey(k=>k.BoardId)
-                .OnDelete(DeleteBehavior.NoAction); //gdy usuwam BoardUser nie usuwam powiazanego z nim Board
+                .HasMany(b => b.BoardUsers)
+                .WithOne(bu => bu.Board)
+                .HasForeignKey(bu => bu.BoardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BoardUser>()
+                .HasOne(bu => bu.User)
+                .WithMany(u => u.BoardUsers)
+                .HasForeignKey(bu => bu.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             #endregion
             base.OnModelCreating(modelBuilder);
