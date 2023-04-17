@@ -4,7 +4,7 @@ namespace Cabanoss.Core.Data.Entities
 {
     public class BoardUser : BaseEentity
     {
-        public string Role { get; set; }
+        public virtual Roles Roles { get; set; }
 
         //Navigation
         public int BoardId { get; set; }

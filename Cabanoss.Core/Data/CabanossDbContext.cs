@@ -54,10 +54,10 @@ namespace Cabanoss.Core.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BoardUser>()
-                .HasOne(bu => bu.User)
-                .WithMany(u => u.BoardUsers)
+                .HasOne(u => u.User)
+                .WithMany(bu => bu.BoardUsers)
                 .HasForeignKey(bu => bu.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             #endregion
             base.OnModelCreating(modelBuilder);

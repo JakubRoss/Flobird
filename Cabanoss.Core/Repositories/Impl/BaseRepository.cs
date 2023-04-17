@@ -43,9 +43,18 @@ namespace Cabanoss.Core.Repositories.Impl
 
         public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            var entity = await DbSet.Where(predicate).FirstOrDefaultAsync();
-
             return await DbSet.Where(predicate).FirstOrDefaultAsync();
+        }
+        public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        {
+            var query = DbSet.Where(predicate);
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<TEntity> UpdateAsync(TEntity entity)

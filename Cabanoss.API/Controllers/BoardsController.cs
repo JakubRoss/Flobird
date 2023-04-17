@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Model.Board;
+﻿using Cabanoss.Core.Common;
+using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,55 +21,53 @@ namespace Cabanoss.API.Controllers
             _boardService = boardService;
         }
 
-        private int Getid()
-        {
-            var claims = User.Claims;
-            var idClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            return int.Parse(idClaim.Value);
-        }
-
         [HttpPost("boards")]
         public async Task PostBoard([FromBody] CreateBoardDto createBoardDto)
         {
-            await _boardService.CreateBoardAsync(Getid(), createBoardDto);
+            await _boardService.CreateBoardAsync(createBoardDto , User);
         }
 
         [HttpGet("boards")]
         public async Task<List<ResponseBoardDto>> GetBoards()
         {
-            var boards = await _boardService.GetBoardsAsync(Getid());
+            var boards = await _boardService.GetBoardsAsync(User);
             return boards;
         }
 
-        [HttpPut("boards={id}")]
-        public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard , [FromRoute] int id)
+        [HttpPut("boards={boardId}")]
+        public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard , [FromRoute] int boardId)
         {
-            await _boardService.ModifyNameBoardAsync(id, updateBoard);
+            await _boardService.ModifyNameBoardAsync(boardId, updateBoard, User);
         }
 
-        [HttpDelete("boards={id}")]
-        public async Task DeleteBoard([FromRoute] int id)
+        [HttpDelete("boards={boardId}")]
+        public async Task DeleteBoard([FromRoute] int boardId)
         {
-            await _boardService.DeleteBoardAsync(id);
+            await _boardService.DeleteBoardAsync(boardId, User);
         }
 
-        [HttpGet("boards={id}&users")]
-        public async Task<List<ResponseBoardUser>> GetBoardUsers([FromRoute] int id)
+        [HttpGet("boards={boardId}&users")]
+        public async Task<List<ResponseBoardUser>> GetBoardUsers([FromRoute] int boardId)
         {
-            var users = await _boardService.GetUsersAsync(id);
+            var users = await _boardService.GetUsersAsync(boardId, User);
             return users;
         }
 
         [HttpPost("boards={boardId}&users={userId}")]
         public async Task AddBoardUsers([FromRoute] int boardId, int userId)
         {
-            await _boardService.AddUsersAsync(boardId, userId);
+            await _boardService.AddUsersAsync(boardId, userId, User);
         }
 
         [HttpDelete("boards={boardId}&users={userId}")]
         public async Task RemoveBoardUsers([FromRoute] int boardId, int userId)
         {
-            await _boardService.RemoveUserAsync(boardId, userId);
+            await _boardService.RemoveUserAsync(boardId, userId, User);
+        }
+        [HttpPatch("boards={boardId}&users={userId}")]
+        public async Task SetUserRole([FromRoute] int boardId, int userId,[FromBody]int userRole)
+        {
+            await _boardService.SetUserRole(boardId, userId, userRole, User);
         }
     }
 }

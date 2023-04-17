@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Common;
+﻿using Cabanoss.Core.Authorization;
+using Cabanoss.Core.Common;
 using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.MIddleware;
@@ -10,6 +11,7 @@ using Cabanoss.Core.Service;
 using Cabanoss.Core.Service.Impl;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -48,6 +50,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 #endregion
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IAuthorizationHandler,BelongToRequirementsHandler>();
 
 builder.Services.AddControllers().AddFluentValidation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

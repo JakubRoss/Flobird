@@ -3,6 +3,8 @@ using Cabanoss.Core.Model.Workspace;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Cabanoss.Core.Model.Board;
+using Cabanoss.Core.Service.Impl;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,7 +36,6 @@ namespace Cabanoss.API.Controllers
             return workspaceDto;
         }
 
-        // PUT api/<WorkspaceController>/
         [HttpPut]
         public void Put([FromBody] UpdateWorkspaceDto updateWorkspaceDto)
         {

@@ -40,7 +40,7 @@ namespace Cabanoss.Core.Service.Impl
                 throw new ResourceNotFoundException("Invalid login name");
             return user;
         }
-        private async System.Threading.Tasks.Task<User> GetUserById(int id)
+        public async System.Threading.Tasks.Task<User> GetUserById(int id)
         {
             var user = await _userBase.GetFirstAsync(p => p.Id == id);
             if (user == null)
@@ -99,7 +99,6 @@ namespace Cabanoss.Core.Service.Impl
             }
             return usersDto;
         }
-
         public async System.Threading.Tasks.Task<string> GenerateJwt(UserLoginDto userLoginDto)
         {
             var user = await GetUser(userLoginDto.Login);

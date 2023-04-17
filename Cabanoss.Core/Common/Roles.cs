@@ -3,6 +3,7 @@
     public enum Roles
     {
         Admin,
-        User
+        User,
+        Creator
     }
 }

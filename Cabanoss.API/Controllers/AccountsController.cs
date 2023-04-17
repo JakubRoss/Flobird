@@ -35,5 +35,7 @@ namespace Cabanoss.API.Controllers
             return usersDto;
         }
 
+        //wyszukiwanie userow trzeba dodac ?z paginacja stron?
+
     }
 }
