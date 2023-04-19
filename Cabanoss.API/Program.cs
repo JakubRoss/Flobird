@@ -3,6 +3,8 @@ using Cabanoss.Core.Common;
 using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.MIddleware;
+using Cabanoss.Core.Model.Board;
+using Cabanoss.Core.Model.List;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Validators;
 using Cabanoss.Core.Repositories;
@@ -106,15 +108,21 @@ builder.Services.AddScoped<IUserBaseRepository, UserBaseRepository>();
 builder.Services.AddScoped<IWorkspaceBaserepository, WorkspaceBaserepository>();
 builder.Services.AddScoped<IBoardBaseRepository, BoardBaseRepository>();
 builder.Services.AddScoped<IBoardUsersBaseRepository, BoardUsersBaseRepository>();
+builder.Services.AddScoped<IListRepository,ListRepository>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
+builder.Services.AddScoped<IListService, ListService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services
 builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
+builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateBoardDto>, CreateBoardDtoValidator>();
+builder.Services.AddScoped<IValidator<ListDto>, ListDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateBoardDto>, UpdateBoardDtoValidator>();
 
 
 var app = builder.Build();

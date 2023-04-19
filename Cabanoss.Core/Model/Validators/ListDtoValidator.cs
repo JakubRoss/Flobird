@@ -1,11 +1,11 @@
-﻿using Cabanoss.Core.Model.Board;
+﻿using Cabanoss.Core.Model.List;
 using FluentValidation;
 
 namespace Cabanoss.Core.Model.Validators
 {
-    public class CreateBoardDtoValidator : AbstractValidator<CreateBoardDto>
+    public class ListDtoValidator : AbstractValidator<ListDto>
     {
-        public CreateBoardDtoValidator()
+        public ListDtoValidator()
         {
             RuleFor(p => p.Name)
                 .NotEmpty()

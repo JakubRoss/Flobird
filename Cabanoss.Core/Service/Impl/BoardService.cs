@@ -35,7 +35,7 @@ namespace Cabanoss.Core.Service.Impl
             _authorizationService = authorizationService;
             _userService = userService;
         }
-        #region private
+        #region utils
 
         /// <summary>
         /// Sprawdza przynaleznosc uzytkownika(pytajacego) do danej tablicy
@@ -43,7 +43,7 @@ namespace Cabanoss.Core.Service.Impl
         /// <param name="id">Id tablicy.</param>
         /// <param name="user">Claims principal.</param>
         /// <returns>Authorization result</returns>
-        private async System.Threading.Tasks.Task<AuthorizationResult> CheckBoardMembership(int BoardId, ClaimsPrincipal user)
+        public async System.Threading.Tasks.Task<AuthorizationResult> CheckBoardMembership(int BoardId, ClaimsPrincipal user)
         {
             var board = await _boardBaseRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new BelongToRequirements());
@@ -61,7 +61,7 @@ namespace Cabanoss.Core.Service.Impl
         /// <param name="id">Id tablicy.</param>
         /// <param name="user">Claims principal.</param>
         /// <returns>Role enum</returns>
-        private async Task<Roles> ChceckUserRole(int BoardId,ClaimsPrincipal user)
+        public async Task<Roles> ChceckUserRole(int BoardId,ClaimsPrincipal user)
         {
             var authorizationResult = await CheckBoardMembership(BoardId, user);
             if (!authorizationResult.Succeeded)
@@ -86,6 +86,7 @@ namespace Cabanoss.Core.Service.Impl
             var newBoardUser = new BoardUser { BoardId = sboard.Id, UserId = userDb.Id };
             newBoardUser.Roles = Roles.Creator;
             await _boardUsersBaseRepository.AddAsync(newBoardUser);
+
         }
 
         public async System.Threading.Tasks.Task DeleteBoardAsync(int boardId, ClaimsPrincipal user)

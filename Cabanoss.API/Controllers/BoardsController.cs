@@ -69,5 +69,7 @@ namespace Cabanoss.API.Controllers
         {
             await _boardService.SetUserRole(boardId, userId, userRole, User);
         }
+
+        //dodac Get specific board?
     }
 }
