@@ -1,6 +1,6 @@
 ﻿using Cabanoss.Core.Model.User;
-using Microsoft.AspNetCore.Mvc;
 using Cabanoss.Core.Service;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
@@ -8,16 +8,17 @@ namespace Cabanoss.API.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private IUserService _userBussinessLogicService;
+        private IUserService _userService;
 
-        public AccountsController(IUserService userBussinessLogicService)
+        public AccountsController(IUserService userService)
         {
-            _userBussinessLogicService = userBussinessLogicService;
+            _userService = userService;
         }
+
         [HttpPost("login")]
         public async System.Threading.Tasks.Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
-            var token = await _userBussinessLogicService.GenerateJwt(userLoginDto);
+            var token = await _userService.GenerateJwt(userLoginDto);
             
             return Ok(token);
         }
@@ -25,17 +26,7 @@ namespace Cabanoss.API.Controllers
         [HttpPost("registger")]
         public async System.Threading.Tasks.Task register([FromBody] CreateUserDto user)
         {
-             await _userBussinessLogicService.AddUserAsync(user);
+             await _userService.AddUserAsync(user);
         }
-
-        [HttpGet]
-        public async Task<IEnumerable<UserDto>> GetUsers()
-        {
-            var usersDto = await _userBussinessLogicService.GetUsersAsync();
-            return usersDto;
-        }
-
-        //wyszukiwanie userow trzeba dodac ?z paginacja stron?
-
     }
 }

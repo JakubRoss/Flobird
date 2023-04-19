@@ -13,11 +13,11 @@ namespace Cabanoss.API.Controllers
     [Authorize]
     public class UsersController : ControllerBase
     {
-        private IUserService _userBussinessLogicService;
+        private IUserService _userService;
 
-        public UsersController(IUserService userBussinessLogicService)
+        public UsersController(IUserService userService)
         {
-            _userBussinessLogicService = userBussinessLogicService;
+            _userService = userService;
         }
         private int Getid()
         {
@@ -29,21 +29,21 @@ namespace Cabanoss.API.Controllers
         [HttpGet]
         public async Task<UserDto> GetUser()
         {
-            var userDto =await _userBussinessLogicService.GetUserAsync(Getid());
+            var userDto =await _userService.GetUserAsync(Getid());
             return userDto;
         }
 
         [HttpPut]
         public async System.Threading.Tasks.Task<UserDto> PutUser([FromBody] UpdateUserDto user)
         {
-            var updatedUser = await _userBussinessLogicService.UpdateUserAsync(Getid(), user);
+            var updatedUser = await _userService.UpdateUserAsync(Getid(), user);
             return updatedUser;
         }
 
         [HttpDelete]
         public async System.Threading.Tasks.Task DeleteUser()
         {
-            await _userBussinessLogicService.RemoveUserAsync(Getid());
+            await _userService.RemoveUserAsync(Getid());
         }
     }
 }

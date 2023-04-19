@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/users/w/")]
+    [Route("api/boards/{boardId}/lists")]
     [ApiController]
     [Authorize]
     public class ListsController : ControllerBase
@@ -17,32 +17,32 @@ namespace Cabanoss.API.Controllers
             _listService = listService;
         }
 
-        [HttpGet("boards={boardId}/lists")]
+        [HttpGet]
         public async Task<List<ListDto>> GetLists([FromRoute] int boardId)
         {
             var lists = await _listService.GetAllAsync(boardId, User);
             return lists;
         }
 
-        [HttpPost("boards={boardId}/lists")]
+        [HttpPost]
         public async Task CreateList([FromRoute]int boardId, [FromBody] CreateListDto createList)
         {
             await _listService.CreateListAsync(boardId, createList.Name, User);
         }
 
-        [HttpGet("boards={boardId}/lists={listId}")]
+        [HttpGet("{listId}")]
         public async Task<ListDto> GetList([FromRoute] int boardId, int listId)
         {
             return await _listService.GetListAsync(listId, boardId, User);
         }
 
-        [HttpPut("boards={boardId}/lists={listId}")]
+        [HttpPut("{listId}")]
         public async Task ModifyList([FromRoute] int boardId, int listId , [FromBody] CreateListDto createList)
         {
             await _listService.ModList(listId,boardId,createList.Name,User);
         }
 
-        [HttpPost("boards={boardId}/lists={listId}")]
+        [HttpPost("{listId}")]
         public async Task SetDeadline([FromRoute] int boardId, int listId, [FromBody] DateOnly date)
         {
             await _listService.SetDeadline(listId , boardId , date , User);
