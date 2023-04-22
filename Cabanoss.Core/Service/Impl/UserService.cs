@@ -14,13 +14,13 @@ namespace Cabanoss.Core.Service.Impl
 {
     public class UserService : IUserService
     {
-        private IUserBaseRepository _userBase;
+        private IUserRepository _userBase;
         private IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IWorkspaceService _workspaceBussiness;
         private readonly AuthenticationSettings _authenticationSettings;
 
-        public UserService(IUserBaseRepository userBase
+        public UserService(IUserRepository userBase
             ,IMapper mapper
             , IWorkspaceService workspaceBussiness
             ,IPasswordHasher<User>passwordHasher
@@ -32,7 +32,8 @@ namespace Cabanoss.Core.Service.Impl
             _workspaceBussiness = workspaceBussiness;
             _authenticationSettings = authenticationSettings;
         }
-        private async System.Threading.Tasks.Task<User> GetUser(string login)
+        #region Utils
+        private async System.Threading.Tasks.Task<User> GetUserByLogin(string login)
         {
             var LowLogin = login.ToLower();
             var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == LowLogin);
@@ -40,13 +41,14 @@ namespace Cabanoss.Core.Service.Impl
                 throw new ResourceNotFoundException("Invalid login name");
             return user;
         }
-        public async System.Threading.Tasks.Task<User> GetUserById(int id)
+        private async System.Threading.Tasks.Task<User> GetUserById(int id)
         {
             var user = await _userBase.GetFirstAsync(p => p.Id == id);
             if (user == null)
                 throw new ResourceNotFoundException("User don't exists");
             return user;
         }
+        #endregion
 
         public async System.Threading.Tasks.Task AddUserAsync(CreateUserDto userDto)
         {
@@ -101,7 +103,7 @@ namespace Cabanoss.Core.Service.Impl
         }
         public async System.Threading.Tasks.Task<string> GenerateJwt(UserLoginDto userLoginDto)
         {
-            var user = await GetUser(userLoginDto.Login);
+            var user = await GetUserByLogin(userLoginDto.Login);
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userLoginDto.Password);
 
             if (result == PasswordVerificationResult.Failed)

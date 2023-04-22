@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/boards/{boardId}/lists")]
+    [Route("api/lists")]
     [ApiController]
     [Authorize]
     public class ListsController : ControllerBase
@@ -17,35 +17,40 @@ namespace Cabanoss.API.Controllers
             _listService = listService;
         }
 
-        [HttpGet]
-        public async Task<List<ListDto>> GetLists([FromRoute] int boardId)
+        [HttpGet("boards")]
+        public async Task<List<ListDto>> GetLists([FromQuery] int boardId)
         {
             var lists = await _listService.GetAllAsync(boardId, User);
             return lists;
         }
 
         [HttpPost]
-        public async Task CreateList([FromRoute]int boardId, [FromBody] CreateListDto createList)
+        public async Task CreateList([FromQuery]int boardId, [FromBody] CreateListDto createList)
         {
             await _listService.CreateListAsync(boardId, createList.Name, User);
         }
 
-        [HttpGet("{listId}")]
-        public async Task<ListDto> GetList([FromRoute] int boardId, int listId)
+        [HttpGet]
+        public async Task<ListDto> GetList([FromQuery]int listId)
         {
-            return await _listService.GetListAsync(listId, boardId, User);
+            return await _listService.GetListAsync(listId, User);
         }
 
-        [HttpPut("{listId}")]
-        public async Task ModifyList([FromRoute] int boardId, int listId , [FromBody] CreateListDto createList)
+        [HttpPut]
+        public async Task UpdateList([FromQuery] int listId , [FromBody] CreateListDto createList)
         {
-            await _listService.ModList(listId,boardId,createList.Name,User);
+            await _listService.UpdateList(listId, createList.Name ,User);
         }
 
-        [HttpPost("{listId}")]
-        public async Task SetDeadline([FromRoute] int boardId, int listId, [FromBody] DateOnly date)
+        [HttpPatch]
+        public async Task SetDeadline([FromQuery] int listId, [FromBody] DateOnly date)
         {
-            await _listService.SetDeadline(listId , boardId , date , User);
+            await _listService.SetDeadline(listId , date , User);
+        }
+        [HttpDelete]
+        public async Task DeleteList([FromQuery] int listId)
+        {
+            await _listService.DeleteList(listId , User);
         }
     }
 }

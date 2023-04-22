@@ -2,7 +2,7 @@
 
 namespace Cabanoss.Core.Repositories
 {
-    public interface IBoardBaseRepository : IBaseRepository<Board>
+    public interface IWorkspaceRepository : IBaseRepository<Workspace>
     {
     }
 }

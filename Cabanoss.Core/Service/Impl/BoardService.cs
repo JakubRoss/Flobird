@@ -1,39 +1,37 @@
 ﻿using AutoMapper;
 using Cabanoss.Core.Authorization;
 using Cabanoss.Core.Common;
-using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using System.Data;
 using System.Security.Claims;
 
 namespace Cabanoss.Core.Service.Impl
 {
     public class BoardService : IBoardService
     {
-        private IBoardBaseRepository _boardBaseRepository;
+        private IBoardRepository _boardBaseRepository;
         private IMapper _mapper;
-        private IBoardUsersBaseRepository _boardUsersBaseRepository;
-        private IUserBaseRepository _userBase;
+        private IBoardUsersRepository _boardUsersBaseRepository;
+        private IUserRepository _userBase;
         private IAuthorizationService _authorizationService;
-        private IUserService _userService;
+        private IUserRepository _userRepository;
 
-        public BoardService(IBoardBaseRepository boardBaseRepository,
+        public BoardService(IBoardRepository boardBaseRepository,
             IMapper mapper,
-            IBoardUsersBaseRepository boardUsersBaseRepository,
-            IUserBaseRepository userBase,
+            IBoardUsersRepository boardUsersBaseRepository,
+            IUserRepository userBase,
             IAuthorizationService authorizationService,
-            IUserService userService)
+            IUserRepository userRepository)
         {
             _boardBaseRepository = boardBaseRepository;
             _mapper = mapper;
             _boardUsersBaseRepository = boardUsersBaseRepository;
             _userBase = userBase;
             _authorizationService = authorizationService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
         #region utils
 
@@ -128,10 +126,14 @@ namespace Cabanoss.Core.Service.Impl
 
         public async System.Threading.Tasks.Task AddUsersAsync(int boardId , int userId, ClaimsPrincipal user)
         {
-            await _userService.GetUserById(userId);
+            var isUserExist = _userRepository.GetFirstAsync(i=>i.Id == userId);
+            if (isUserExist == null)
+                throw new ResourceNotFoundException("User don't exists");
+
             var role = await ChceckUserRole(boardId, user);
             if (role == Roles.User)
                 throw new ResourceNotFoundException("No Access");
+
             var newBoardUser = new BoardUser { BoardId = boardId, UserId = userId };
             newBoardUser.Roles = Roles.User;
             await _boardUsersBaseRepository.AddAsync(newBoardUser);

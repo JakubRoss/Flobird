@@ -7,8 +7,9 @@ namespace Cabanoss.Core.Service
     {
         Task<List<ListDto>> GetAllAsync(int boardId, ClaimsPrincipal claims);
         Task CreateListAsync(int boardId, string name, ClaimsPrincipal claims);
-        Task<ListDto> GetListAsync(int listId, int boardId, ClaimsPrincipal claims);
-        Task ModList(int listId, int boardId, string name, ClaimsPrincipal claims);
-        Task SetDeadline(int listid, int boardId, DateOnly date, ClaimsPrincipal claims);
+        Task<ListDto> GetListAsync(int listId, ClaimsPrincipal claims);
+        Task UpdateList(int listId, string name, ClaimsPrincipal claims);
+        Task SetDeadline(int listid, DateOnly date, ClaimsPrincipal claims);
+        Task DeleteList(int listId, ClaimsPrincipal user);
     }
 }

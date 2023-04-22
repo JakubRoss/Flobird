@@ -2,7 +2,7 @@
 
 namespace Cabanoss.Core.Repositories
 {
-    public interface IUserBaseRepository : IBaseRepository<User>
+    public interface IBoardUsersRepository : IBaseRepository<BoardUser>
     {
     }
 }

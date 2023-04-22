@@ -8,11 +8,11 @@ namespace Cabanoss.Core.Service.Impl
 {
     public class WorkspaceService : IWorkspaceService
     {
-        private readonly IWorkspaceBaserepository _workspaceBaserepository;
+        private readonly IWorkspaceRepository _workspaceBaserepository;
         private readonly IMapper _mapper;
-        private readonly IUserBaseRepository _userBase;
+        private readonly IUserRepository _userBase;
 
-        public WorkspaceService(IWorkspaceBaserepository workspaceBaserepository, IMapper mapper, IUserBaseRepository userBaseRepository)
+        public WorkspaceService(IWorkspaceRepository workspaceBaserepository, IMapper mapper, IUserRepository userBaseRepository)
         {
             _workspaceBaserepository = workspaceBaserepository;
             _mapper = mapper;

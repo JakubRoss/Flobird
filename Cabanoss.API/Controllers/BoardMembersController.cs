@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/boards/{boardId}/members")]
+    [Route("api/members")]
     [ApiController]
     [Authorize]
     public class BoardMembersController : Controller
@@ -18,25 +18,25 @@ namespace Cabanoss.API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ResponseBoardUser>> GetBoardUsers([FromRoute] int boardId)
+        public async Task<List<ResponseBoardUser>> GetBoardUsers([FromQuery] int boardId)
         {
             var users = await _boardService.GetUsersAsync(boardId, User);
             return users;
         }
 
-        [HttpPost("{userId}")]
-        public async Task AddBoardUsers([FromRoute] int boardId, int userId)
+        [HttpPost("boards/{boardId}")]
+        public async Task AddBoardUsers([FromRoute] int boardId,[FromQuery] int userId)
         {
             await _boardService.AddUsersAsync(boardId, userId, User);
         }
 
-        [HttpDelete("{userId}")]
-        public async Task RemoveBoardUsers([FromRoute] int boardId, int userId)
+        [HttpDelete("boards/{boardId}")]
+        public async Task RemoveBoardUsers([FromRoute] int boardId,[FromQuery] int userId)
         {
             await _boardService.RemoveUserAsync(boardId, userId, User);
         }
-        [HttpPatch("{userId}")]
-        public async Task SetUserRole([FromRoute] int boardId, int userId, [FromBody] int userRole)
+        [HttpPatch("boards/{boardId}")]
+        public async Task SetUserRole([FromRoute] int boardId, [FromQuery] int userId, [FromBody] int userRole)
         {
             await _boardService.SetUserRole(boardId, userId, userRole, User);
         }

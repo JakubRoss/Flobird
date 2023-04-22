@@ -4,7 +4,6 @@ using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.List;
 using Cabanoss.Core.Repositories;
-using Cabanoss.Core.Repositories.Impl;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -14,44 +13,41 @@ namespace Cabanoss.Core.Service.Impl
     {
         private IListRepository _listRepository;
         private IMapper _mapper;
-        private IBoardBaseRepository _boardBaseRepository;
+        private IBoardRepository _boardRepository;
         private IAuthorizationService _authorizationService;
 
         public ListService(
             IListRepository listRepository,
             IMapper mapper,
-            IBoardBaseRepository boardBaseRepository,
+            IBoardRepository boardRepository,
             IAuthorizationService authorizationService)
         {
             _listRepository = listRepository;
             _mapper = mapper;
-            _boardBaseRepository = boardBaseRepository;
+            _boardRepository = boardRepository;
             _authorizationService = authorizationService;
         }
         #region Utils
-        private async Task<List> GetList(int listId, int? boardId)
+        private async Task<List> GetList(int listId)
         {
-            var list = new List();
-            if(boardId is null)
-            {
-                list = await _listRepository.GetFirstAsync(p => p.Id == listId);
-            }
-            list = await _listRepository.GetFirstAsync(p=>p.Id == listId && p.BoardId == boardId);
+            var list = await _listRepository.GetFirstAsync(p => p.Id == listId);
             if (list is null)
                 throw new ResourceNotFoundException("ResourceNotFound");
             return list;
         }
-        public async System.Threading.Tasks.Task<AuthorizationResult> CheckBoardMembership(int BoardId, ClaimsPrincipal user)
+        private async System.Threading.Tasks.Task CheckBoardMembership(int listId, ClaimsPrincipal user)
         {
-            var board = await _boardBaseRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
+            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Id == listId), i=>i.BoardUsers);
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new BelongToRequirements());
-            return authorizationResult;
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("no access");
         }
         #endregion
 
         public async Task<List<ListDto>> GetAllAsync(int boardId, ClaimsPrincipal claims)
         {
-            var authorizationResult = await CheckBoardMembership(boardId, claims);
+            var board = await _boardRepository.GetFirstAsync(board => board.Id == boardId, i => i.BoardUsers);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(claims, board, new BelongToRequirements());
             if (!authorizationResult.Succeeded)
                 throw new ResourceNotFoundException("no access");
 
@@ -61,6 +57,11 @@ namespace Cabanoss.Core.Service.Impl
         }
         public async Task CreateListAsync(int boardId , string name, ClaimsPrincipal claims)
         {
+            var board = await _boardRepository.GetFirstAsync(board => board.Id == boardId, i => i.BoardUsers);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(claims, board, new BelongToRequirements());
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("no access");
+
             var i = GetAllAsync(boardId, claims).Result.Count;
             var list = new List();
             list.CreatedAt = DateTime.Now;
@@ -69,34 +70,41 @@ namespace Cabanoss.Core.Service.Impl
             list.Position = i++;
             await _listRepository.AddAsync(list);
         }
-        public async Task<ListDto> GetListAsync(int listId , int boardId , ClaimsPrincipal claims)
+        public async Task<ListDto> GetListAsync(int listId , ClaimsPrincipal claims)
         {
-            var list = await GetList(listId, boardId);
-            var authorizationResult = await CheckBoardMembership(list.BoardId, claims);
-            if (!authorizationResult.Succeeded)
-                throw new ResourceNotFoundException("no access");
+            await CheckBoardMembership(listId, claims);
+
+            var list = await GetList(listId);;
             return _mapper.Map<ListDto>(list);
         }
-        public async Task ModList (int listId , int boardId, string name ,ClaimsPrincipal claims)
+        public async Task UpdateList(int listId , string name ,ClaimsPrincipal claims)
         {
-            var list = await GetList(listId, boardId);
-            var authorizationResult = await CheckBoardMembership(list.BoardId, claims);
-            if (!authorizationResult.Succeeded && boardId != list.BoardId)
-                throw new ResourceNotFoundException("no access");
+            await CheckBoardMembership(listId, claims);
+
+            var list = await GetList(listId);
             list.UpdatedAt = DateTime.Now;
             list.Name = name;
             await _listRepository.UpdateAsync(list);
 
         }
-        public async Task SetDeadline (int listid,int boardId, DateOnly date, ClaimsPrincipal claims)
+        public async Task SetDeadline (int listId, DateOnly date, ClaimsPrincipal claims)
         {
-            var authorizationResult = await CheckBoardMembership(boardId, claims);
-            if (!authorizationResult.Succeeded)
-                throw new ResourceNotFoundException("no access");
+            await CheckBoardMembership(listId, claims);
 
-            var list = await GetList(listid, boardId);
+            var list = await GetList(listId);
             list.Deadline = date.ToDateTime(new TimeOnly());
             await _listRepository.UpdateAsync(list);
         }
+        public async Task DeleteList(int listId , ClaimsPrincipal user)
+        {
+            await CheckBoardMembership(listId, user);
+
+            var list = await GetList(listId);
+            await _listRepository.DeleteAsync(list);
+
+        }
+
+
+        //TUTAJ NIE MA SPRawDZANIA ROLI UZYTKOWNIKA (DO ZROBIENIA)
     }
 }

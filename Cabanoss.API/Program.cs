@@ -57,7 +57,11 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAuthorizationHandler,BelongToRequirementsHandler>();
 
-builder.Services.AddControllers().AddFluentValidation();
+builder.Services.AddControllers();
+#region FluentValidations
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+#endregion
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -104,16 +108,18 @@ builder.Services.AddDbContext<CabanossDbContext>(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //base repo Services
-builder.Services.AddScoped<IUserBaseRepository, UserBaseRepository>();
-builder.Services.AddScoped<IWorkspaceBaserepository, WorkspaceBaserepository>();
-builder.Services.AddScoped<IBoardBaseRepository, BoardBaseRepository>();
-builder.Services.AddScoped<IBoardUsersBaseRepository, BoardUsersBaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
+builder.Services.AddScoped<IBoardUsersRepository, BoardUsersRepository>();
 builder.Services.AddScoped<IListRepository,ListRepository>();
+builder.Services.AddScoped<ICardRepository, CardRepository>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IListService, ListService>();
+builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services

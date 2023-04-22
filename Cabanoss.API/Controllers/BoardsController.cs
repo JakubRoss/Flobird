@@ -30,18 +30,17 @@ namespace Cabanoss.API.Controllers
             return boards;
         }
 
-        [HttpPut("{boardId}")]
-        public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard , [FromRoute] int boardId)
+        [HttpPut]
+        public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard , [FromQuery] int boardId)
         {
             await _boardService.ModifyNameBoardAsync(boardId, updateBoard, User);
         }
 
-        [HttpDelete("{boardId}")]
-        public async Task DeleteBoard([FromRoute] int boardId)
+        [HttpDelete]
+        public async Task DeleteBoard([FromQuery] int boardId)
         {
             await _boardService.DeleteBoardAsync(boardId, User);
         }
 
-        //dodac Get specific board?
     }
 }
