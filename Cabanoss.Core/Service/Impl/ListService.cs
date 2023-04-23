@@ -57,12 +57,6 @@ namespace Cabanoss.Core.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new ResourceNotFoundException("no access");
         }
-        private async Task<AuthorizationResult> ChceckCreatorRole(int BoardId, ClaimsPrincipal user)
-        {
-            var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
-            var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new CreatorRoleRequirements());
-            return authorizationResult;
-        }
         private async Task<AuthorizationResult> ChceckAdminRole(int BoardId, ClaimsPrincipal user)
         {
             var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
@@ -130,7 +124,7 @@ namespace Cabanoss.Core.Service.Impl
         public async Task DeleteList(int listId, ClaimsPrincipal claims)
         {
             var board = await GetBoardByListId(listId);
-            var authorizationResult = await ChceckCreatorRole(board.Id, claims);
+            var authorizationResult = await ChceckAdminRole(board.Id, claims);
             if (!authorizationResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
 

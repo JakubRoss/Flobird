@@ -3,6 +3,7 @@ using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Model.Card;
 using Cabanoss.Core.Model.List;
+using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Workspace;
 
@@ -37,6 +38,7 @@ namespace Cabanoss.Core.Common
             CreateMap<ListDto, List>().ReverseMap();
             CreateMap<CardDto, Card>().ReverseMap();
             CreateMap<CreateCardDto, Card>().ReverseMap();
+            CreateMap<TaskDto, Tasks>().ReverseMap();
         }
     }
 }

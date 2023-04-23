@@ -56,6 +56,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAuthorizationHandler,MembershipRequirementsHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, AdminRoleRequirementsHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, CreatorRoleRequirementsHandler>();
 
 builder.Services.AddControllers();
 #region FluentValidations
@@ -114,12 +116,14 @@ builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<IBoardUsersRepository, BoardUsersRepository>();
 builder.Services.AddScoped<IListRepository,ListRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IListService, ListService>();
 builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services

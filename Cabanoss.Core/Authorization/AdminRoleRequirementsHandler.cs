@@ -11,12 +11,12 @@ namespace Cabanoss.Core.Authorization
         {
             var userId = int.Parse(context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var boardUser = board.BoardUsers.FirstOrDefault(p => p.UserId == userId);
-            var boardUserRole = boardUser.Roles;
-            if (boardUserRole !=Roles.Admin || boardUserRole !=Roles.Creator)
+            if (boardUser.Roles == Roles.Admin || boardUser.Roles == Roles.Creator)
             {
-                context.Fail();
+                context.Succeed(requirement);
+                return Task.CompletedTask;
             }
-            context.Succeed(requirement);
+            context.Fail();
             return Task.CompletedTask;
         }
     }

@@ -35,15 +35,6 @@ namespace Cabanoss.Core.Service.Impl
                 throw new ResourceNotFoundException("ResourceNotFound");
             return card;
         }
-        private async Task<AuthorizationResult> CheckCreatorRole(int BoardId, ClaimsPrincipal user)
-        {
-            var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
-            if (board is null)
-                throw new ResourceNotFoundException("Resource Not Found");
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new CreatorRoleRequirements());
-            return authorizationResult;
-        }
         private async Task<AuthorizationResult> CheckAdminRole(int BoardId, ClaimsPrincipal user)
         {
             var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
@@ -112,7 +103,7 @@ namespace Cabanoss.Core.Service.Impl
             if (board is null)
                 throw new ResourceNotFoundException("Resource Not Found");
 
-            var authorizationResult = await CheckCreatorRole(board.Id, user);
+            var authorizationResult = await CheckAdminRole(board.Id, user);
             if (!authorizationResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
 

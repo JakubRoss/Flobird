@@ -67,7 +67,7 @@ namespace Cabanoss.Core.Service.Impl
         }
         #endregion
 
-        public async System.Threading.Tasks.Task CreateBoardAsync(CreateBoardDto createBoardDto, ClaimsPrincipal user)
+        public async Task CreateBoardAsync(CreateBoardDto createBoardDto, ClaimsPrincipal user)
         {
             var userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var userDb = await _userBase.GetFirstAsync(p => p.Id == userId, i => i.Workspace);
@@ -83,7 +83,7 @@ namespace Cabanoss.Core.Service.Impl
 
         }
 
-        public async System.Threading.Tasks.Task DeleteBoardAsync(int boardId, ClaimsPrincipal user)
+        public async Task DeleteBoardAsync(int boardId, ClaimsPrincipal user)
         {
             var authorizationRoleResult = await ChceckCreatorRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)
@@ -94,7 +94,7 @@ namespace Cabanoss.Core.Service.Impl
             await _boardRepository.DeleteAsync(board);
         }
 
-        public async System.Threading.Tasks.Task<List<ResponseBoardDto>> GetBoardsAsync(ClaimsPrincipal user)
+        public async Task<List<ResponseBoardDto>> GetBoardsAsync(ClaimsPrincipal user)
         {
             var userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
@@ -109,7 +109,7 @@ namespace Cabanoss.Core.Service.Impl
             return responseBoards;
         }
 
-        public async System.Threading.Tasks.Task<List<ResponseBoardUser>> GetBoardUsersAsync(int BoardId, ClaimsPrincipal user)
+        public async Task<List<ResponseBoardUser>> GetBoardUsersAsync(int BoardId, ClaimsPrincipal user)
         {
             var authorizationMembershipResult = await CheckBoardMembership(BoardId, user);
             if (!authorizationMembershipResult.Succeeded)
@@ -120,7 +120,7 @@ namespace Cabanoss.Core.Service.Impl
             return mapedUsers;
         }
 
-        public async System.Threading.Tasks.Task AddUsersAsync(int boardId , int userId, ClaimsPrincipal user)
+        public async Task AddUsersAsync(int boardId , int userId, ClaimsPrincipal user)
         {
             var isUserExist = _userRepository.GetFirstAsync(i=>i.Id == userId);
             if (isUserExist == null)
@@ -135,7 +135,7 @@ namespace Cabanoss.Core.Service.Impl
             await _boardUsersBaseRepository.AddAsync(newBoardUser);
         }
 
-        public async System.Threading.Tasks.Task RemoveUserAsync (int boardId, int userId, ClaimsPrincipal user)
+        public async Task RemoveUserAsync (int boardId, int userId, ClaimsPrincipal user)
         {
             var authorizationRoleResult = await ChceckAdminRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)
@@ -146,7 +146,7 @@ namespace Cabanoss.Core.Service.Impl
                 await _boardUsersBaseRepository.DeleteAsync(boardUser);
         }
 
-        public async System.Threading.Tasks.Task UpdateBoardAsync(int boardId, UpdateBoardDto updateBoardDto, ClaimsPrincipal user)
+        public async Task UpdateBoardAsync(int boardId, UpdateBoardDto updateBoardDto, ClaimsPrincipal user)
         {
             var board = await _boardRepository.GetFirstAsync(i=>i.Id == boardId);
             if(board is null)
@@ -161,7 +161,7 @@ namespace Cabanoss.Core.Service.Impl
             await _boardRepository.UpdateAsync(board);
         }
 
-        public async System.Threading.Tasks.Task SetUserRole (int boardId,int userId, int roles, ClaimsPrincipal user)
+        public async Task SetUserRole (int boardId,int userId, int roles, ClaimsPrincipal user)
         {
             var authorizationRoleResult = await ChceckAdminRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)

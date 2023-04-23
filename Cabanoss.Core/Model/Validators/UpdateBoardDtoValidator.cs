@@ -10,7 +10,8 @@ namespace Cabanoss.Core.Model.Validators
             RuleFor(p=>p.Name)
                 .NotEmpty()
                 .NotNull()
-                .MinimumLength(3);
+                .MinimumLength(3)
+                .MaximumLength(15);
         }
     }
 }

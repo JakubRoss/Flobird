@@ -50,7 +50,7 @@ namespace Cabanoss.Core.Service.Impl
         }
         #endregion
 
-        public async System.Threading.Tasks.Task AddUserAsync(CreateUserDto userDto)
+        public async Task AddUserAsync(CreateUserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
             var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
@@ -60,13 +60,13 @@ namespace Cabanoss.Core.Service.Impl
 
             await _workspaceBussiness.AddWorkspaceAsync(user.Id);
         }
-        public async System.Threading.Tasks.Task<UserDto> GetUserAsync(int id)
+        public async Task<UserDto> GetUserAsync(int id)
         {
             var user = await GetUserById(id);
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }
-        public async System.Threading.Tasks.Task<UserDto> UpdateUserAsync(int id, UpdateUserDto userDto)
+        public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto userDto)
         {
             var user = await GetUserById(id);
             #region updt_properties
@@ -83,12 +83,12 @@ namespace Cabanoss.Core.Service.Impl
             var updatedDto = _mapper.Map<UserDto>(updated);
             return updatedDto;
         }
-        public async System.Threading.Tasks.Task RemoveUserAsync(int id)
+        public async Task RemoveUserAsync(int id)
         {
             var user = await GetUserById(id);
             await _userBase.DeleteAsync(user);
         }
-        public async System.Threading.Tasks.Task<List<UserDto>> GetUsersAsync()
+        public async Task<List<UserDto>> GetUsersAsync()
         {
             var users = await _userBase.GetAllAsync();
             if(users is null)
@@ -101,7 +101,7 @@ namespace Cabanoss.Core.Service.Impl
             }
             return usersDto;
         }
-        public async System.Threading.Tasks.Task<string> GenerateJwt(UserLoginDto userLoginDto)
+        public async Task<string> GenerateJwt(UserLoginDto userLoginDto)
         {
             var user = await GetUserByLogin(userLoginDto.Login);
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userLoginDto.Password);

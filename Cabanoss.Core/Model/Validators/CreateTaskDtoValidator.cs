@@ -1,11 +1,11 @@
-﻿using Cabanoss.Core.Model.Board;
+﻿using Cabanoss.Core.Model.Task;
 using FluentValidation;
 
 namespace Cabanoss.Core.Model.Validators
 {
-    public class CreateBoardDtoValidator : AbstractValidator<CreateBoardDto>
+    public class CreateTaskDtoValidator : AbstractValidator<TaskDto>
     {
-        public CreateBoardDtoValidator()
+        public CreateTaskDtoValidator() 
         {
             RuleFor(p => p.Name)
                 .NotEmpty()
@@ -13,5 +13,6 @@ namespace Cabanoss.Core.Model.Validators
                 .MinimumLength(3)
                 .MaximumLength(15);
         }
+
     }
 }

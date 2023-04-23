@@ -18,7 +18,8 @@ namespace Cabanoss.Core.Service.Impl
             _mapper = mapper;
             _userBase = userBaseRepository;
         }
-        private async System.Threading.Tasks.Task<User> GetUserById(int id)
+        #region Utils
+        private async Task<User> GetUserById(int id)
         {
             var user = await _userBase.GetFirstAsync(p => p.Id == id);
             if (user == null)
@@ -33,14 +34,14 @@ namespace Cabanoss.Core.Service.Impl
                 throw new ResourceNotFoundException("Uzytkownik nie posiada przestrzeni roboczej");
             return workspace;
         }
-
-        public async System.Threading.Tasks.Task<WorkspaceDto> GetUserWorkspaceAsync(int id)
+        #endregion
+        public async Task<WorkspaceDto> GetUserWorkspaceAsync(int id)
         {
             var workspace = await GetWorkspaceAsync(id);
             var workspaceDto = _mapper.Map<WorkspaceDto>(workspace);
             return workspaceDto;
         }
-        public async System.Threading.Tasks.Task<WorkspaceDto> UpdateWorkspaceAsync(int id, UpdateWorkspaceDto updateWorkspaceDto)
+        public async Task<WorkspaceDto> UpdateWorkspaceAsync(int id, UpdateWorkspaceDto updateWorkspaceDto)
         {
             var workspace = await GetWorkspaceAsync(id);
             workspace.Name = updateWorkspaceDto.Name;
@@ -51,7 +52,7 @@ namespace Cabanoss.Core.Service.Impl
         }
 
         #region nieuzywane
-        public async System.Threading.Tasks.Task AddWorkspaceAsync(int id)
+        public async Task AddWorkspaceAsync(int id)
         {
             var user = await GetUserById(id);
             var workspaceDto = new WorkspaceDto

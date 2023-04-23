@@ -20,7 +20,7 @@ namespace Cabanoss.API.Controllers
         [HttpGet]
         public async Task<List<ResponseBoardUser>> GetBoardUsers([FromQuery] int boardId)
         {
-            var users = await _boardService.GetUsersAsync(boardId, User);
+            var users = await _boardService.GetBoardUsersAsync(boardId, User);
             return users;
         }
 

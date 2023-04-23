@@ -33,7 +33,7 @@ namespace Cabanoss.API.Controllers
         [HttpPut]
         public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard , [FromQuery] int boardId)
         {
-            await _boardService.ModifyNameBoardAsync(boardId, updateBoard, User);
+            await _boardService.UpdateBoardAsync(boardId, updateBoard, User);
         }
 
         [HttpDelete]

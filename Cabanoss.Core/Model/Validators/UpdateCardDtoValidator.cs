@@ -14,8 +14,8 @@ namespace Cabanoss.Core.Model.Validators
                     if (value != null)
                     {
                         
-                        if (value.Length<3 || value.IsNullOrEmpty())
-                            context.AddFailure("Name", "Name is too short or is empty");
+                        if (value.Length<3 || value.IsNullOrEmpty() ||value.Length>15)
+                            context.AddFailure("Name", "Name is too short/long or is empty");
                     }
                 });
             RuleFor(e => e.Description)
