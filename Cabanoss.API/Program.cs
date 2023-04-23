@@ -55,7 +55,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddScoped<IAuthorizationHandler,BelongToRequirementsHandler>();
+builder.Services.AddScoped<IAuthorizationHandler,MembershipRequirementsHandler>();
 
 builder.Services.AddControllers();
 #region FluentValidations

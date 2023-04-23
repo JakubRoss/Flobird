@@ -2,7 +2,8 @@
 
 namespace Cabanoss.Core.Authorization
 {
-    public class BelongToRequirements : IAuthorizationRequirement
+    public class CreatorRoleRequirements : IAuthorizationRequirement
     {
+
     }
 }

@@ -3,10 +3,8 @@ using Cabanoss.Core.Authorization;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Card;
-using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace Cabanoss.Core.Service.Impl
@@ -30,21 +28,6 @@ namespace Cabanoss.Core.Service.Impl
             _authorizationService = authorizationService;
         }
         #region Utils
-        private async Task CheckMembershipByCardId(int cardId, ClaimsPrincipal user)
-        {
-            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Cards.Any(card => card.Id == cardId)), i => i.BoardUsers);
-            var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new BelongToRequirements());
-            if (!authorizationResult.Succeeded)
-                throw new ResourceNotFoundException("no access");
-
-        }
-        private async Task CheckMembershipByListId(int listId, ClaimsPrincipal user)
-        {
-            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Id == listId), i => i.BoardUsers);
-            var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new BelongToRequirements());
-            if (!authorizationResult.Succeeded)
-                throw new ResourceNotFoundException("no access");
-        }
         private async Task<Card> GetCardById(int cardId)
         {
             var card = await _cardRepository.GetFirstAsync(p => p.Id == cardId);
@@ -52,12 +35,36 @@ namespace Cabanoss.Core.Service.Impl
                 throw new ResourceNotFoundException("ResourceNotFound");
             return card;
         }
+        private async Task<AuthorizationResult> CheckCreatorRole(int BoardId, ClaimsPrincipal user)
+        {
+            var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new CreatorRoleRequirements());
+            return authorizationResult;
+        }
+        private async Task<AuthorizationResult> CheckAdminRole(int BoardId, ClaimsPrincipal user)
+        {
+            var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new AdminRoleRequirements());
+            return authorizationResult;
+        }
 
         #endregion
 
         public async Task<List<CardDto>> GetCards(int listId, ClaimsPrincipal user)
         {
-            await CheckMembershipByListId(listId, user);
+            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Id == listId), i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new MembershipRequirements());
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("no access");
 
             var lists = await _cardRepository.GetAllAsync(p => p.ListId == listId);
             var listsDto = _mapper.Map<List<CardDto>>(lists);
@@ -66,7 +73,13 @@ namespace Cabanoss.Core.Service.Impl
 
         public async Task<CardDto> GetCard(int cardId, ClaimsPrincipal claims)
         {
-            await CheckMembershipByCardId(cardId, claims);
+            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Cards.Any(card => card.Id == cardId)), i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(claims, board, new MembershipRequirements());
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("no access");
 
             var card = await GetCardById(cardId);
             var cardDto = _mapper.Map<CardDto>(card);
@@ -75,7 +88,13 @@ namespace Cabanoss.Core.Service.Impl
 
         public async Task AddCard(int listId, ClaimsPrincipal user, CreateCardDto createCard)
         {
-            await CheckMembershipByListId(listId, user);
+            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Id == listId), i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await CheckAdminRole(board.Id, user);
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("No Access");
 
             Card card = new Card
             {
@@ -89,14 +108,27 @@ namespace Cabanoss.Core.Service.Impl
 
         public async Task DeleteCard(int cardId, ClaimsPrincipal user)
         {
-            await CheckMembershipByCardId(cardId, user);
+            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Cards.Any(card => card.Id == cardId)), i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await CheckCreatorRole(board.Id, user);
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("No Access");
+
             var card = await GetCardById(cardId);
             await _cardRepository.DeleteAsync(card);
         }
 
         public async Task UpdateCard(int cardId, ClaimsPrincipal user, UpdateCardDto createCard)
         {
-            await CheckMembershipByCardId(cardId, user);
+            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Cards.Any(card => card.Id == cardId)), i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await CheckAdminRole(board.Id, user);
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("No Access");
 
             var card = await GetCardById(cardId);
 
@@ -109,7 +141,5 @@ namespace Cabanoss.Core.Service.Impl
             card.UpdateAt = DateTime.UtcNow;
             await _cardRepository.UpdateAsync(card);
         }
-
-        //TUTAJ NIE MA SPRAWDZANIA ROLI UZYTKOWNIKA (DO ZROBIENIA)
     }
 }
