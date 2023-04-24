@@ -1,10 +1,8 @@
-﻿using Cabanoss.Core.Service;
-using Cabanoss.Core.Model.Workspace;
+﻿using Cabanoss.Core.Model.Workspace;
+using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Cabanoss.Core.Model.Board;
-using Cabanoss.Core.Service.Impl;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

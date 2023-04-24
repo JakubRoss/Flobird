@@ -1,6 +1,5 @@
 ﻿using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Service;
-using Cabanoss.Core.Service.Impl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

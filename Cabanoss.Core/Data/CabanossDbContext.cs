@@ -89,6 +89,18 @@ namespace Cabanoss.Core.Data
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Card>()
+                .HasMany(a=>a.Attachments)
+                .WithOne(c=>c.Card)
+                .HasForeignKey(a=>a.CardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Attachment>()
+                .HasOne(u => u.User)
+                .WithMany(a => a.Attachments)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             #endregion
             base.OnModelCreating(modelBuilder);
         }
