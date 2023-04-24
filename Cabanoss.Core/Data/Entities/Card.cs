@@ -15,7 +15,7 @@ namespace Cabanoss.Core.Data.Entities
         public List List { get; set; }
 
         public virtual ICollection<Tasks> Tasks { get; set; }
-        //public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
         //public virtual ICollection<Attachment> Attachments { get; set; }
     }
 }

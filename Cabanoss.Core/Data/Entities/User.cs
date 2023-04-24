@@ -15,6 +15,6 @@ namespace Cabanoss.Core.Data.Entities
         public virtual Workspace Workspace { get; set; }
 
         public virtual ICollection<BoardUser> BoardUsers { get; set; } = new List<BoardUser>();
-        //public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

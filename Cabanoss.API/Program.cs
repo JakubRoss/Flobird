@@ -4,7 +4,10 @@ using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.MIddleware;
 using Cabanoss.Core.Model.Board;
+using Cabanoss.Core.Model.Card;
+using Cabanoss.Core.Model.Comment;
 using Cabanoss.Core.Model.List;
+using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Validators;
 using Cabanoss.Core.Repositories;
@@ -54,7 +57,7 @@ builder.Services.AddAuthentication(options =>
 #endregion
 
 builder.Services.AddAuthorization();
-
+//Authorization services
 builder.Services.AddScoped<IAuthorizationHandler,MembershipRequirementsHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, AdminRoleRequirementsHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, CreatorRoleRequirementsHandler>();
@@ -117,6 +120,7 @@ builder.Services.AddScoped<IBoardUsersRepository, BoardUsersRepository>();
 builder.Services.AddScoped<IListRepository,ListRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();
@@ -124,6 +128,7 @@ builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IListService, ListService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<ITasksService, TasksService>();
+builder.Services.AddScoped<ICommentServices,  CommentServices>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services
@@ -133,6 +138,11 @@ builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginDtoValidator>();
 builder.Services.AddScoped<IValidator<CreateBoardDto>, CreateBoardDtoValidator>();
 builder.Services.AddScoped<IValidator<ListDto>, ListDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateBoardDto>, UpdateBoardDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateCardDto>, CreateCardValidator>();
+builder.Services.AddScoped<IValidator<TaskDto>, TaskDtoValidator>();
+builder.Services.AddScoped<IValidator<ListDto>, ListDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateCardDto>, UpdateCardDtoValidator>();
+builder.Services.AddScoped<IValidator<CommentDto>, CommentDtoValidator>();
 
 
 var app = builder.Build();
