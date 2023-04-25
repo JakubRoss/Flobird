@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/lists")]
+    [Route("lists")]
     [ApiController]
     [Authorize]
     public class ListsController : ControllerBase

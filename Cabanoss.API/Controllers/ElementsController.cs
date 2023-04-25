@@ -1,12 +1,11 @@
-﻿using Cabanoss.Core.Model.Attachments;
-using Cabanoss.Core.Model.Element;
+﻿using Cabanoss.Core.Model.Element;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/elements")]
+    [Route("elements")]
     [ApiController]
     [Authorize]
     public class ElementsController : ControllerBase

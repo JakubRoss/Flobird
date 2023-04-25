@@ -1,13 +1,11 @@
 ﻿using Cabanoss.Core.Model.Attachments;
-using Cabanoss.Core.Model.Comment;
 using Cabanoss.Core.Service;
-using Cabanoss.Core.Service.Impl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/attachments")]
+    [Route("attachments")]
     [ApiController]
     [Authorize]
     public class AttachmentsController : ControllerBase

@@ -1,13 +1,11 @@
 ﻿using Cabanoss.Core.Model.Board;
-using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Service;
-using Cabanoss.Core.Service.Impl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/members")]
+    [Route("members")]
     [ApiController]
     [Authorize]
     public class MembersController : Controller

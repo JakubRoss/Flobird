@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/users/w")]
+    [Route("workspaces")]
     [ApiController]
     [Authorize]
     public class WorkspacesController : ControllerBase

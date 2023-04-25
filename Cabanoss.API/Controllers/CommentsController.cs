@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("api/comments")]
+    [Route("comments")]
     [ApiController]
     [Authorize]
     public class CommentsController : ControllerBase
