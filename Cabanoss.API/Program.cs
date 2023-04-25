@@ -64,6 +64,8 @@ builder.Services.AddScoped<IAuthorizationHandler,MembershipRequirementsHandler>(
 builder.Services.AddScoped<IAuthorizationHandler, AdminRoleRequirementsHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, CreatorRoleRequirementsHandler>();
 
+builder.Services.AddScoped<CabanossSeeder>();
+
 builder.Services.AddControllers();
 #region FluentValidations
 builder.Services.AddFluentValidationAutoValidation();
@@ -167,12 +169,15 @@ builder.Services.AddScoped<IValidator<ElementDto>, ElementDtoValidator>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 app.UseCors("FrontEndClient");
+
+var scope = app.Services.CreateScope();
+var seeder = scope.ServiceProvider.GetRequiredService<CabanossSeeder>();
+seeder.Seed();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
