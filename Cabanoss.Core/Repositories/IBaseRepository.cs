@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Cabanoss.Core.Repositories
 {
-    public interface IBaseRepository<TEntity> where TEntity : BaseEentity
+    public interface IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         Task<TEntity> AddAsync(TEntity entity);
         Task<TEntity> DeleteAsync(TEntity entity);

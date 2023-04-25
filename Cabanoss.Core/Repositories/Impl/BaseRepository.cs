@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Cabanoss.Core.Repositories.Impl
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEentity
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         private CabanossDbContext Context { get; }
         private DbSet<TEntity> DbSet;

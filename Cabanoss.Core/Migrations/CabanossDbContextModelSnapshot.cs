@@ -51,7 +51,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Attachment");
+                    b.ToTable("Attachment", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Board", b =>
@@ -79,7 +79,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("WorkspaceId");
 
-                    b.ToTable("Boards");
+                    b.ToTable("Boards", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.BoardUser", b =>
@@ -100,7 +100,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BoardsUser");
+                    b.ToTable("BoardsUser", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Card", b =>
@@ -131,7 +131,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("ListId");
 
-                    b.ToTable("Card");
+                    b.ToTable("Card", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Comment", b =>
@@ -161,7 +161,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Element", b =>
@@ -189,7 +189,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("Element");
+                    b.ToTable("Element", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.List", b =>
@@ -223,7 +223,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("List");
+                    b.ToTable("List", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Tasks", b =>
@@ -251,7 +251,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasIndex("CardId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.User", b =>
@@ -281,7 +281,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Workspace", b =>
@@ -309,7 +309,7 @@ namespace Cabanoss.Core.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Workspaces");
+                    b.ToTable("Workspaces", (string)null);
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Attachment", b =>

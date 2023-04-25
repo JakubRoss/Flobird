@@ -23,8 +23,8 @@ namespace Cabanoss.Core.Data
             modelBuilder.Entity<BoardUser>()
                 .HasKey(bu => new { bu.BoardId, bu.UserId });
 
-            //modelBuilder.Entity<BoardUserTaskElement>()
-            //    .HasKey(bu => new { bu.BoardUserId, bu.TaskElementId });
+            modelBuilder.Entity<ElementUsers>()
+                .HasKey(bu => new { bu.BoardUserId, bu.ElementId });
 
             #endregion
             #region Deleting_Behaviour
@@ -99,6 +99,24 @@ namespace Cabanoss.Core.Data
                 .HasMany(te=>te.Elements)
                 .WithOne(t=>t.Task)
                 .HasForeignKey(te=>te.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BoardUser>()
+                .HasMany(bue => bue.ElementUsers)
+                .WithOne(bu => bu.BoardUser)
+                .HasForeignKey(bue => bue.BoardUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ElementUsers>()
+                .HasOne(bu => bu.BoardUser)
+                .WithMany(bue => bue.ElementUsers)
+                .HasForeignKey(eu=> new {eu.BoardUserId, eu.ElementId})
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Element>()
+                .HasMany(bue=>bue.ElementUsers)
+                .WithOne(e=>e.Element)
+                .HasForeignKey(bue=>bue.ElementId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             #endregion

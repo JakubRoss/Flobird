@@ -2,7 +2,7 @@
 
 namespace Cabanoss.Core.Data.Entities
 {
-    public class Attachment : BaseEentity
+    public class Attachment : BaseEntity
     {
         public int Id { get; set; }
         public string? Name { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Cabanoss.Core.Data.Entities
 {
-    public class Element : BaseEentity
+    public class Element : BaseEntity
     {
         public int Id { get; set; }
         public string Description { get; set; }
@@ -13,7 +13,7 @@ namespace Cabanoss.Core.Data.Entities
         public int TaskId { get; set; }
         public virtual Tasks Task { get; set; }
 
-        //public virtual ICollection<BoardUserTaskElement> BoardUsers { get; set; }
+        public virtual ICollection<ElementUsers>? ElementUsers { get; set; }
 
     }
 }

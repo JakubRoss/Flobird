@@ -125,6 +125,7 @@ builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 builder.Services.AddScoped<IElementRepository, ElementRepository>();
+builder.Services.AddScoped<IElementUsersRepository, ElementUsersRepository>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();

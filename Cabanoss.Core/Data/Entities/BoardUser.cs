@@ -2,7 +2,7 @@
 
 namespace Cabanoss.Core.Data.Entities
 {
-    public class BoardUser : BaseEentity
+    public class BoardUser : BaseEntity
     {
         public virtual Roles Roles { get; set; }
 
@@ -12,6 +12,6 @@ namespace Cabanoss.Core.Data.Entities
         public int UserId { get; set; }
         public virtual User User { get; set; }
 
-        //public virtual ICollection<BoardUserTaskElement> TaskElements { get; set; }
+        public virtual ICollection<ElementUsers> ElementUsers { get; set; }
     }
 }
