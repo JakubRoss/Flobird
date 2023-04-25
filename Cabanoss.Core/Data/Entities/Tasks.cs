@@ -13,6 +13,6 @@ namespace Cabanoss.Core.Data.Entities
         public int CardId { get; set; }
         public virtual Card Card { get; set; }
 
-        //public virtual ICollection<TasksElement> TaskElements { get; set; }
+        public virtual ICollection<Element> Elements { get; set; }
     }
 }

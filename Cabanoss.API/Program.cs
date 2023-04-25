@@ -7,6 +7,7 @@ using Cabanoss.Core.Model.Attachments;
 using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Model.Card;
 using Cabanoss.Core.Model.Comment;
+using Cabanoss.Core.Model.Element;
 using Cabanoss.Core.Model.List;
 using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Model.User;
@@ -123,6 +124,7 @@ builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+builder.Services.AddScoped<IElementRepository, ElementRepository>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();
@@ -132,6 +134,7 @@ builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<ICommentServices,  CommentServices>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+builder.Services.AddScoped<IElementService, ElementService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services
@@ -147,6 +150,8 @@ builder.Services.AddScoped<IValidator<ListDto>, ListDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateCardDto>, UpdateCardDtoValidator>();
 builder.Services.AddScoped<IValidator<CommentDto>, CommentDtoValidator>();
 builder.Services.AddScoped<IValidator<AttachmentDto>, AttachmentDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateElementDto>, UpdateElementDtoValidator>();
+builder.Services.AddScoped<IValidator<ElementDto>, ElementDtoValidator>();
 
 
 var app = builder.Build();

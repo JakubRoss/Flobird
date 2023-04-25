@@ -4,6 +4,7 @@ using Cabanoss.Core.Model.Attachments;
 using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Model.Card;
 using Cabanoss.Core.Model.Comment;
+using Cabanoss.Core.Model.Element;
 using Cabanoss.Core.Model.List;
 using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Model.User;
@@ -45,6 +46,9 @@ namespace Cabanoss.Core.Common
             CreateMap<CommentDto, Comment>().ReverseMap();
             CreateMap<AttachmentResponseDto, Attachment>().ReverseMap();
             CreateMap<AttachmentDto , Attachment>().ReverseMap();
+            CreateMap<ResponseElementDto, Element>().ReverseMap();
+            CreateMap<ElementDto, Element>().ReverseMap();
+            CreateMap<UpdateElementDto , Element>().ReverseMap();
         }
     }
 }

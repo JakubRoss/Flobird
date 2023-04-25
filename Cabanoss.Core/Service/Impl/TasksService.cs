@@ -4,7 +4,6 @@ using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Repositories;
-using Cabanoss.Core.Repositories.Impl;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 

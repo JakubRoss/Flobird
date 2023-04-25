@@ -20,17 +20,11 @@ namespace Cabanoss.Core.Data
         {
             #region Set_Keys
 
-            modelBuilder.Entity<Board>()
-                .HasKey(b => b.Id);
-
             modelBuilder.Entity<BoardUser>()
                 .HasKey(bu => new { bu.BoardId, bu.UserId });
 
-            modelBuilder.Entity<User>()
-                .HasKey(u => u.Id);
-
-            modelBuilder.Entity<Workspace>()
-                .HasKey(w => w.Id);
+            //modelBuilder.Entity<BoardUserTaskElement>()
+            //    .HasKey(bu => new { bu.BoardUserId, bu.TaskElementId });
 
             #endregion
             #region Deleting_Behaviour
@@ -100,6 +94,12 @@ namespace Cabanoss.Core.Data
                 .WithMany(a => a.Attachments)
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Tasks>()
+                .HasMany(te=>te.Elements)
+                .WithOne(t=>t.Task)
+                .HasForeignKey(te=>te.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             #endregion
             base.OnModelCreating(modelBuilder);
