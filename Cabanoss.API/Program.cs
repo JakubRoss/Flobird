@@ -107,6 +107,15 @@ builder.Services.AddSwaggerGen(c =>
 });
 #endregion
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontEndClient", policy =>
+    policy.AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowAnyOrigin()
+    );
+});
+
 builder.Services.AddDbContext<CabanossDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("CabanossDbConnection"));
@@ -163,6 +172,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("FrontEndClient");
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
