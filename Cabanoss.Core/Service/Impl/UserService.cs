@@ -35,10 +35,9 @@ namespace Cabanoss.Core.Service.Impl
         #region Utils
         private async System.Threading.Tasks.Task<User> GetUserByLogin(string login)
         {
-            var LowLogin = login.ToLower();
-            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == LowLogin);
+            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == login.ToLower());
             if (user == null)
-                throw new ResourceNotFoundException("Invalid login name");
+                throw new ResourceNotFoundException("Invalid User name or password");
             return user;
         }
         private async System.Threading.Tasks.Task<User> GetUserById(int id)
@@ -92,7 +91,7 @@ namespace Cabanoss.Core.Service.Impl
         {
             var users = await _userBase.GetAllAsync();
             if(users is null)
-                throw new ResourceNotFoundException("Aplikacja nie posiada uzytkownikow");
+                throw new ResourceNotFoundException("The application has no users");
             var usersDto = new List<UserDto>();
             foreach (var user in users)
             {
