@@ -24,14 +24,14 @@ namespace Cabanoss.API.Controllers
         }
 
         [HttpGet("cards")]
-        public async Task<List<TaskDto>> GetCardTasks([FromQuery] int cardId)
+        public async Task<List<ResponseTaskDto>> GetCardTasks([FromQuery] int cardId)
         {
             var tasks = await _tasksService.GetCardTasks(cardId,User);
             return tasks;
         }
 
         [HttpGet]
-        public async Task<TaskDto> GetTask([FromQuery] int taskId)
+        public async Task<ResponseTaskDto> GetTask([FromQuery] int taskId)
         {
            var task = await _tasksService.GetTask(taskId,User);
            return task;

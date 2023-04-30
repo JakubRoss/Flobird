@@ -76,24 +76,24 @@ namespace Cabanoss.Core.Service.Impl
             await _tasksRepository.AddAsync(task);
 
         }
-        public async Task<List<TaskDto>> GetCardTasks(int cardId, ClaimsPrincipal claims)
+        public async Task<List<ResponseTaskDto>> GetCardTasks(int cardId, ClaimsPrincipal claims)
         {
             var board = await GetBoardByCardId(cardId);
 
             await CheckBoardMembership(board, claims);
 
             var tasks = await _tasksRepository.GetAllAsync(p => p.CardId == cardId);
-            var tasksDto = _mapper.Map<List<TaskDto>>(tasks);
+            var tasksDto = _mapper.Map<List<ResponseTaskDto>>(tasks);
             return tasksDto;
         }
-        public async Task<TaskDto> GetTask(int taskId, ClaimsPrincipal claims)
+        public async Task<ResponseTaskDto> GetTask(int taskId, ClaimsPrincipal claims)
         {
             var board = await GetBoardByTaskId(taskId);
 
             await CheckBoardMembership(board, claims);
 
-            var tasks = await _tasksRepository.GetAllAsync(p => p.Id == taskId);
-            var tasksDto = _mapper.Map<TaskDto>(tasks);
+            var tasks = await _tasksRepository.GetFirstAsync(p => p.Id == taskId);
+            var tasksDto = _mapper.Map<ResponseTaskDto>(tasks);
             return tasksDto;
         }
         public async Task UpdateTask(int taskId, TaskDto taskDto, ClaimsPrincipal claims)

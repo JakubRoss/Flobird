@@ -7,8 +7,8 @@ namespace Cabanoss.Core.Service
     {
         Task AddTask(int cardId, TaskDto createTaskDto, ClaimsPrincipal claims);
         Task DeleteTask(int taskId, ClaimsPrincipal claims);
-        Task<List<TaskDto>> GetCardTasks(int cardId, ClaimsPrincipal claims);
-        Task<TaskDto> GetTask(int taskId, ClaimsPrincipal claims);
+        Task<List<ResponseTaskDto>> GetCardTasks(int cardId, ClaimsPrincipal claims);
+        Task<ResponseTaskDto> GetTask(int taskId, ClaimsPrincipal claims);
         Task UpdateTask(int taskId, TaskDto taskDto, ClaimsPrincipal claims);
     }
 }
