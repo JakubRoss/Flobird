@@ -18,12 +18,12 @@ namespace Cabanoss.API.Controllers
         [HttpPost("login")]
         public async System.Threading.Tasks.Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
-            var token = await _userService.GenerateJwt(userLoginDto);
+            var token = await _userService.LogIn(userLoginDto);
             
             return Ok(token);
         }
 
-        [HttpPost("registger")]
+        [HttpPost("register")]
         public async System.Threading.Tasks.Task register([FromBody] CreateUserDto user)
         {
              await _userService.AddUserAsync(user);

@@ -13,8 +13,15 @@ namespace Cabanoss.Core.MIddleware
             }
             catch (ResourceNotFoundException ex)
             {
+                context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(ex.Message);
             }
+            catch (UnauthorizedException  ex) 
+            {
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync(ex.Message);
+            } 
+
         }
     }
 }

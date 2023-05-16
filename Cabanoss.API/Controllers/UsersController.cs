@@ -19,31 +19,25 @@ namespace Cabanoss.API.Controllers
         {
             _userService = userService;
         }
-        private int Getid()
-        {
-            var claims = User.Claims;
-            var idClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            return int.Parse(idClaim.Value);
-        }
 
         [HttpGet]
         public async Task<UserDto> GetUser()
         {
-            var userDto =await _userService.GetUserAsync(Getid());
+            var userDto =await _userService.GetUserAsync(User);
             return userDto;
         }
 
         [HttpPut]
         public async System.Threading.Tasks.Task<UserDto> PutUser([FromBody] UpdateUserDto user)
         {
-            var updatedUser = await _userService.UpdateUserAsync(Getid(), user);
+            var updatedUser = await _userService.UpdateUserAsync(User, user);
             return updatedUser;
         }
 
         [HttpDelete]
         public async System.Threading.Tasks.Task DeleteUser()
         {
-            await _userService.RemoveUserAsync(Getid());
+            await _userService.RemoveUserAsync(User);
         }
     }
 }

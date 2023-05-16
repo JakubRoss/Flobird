@@ -170,10 +170,10 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
 app.UseCors("FrontEndClient");
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<CabanossSeeder>();

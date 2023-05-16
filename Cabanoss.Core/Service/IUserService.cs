@@ -1,14 +1,16 @@
-﻿using Cabanoss.Core.Model.User;
+﻿using Cabanoss.Core.Common;
+using Cabanoss.Core.Model.User;
+using System.Security.Claims;
 
 namespace Cabanoss.Core.Service
 {
     public interface IUserService
     {
         System.Threading.Tasks.Task AddUserAsync(CreateUserDto user);
-        System.Threading.Tasks.Task<UserDto> GetUserAsync(int id);
-        System.Threading.Tasks.Task<UserDto> UpdateUserAsync(int id, UpdateUserDto user);
-        System.Threading.Tasks.Task RemoveUserAsync(int id);
+        System.Threading.Tasks.Task<UserDto> GetUserAsync(ClaimsPrincipal claims);
+        System.Threading.Tasks.Task<UserDto> UpdateUserAsync(ClaimsPrincipal claims, UpdateUserDto user);
+        System.Threading.Tasks.Task RemoveUserAsync(ClaimsPrincipal claims);
         System.Threading.Tasks.Task<List<UserDto>> GetUsersAsync();
-        System.Threading.Tasks.Task<string> GenerateJwt(UserLoginDto userLoginDto);
+        System.Threading.Tasks.Task<LoginResult> LogIn(UserLoginDto userLoginDto);
     }
 }

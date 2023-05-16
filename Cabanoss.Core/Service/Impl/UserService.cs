@@ -33,77 +33,17 @@ namespace Cabanoss.Core.Service.Impl
             _authenticationSettings = authenticationSettings;
         }
         #region Utils
-        private async System.Threading.Tasks.Task<User> GetUserByLogin(string login)
+        private async System.Threading.Tasks.Task<User> GetUser(ClaimsPrincipal claims)
         {
-            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == login.ToLower());
-            if (user == null)
-                throw new ResourceNotFoundException("Invalid User name or password");
-            return user;
-        }
-        private async System.Threading.Tasks.Task<User> GetUserById(int id)
-        {
+            var id = int.Parse(claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var user = await _userBase.GetFirstAsync(p => p.Id == id);
             if (user == null)
                 throw new ResourceNotFoundException("User don't exists");
             return user;
         }
-        #endregion
-
-        public async Task AddUserAsync(CreateUserDto userDto)
+        private string GenerateJwt(User user, string password)
         {
-            var user = _mapper.Map<User>(userDto);
-            var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
-            user.PasswordHash = hashedPassword;
-            user.CreatedAt = DateTime.Now;
-            await _userBase.AddAsync(user);
-
-            await _workspaceBussiness.AddWorkspaceAsync(user.Id);
-        }
-        public async Task<UserDto> GetUserAsync(int id)
-        {
-            var user = await GetUserById(id);
-            var userDto = _mapper.Map<UserDto>(user);
-            return userDto;
-        }
-        public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto userDto)
-        {
-            var user = await GetUserById(id);
-            #region updt_properties
-            if (userDto.Login!=null)
-                user.Login = userDto.Login;
-            if (userDto.Password != null)
-                user.PasswordHash = userDto.Password;
-            if (userDto.Email != null)
-                user.Email = userDto.Email;
-            user.UpdatedAt = DateTime.Now;
-            #endregion
-
-            var updated = await _userBase.UpdateAsync(user);
-            var updatedDto = _mapper.Map<UserDto>(updated);
-            return updatedDto;
-        }
-        public async Task RemoveUserAsync(int id)
-        {
-            var user = await GetUserById(id);
-            await _userBase.DeleteAsync(user);
-        }
-        public async Task<List<UserDto>> GetUsersAsync()
-        {
-            var users = await _userBase.GetAllAsync();
-            if(users is null)
-                throw new ResourceNotFoundException("The application has no users");
-            var usersDto = new List<UserDto>();
-            foreach (var user in users)
-            {
-                var userDto = _mapper.Map<UserDto>(user);
-                usersDto.Add(userDto);
-            }
-            return usersDto;
-        }
-        public async Task<string> GenerateJwt(UserLoginDto userLoginDto)
-        {
-            var user = await GetUserByLogin(userLoginDto.Login);
-            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userLoginDto.Password);
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
 
             if (result == PasswordVerificationResult.Failed)
             {
@@ -128,7 +68,77 @@ namespace Cabanoss.Core.Service.Impl
                 signingCredentials: cred);
 
             var TokenHandler = new JwtSecurityTokenHandler();
+
             return TokenHandler.WriteToken(token);
+        }
+        #endregion
+
+        public async Task AddUserAsync(CreateUserDto userDto)
+        {
+            var user = _mapper.Map<User>(userDto);
+            var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
+            user.PasswordHash = hashedPassword;
+            user.CreatedAt = DateTime.Now;
+            await _userBase.AddAsync(user);
+
+            await _workspaceBussiness.AddWorkspaceAsync(user.Id);
+        }
+        public async Task<UserDto> GetUserAsync(ClaimsPrincipal claims)
+        {
+            var user = await GetUser(claims);
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
+        }
+        public async Task<UserDto> UpdateUserAsync(ClaimsPrincipal claims, UpdateUserDto userDto)
+        {
+            var user = await GetUser(claims);
+            #region updt_properties
+            if (userDto.Login!=null)
+                user.Login = userDto.Login;
+            if (userDto.Password != null)
+                user.PasswordHash = userDto.Password;
+            if (userDto.Email != null)
+                user.Email = userDto.Email;
+            user.UpdatedAt = DateTime.Now;
+            #endregion
+
+            var updated = await _userBase.UpdateAsync(user);
+            var updatedDto = _mapper.Map<UserDto>(updated);
+            return updatedDto;
+        }
+        public async Task RemoveUserAsync(ClaimsPrincipal claims)
+        {
+            var user = await GetUser(claims);
+            await _userBase.DeleteAsync(user);
+        }
+        public async Task<List<UserDto>> GetUsersAsync()
+        {
+            var users = await _userBase.GetAllAsync();
+            if(users is null)
+                throw new ResourceNotFoundException("The application has no users");
+            var usersDto = new List<UserDto>();
+            foreach (var user in users)
+            {
+                var userDto = _mapper.Map<UserDto>(user);
+                usersDto.Add(userDto);
+            }
+            return usersDto;
+        }
+        public async Task<LoginResult> LogIn(UserLoginDto userLoginDto)
+        {
+            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == userLoginDto.Login.ToLower());
+            if (user == null)
+                throw new UnauthorizedException("Invalid User name or password");
+
+            string tokenText = GenerateJwt(user, userLoginDto.Password);
+
+            var userDto = _mapper.Map<ResponseUserDto>(user);
+            var loginResult = new LoginResult()
+            {
+                Token = tokenText,
+                User = userDto
+            };
+            return loginResult;
         }
     }
 }
