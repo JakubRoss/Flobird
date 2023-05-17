@@ -14,7 +14,13 @@ namespace Cabanoss.API.Controllers
         {
             _userService = userService;
         }
-
+        /// <summary>
+        /// Logging in
+        /// </summary>
+        /// <returns>authorization token</returns>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/accounts/login
+        /// </remarks>
         [HttpPost("login")]
         public async System.Threading.Tasks.Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
@@ -23,6 +29,13 @@ namespace Cabanoss.API.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        /// Create new account
+        /// </summary>
+        /// <param name="user">Request's payload</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/accounts/register
+        /// </remarks>
         [HttpPost("register")]
         public async System.Threading.Tasks.Task register([FromBody] CreateUserDto user)
         {

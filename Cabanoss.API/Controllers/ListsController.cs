@@ -17,6 +17,13 @@ namespace Cabanoss.API.Controllers
             _listService = listService;
         }
 
+        /// <summary>
+        /// Retrieves all lists for a given board
+        /// </summary>
+        /// <param name="boardId">board Id</param>
+        /// <returns>List of board task lists</returns>
+        /// <remarks>GET cabanoss.azurewebsites.net/lists/boards?boardId={id}
+        /// </remarks>
         [HttpGet("boards")]
         public async Task<List<ListDto>> GetLists([FromQuery] int boardId)
         {
@@ -24,29 +31,64 @@ namespace Cabanoss.API.Controllers
             return lists;
         }
 
+        /// <summary>
+        /// Creating list for a given board
+        /// </summary>
+        /// <param name="boardId">board Id</param>
+        /// <param name="createList">Request's payload</param>
+        /// <remarks>POST cabanoss.azurewebsites.net/lists?boardId={id}
+        /// </remarks>
         [HttpPost]
         public async Task CreateList([FromQuery]int boardId, [FromBody] CreateListDto createList)
         {
             await _listService.CreateListAsync(boardId, createList.Name, User);
         }
 
+        /// <summary>
+        /// Retrieves a given list
+        /// </summary>
+        /// <param name="listId">list Id</param>
+        /// <returns>task list</returns>
+        /// <remarks>GET cabanoss.azurewebsites.net/lists?listId={id}
+        /// </remarks>
         [HttpGet]
         public async Task<ListDto> GetList([FromQuery]int listId)
         {
             return await _listService.GetListAsync(listId, User);
         }
 
+        /// <summary>
+        /// Updating a given list
+        /// </summary>
+        /// <param name="listId">list Id</param>
+        /// <param name="createList">Request's payload</param>
+        /// <remarks>PUT cabanoss.azurewebsites.net/lists?listId={id}
+        /// </remarks>
         [HttpPut]
         public async Task UpdateList([FromQuery] int listId , [FromBody] CreateListDto createList)
         {
             await _listService.UpdateList(listId, createList.Name ,User);
         }
 
+        /// <summary>
+        /// Seting task list deadline
+        /// </summary>
+        /// <param name="listId">list Id</param>
+        /// <param name="date">deadline time</param>
+        /// <remarks>PATCH cabanoss.azurewebsites.net/lists?listId={id}
+        /// </remarks>
         [HttpPatch]
         public async Task SetDeadline([FromQuery] int listId, [FromBody] DateOnly date)
         {
             await _listService.SetDeadline(listId , date , User);
         }
+
+        /// <summary>
+        /// Deleting a given list
+        /// </summary>
+        /// <param name="listId">list Id</param>
+        /// <remarks>DELETE cabanoss.azurewebsites.net/lists?listId={id}
+        /// </remarks>
         [HttpDelete]
         public async Task DeleteList([FromQuery] int listId)
         {
