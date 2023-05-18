@@ -1,4 +1,5 @@
 ﻿using Cabanoss.Core.Model.Board;
+using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,12 +44,11 @@ namespace Cabanoss.API.Controllers
         {
             await _boardService.SetUserRole(boardId, userId, userRole, User);
         }
-        //
-        //
+        
         [HttpGet("elements")]
-        public async Task GetElementUsers([FromQuery] int elementId)
+        public async Task<List<ResponseUserDto>> GetElementUsers([FromQuery] int elementId)
         {
-            await _elementService.GetElementUsers(elementId, User);
+           return await _elementService.GetElementUsers(elementId, User);
         }
 
         [HttpPost("elements/{elementId}")]

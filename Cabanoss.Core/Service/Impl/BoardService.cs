@@ -122,7 +122,7 @@ namespace Cabanoss.Core.Service.Impl
 
         public async Task AddUsersAsync(int boardId , int userId, ClaimsPrincipal user)
         {
-            var isUserExist = _userRepository.GetFirstAsync(i=>i.Id == userId);
+            var isUserExist = await _userRepository.GetFirstAsync(i=>i.Id == userId);
             if (isUserExist == null)
                 throw new ResourceNotFoundException("User don't exists");
 

@@ -110,7 +110,7 @@ namespace Cabanoss.Core.Data
             modelBuilder.Entity<ElementUsers>()
                 .HasOne(bu => bu.BoardUser)
                 .WithMany(bue => bue.ElementUsers)
-                .HasForeignKey(eu=> new {eu.BoardUserId, eu.ElementId})
+                .HasForeignKey(eu => new { eu.BoardUserId, eu.ElementId })
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Element>()

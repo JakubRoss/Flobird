@@ -5,10 +5,8 @@ using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Element;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Repositories;
-using Cabanoss.Core.Repositories.Impl;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Cabanoss.Core.Service.Impl
 {
@@ -82,6 +80,7 @@ namespace Cabanoss.Core.Service.Impl
             return authorizationResult;
         }
         #endregion
+
         public async Task<List<ResponseElementDto>> GetElements(int taskId, ClaimsPrincipal claims)
         {
             var board = await GetBoardByTaskId(taskId);
@@ -98,7 +97,7 @@ namespace Cabanoss.Core.Service.Impl
 
             await CheckBoardMembership(board, claims);
 
-            var element = await _element.GetAllAsync(p => p.Id == elementId);
+            var element = await _element.GetFirstAsync(p => p.Id == elementId);
             var elementDto = _mapper.Map<ResponseElementDto>(element);
             return elementDto;
         }
@@ -112,7 +111,8 @@ namespace Cabanoss.Core.Service.Impl
             {
                 Description = elementDto.Description,
                 IsComplete = false,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                TaskId = taskId
             };
 
             await _element.AddAsync(newElement);
@@ -161,12 +161,11 @@ namespace Cabanoss.Core.Service.Impl
             element.IsComplete = updateElementDto.IsComplete;
             await _element.UpdateAsync(element);
         }
-        //Do tego osobny serwis bo za grubo\/
+
         public async Task<List<ResponseUserDto>> GetElementUsers(int elementId,ClaimsPrincipal claims)
         {
             var board = await GetBoardByElementId(elementId);
             await CheckBoardMembership(board,claims);
-
 
             var boardUsers = await _boardUsersRepository.GetAllAsync(board => board.ElementUsers.Any(p=>p.ElementId == elementId));
             if (boardUsers == null)
@@ -181,7 +180,7 @@ namespace Cabanoss.Core.Service.Impl
             var usersDto = _mapper.Map<List<ResponseUserDto>>(users);
             return usersDto;
 
-        }
+        } 
         public async Task AddUserToElement(int elementId, int userId, ClaimsPrincipal claims)
         {
             var board = await GetBoardByElementId(elementId);
@@ -192,7 +191,7 @@ namespace Cabanoss.Core.Service.Impl
 
             var userElement = new ElementUsers()
             {
-                BoardUserId = board.Id,
+                BoardUserId = userId,
                 ElementId = elementId
             };
 
