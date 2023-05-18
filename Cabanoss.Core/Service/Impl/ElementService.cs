@@ -205,7 +205,7 @@ namespace Cabanoss.Core.Service.Impl
 
             var boardUser = board.BoardUsers.FirstOrDefault(p=>p.BoardId == board.Id && p.UserId==userId);
 
-            var element = await _elementUsersRepository.GetFirstAsync(_ => _.BoardUserId == boardUser.Id && _.ElementId == elementId);
+            var element = await _elementUsersRepository.GetFirstAsync(_ => _.ElementId == elementId && _.BoardUserId == userId);
             if (element == null)
                 throw new ResourceNotFoundException("Resource not Found");
             await _elementUsersRepository.DeleteAsync(element);

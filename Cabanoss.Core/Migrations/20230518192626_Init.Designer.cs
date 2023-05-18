@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cabanoss.Core.Migrations
 {
     [DbContext(typeof(CabanossDbContext))]
-    [Migration("20230518171005_ElementUser")]
-    partial class ElementUser
+    [Migration("20230518192626_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
