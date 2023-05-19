@@ -1,10 +1,7 @@
-﻿using Cabanoss.Core.Service;
-using Cabanoss.Core.Model.User;
+﻿using Cabanoss.Core.Model.User;
+using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Cabanoss.API.Controllers
 {
@@ -20,6 +17,12 @@ namespace Cabanoss.API.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// downloads account details
+        /// </summary>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/users
+        /// </remarks>
         [HttpGet]
         public async Task<UserDto> GetUser()
         {
@@ -27,6 +30,13 @@ namespace Cabanoss.API.Controllers
             return userDto;
         }
 
+        /// <summary>
+        /// updates account details
+        /// </summary>
+        /// <param name="user">Request's payload</param>
+        /// <remarks>
+        /// PUT cabanoss.azurewebsites.net/users
+        /// </remarks>
         [HttpPut]
         public async System.Threading.Tasks.Task<UserDto> PutUser([FromBody] UpdateUserDto user)
         {
@@ -34,6 +44,12 @@ namespace Cabanoss.API.Controllers
             return updatedUser;
         }
 
+        /// <summary>
+        /// deletes account
+        /// </summary>
+        /// <remarks>
+        /// DELETE cabanoss.azurewebsites.net/users
+        /// </remarks>
         [HttpDelete]
         public async System.Threading.Tasks.Task DeleteUser()
         {

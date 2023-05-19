@@ -79,9 +79,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "CabanossAPI", 
-        Version = "v1" 
+    {
+        Version = "1.0",
+        Title = "Cabanoss API",
+        Description = "An ASP.NET Core Web API for managing ToDo items",
+        Contact = new OpenApiContact
+        {
+            Name = "Jakub Ross",
+            Email = "jakub.rosploch@gmail.com",
+            Url = new Uri("https://github.com/JakubRoss")
+        }
     });
 
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

@@ -16,6 +16,14 @@ namespace Cabanoss.API.Controllers
         {
             _attachmentService = attachmentService;
         }
+
+        /// <summary>
+        /// Downloads attachments from a given card
+        /// </summary>
+        /// <param name="cardId">Card id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/attachments/cards?cardId={id}
+        /// </remarks>
         [HttpGet("cards")]
         public async Task<List<AttachmentResponseDto>> GetAttachments([FromQuery] int cardId)
         {
@@ -23,6 +31,13 @@ namespace Cabanoss.API.Controllers
             return attachments;
         }
 
+        /// <summary>
+        /// downloads the indicated attachment
+        /// </summary>
+        /// <param name="attachmentId">attachment id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/attachments?attachmentId={id}
+        /// </remarks>
         [HttpGet]
         public async Task<AttachmentResponseDto> GetAttachment([FromQuery] int attachmentId)
         {
@@ -30,18 +45,41 @@ namespace Cabanoss.API.Controllers
             return attachment;
         }
 
+        /// <summary>
+        /// Adds an attachment to a given card
+        /// </summary>
+        /// <param name="cardId">Card id</param>
+        /// <param name="attachmentDto">Request's payload</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/attachments/cards?cardId={id}
+        /// </remarks>
         [HttpPost("cards")]
         public async Task AddAttachment([FromQuery] int cardId, [FromBody] AttachmentDto attachmentDto)
         {
             await _attachmentService.AddAttachment(cardId, attachmentDto, User);
         }
 
+        /// <summary>
+        /// updates the indicated attachment
+        /// </summary>
+        /// <param name="attachmentId">attachment id</param>
+        /// <param name="attachmentDto">Request's payload</param>
+        /// <remarks>
+        /// PUT cabanoss.azurewebsites.net/attachments?attachmentId={id}
+        /// </remarks>
         [HttpPut]
         public async Task UpdateAttachment([FromQuery] int attachmentId, [FromBody] AttachmentDto attachmentDto)
         {
             await _attachmentService.UpdateAttachment(attachmentId, attachmentDto, User);
         }
 
+        /// <summary>
+        /// deletes the indicated attachment
+        /// </summary>
+        /// <param name="attachmentId">attachment id</param>
+        /// <remarks>
+        /// DELETE cabanoss.azurewebsites.net/attachments?attachmentId={id}
+        /// </remarks>
         [HttpDelete]
         public async Task DeleteAttachment([FromQuery] int attachmentId)
         {

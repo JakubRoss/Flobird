@@ -11,6 +11,7 @@ namespace Cabanoss.API.Controllers
     [Route("workspaces")]
     [ApiController]
     [Authorize]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class WorkspacesController : ControllerBase
     {
         private readonly IWorkspaceService _workspaceBussinessLogicService;
