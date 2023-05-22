@@ -33,13 +33,14 @@ namespace Cabanoss.API.Controllers
         /// <summary>
         /// downloads all users of the application
         /// </summary>
+        /// /// <param name="searchingPhrase">phrase search in login or email if null returns all users</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/users/all
+        /// GET cabanoss.azurewebsites.net/users/all?searchingPhrase={phrase}
         /// </remarks>
         [HttpGet("all")]
-        public async Task<List<ResponseUserDto>> GetUsersAsync()
+        public async Task<List<ResponseUserDto>> GetUsersAsync([FromQuery]string? searchingPhrase)
         {
-            return await _userService.GetUsersAsync();
+            return await _userService.GetUsersAsync(searchingPhrase);
         }
 
         /// <summary>

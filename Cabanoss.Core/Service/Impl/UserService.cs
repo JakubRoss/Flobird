@@ -111,9 +111,9 @@ namespace Cabanoss.Core.Service.Impl
             var user = await GetUser(claims);
             await _userBase.DeleteAsync(user);
         }
-        public async Task<List<ResponseUserDto>> GetUsersAsync()
+        public async Task<List<ResponseUserDto>> GetUsersAsync(string searchingPhrase)
         {
-            var users = await _userBase.GetAllAsync();
+            var users = await _userBase.GetUsersAsync(searchingPhrase);
             if(users is null)
                 throw new ResourceNotFoundException("The application has no users");
             var usersDto = new List<ResponseUserDto>();
