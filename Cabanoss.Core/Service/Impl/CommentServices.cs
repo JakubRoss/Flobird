@@ -15,17 +15,20 @@ namespace Cabanoss.Core.Service.Impl
         private IMapper _mapper;
         private IBoardRepository _boardRepository;
         private IAuthorizationService _authorizationService;
+        private IUserRepository _userRepository;
 
         public CommentServices(
             ICommentRepository commentRepository,
             IMapper mapper,
             IBoardRepository boardRepository,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService,
+            IUserRepository userRepository)
         {
             _commentRepository = commentRepository;
             _mapper = mapper;
             _boardRepository = boardRepository;
             _authorizationService = authorizationService;
+            _userRepository = userRepository;
         }
 
         #region Utils
@@ -65,7 +68,19 @@ namespace Cabanoss.Core.Service.Impl
             await CheckBoardMembership(board, claims);
 
             var cardComments = await _commentRepository.GetAllAsync(p => p.CardId == cardId);
-            var cardDtoComments = _mapper.Map<List<ResponseCommentDto>>(cardComments);
+            var cardDtoComments = new List<ResponseCommentDto>();
+            foreach (var comment in cardComments)
+            {
+                var user = await _userRepository.GetFirstAsync(x => x.Id == comment.UserId);
+                cardDtoComments.Add(new ResponseCommentDto
+                {
+                    Id = comment.Id,
+                    UserId = user.Id,
+                    Author = user.Login,
+                    Text = comment.Text,
+                    CreatedAt = comment.CreatedAt
+                });
+            }
             return cardDtoComments;
 
         }
@@ -74,10 +89,16 @@ namespace Cabanoss.Core.Service.Impl
             var board = await GetBoardByCommentId(commentId);
             await CheckBoardMembership(board, claims);
 
-            var comment = _commentRepository.GetFirstAsync(p => p.Id == commentId);
-            var commentDto = _mapper.Map<ResponseCommentDto>(comment);
+            var comment = await _commentRepository.GetFirstAsync(p => p.Id == commentId);
 
-            return commentDto;
+            return new ResponseCommentDto 
+            { 
+                Id = comment.Id,
+                UserId = int.Parse(claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value),
+                Author = claims.Claims.FirstOrDefault(c=>c.Type == ClaimTypes.Name).Value,
+                Text = comment.Text,
+                CreatedAt = comment.CreatedAt
+            };
         }
         public async Task AddComment(int cardId, string text, ClaimsPrincipal claims)
         {

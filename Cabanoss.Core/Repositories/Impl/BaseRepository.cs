@@ -2,6 +2,7 @@
 using Cabanoss.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Cabanoss.Core.Repositories.Impl
 {
