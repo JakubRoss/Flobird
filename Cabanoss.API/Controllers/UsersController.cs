@@ -31,6 +31,18 @@ namespace Cabanoss.API.Controllers
         }
 
         /// <summary>
+        /// downloads all users of the application
+        /// </summary>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/users/all
+        /// </remarks>
+        [HttpGet("all")]
+        public async Task<List<ResponseUserDto>> GetUsersAsync()
+        {
+            return await _userService.GetUsersAsync();
+        }
+
+        /// <summary>
         /// updates account details
         /// </summary>
         /// <param name="user">Request's payload</param>

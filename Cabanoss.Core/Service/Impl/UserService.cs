@@ -111,15 +111,15 @@ namespace Cabanoss.Core.Service.Impl
             var user = await GetUser(claims);
             await _userBase.DeleteAsync(user);
         }
-        public async Task<List<UserDto>> GetUsersAsync()
+        public async Task<List<ResponseUserDto>> GetUsersAsync()
         {
             var users = await _userBase.GetAllAsync();
             if(users is null)
                 throw new ResourceNotFoundException("The application has no users");
-            var usersDto = new List<UserDto>();
+            var usersDto = new List<ResponseUserDto>();
             foreach (var user in users)
             {
-                var userDto = _mapper.Map<UserDto>(user);
+                var userDto = _mapper.Map<ResponseUserDto>(user);
                 usersDto.Add(userDto);
             }
             return usersDto;

@@ -10,7 +10,7 @@ namespace Cabanoss.Core.Service
         System.Threading.Tasks.Task<UserDto> GetUserAsync(ClaimsPrincipal claims);
         System.Threading.Tasks.Task<UserDto> UpdateUserAsync(ClaimsPrincipal claims, UpdateUserDto user);
         System.Threading.Tasks.Task RemoveUserAsync(ClaimsPrincipal claims);
-        System.Threading.Tasks.Task<List<UserDto>> GetUsersAsync();
+        System.Threading.Tasks.Task<List<ResponseUserDto>> GetUsersAsync();
         System.Threading.Tasks.Task<LoginResult> LogIn(UserLoginDto userLoginDto);
     }
 }
