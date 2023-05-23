@@ -31,6 +31,6 @@ the project and the content of other users.
 * **Description** - each component of the board will have a description to accurately describe the 
 problem and approach.
 
-[CHECK HOW IT WORKS](https://cabanoss.azurewebsites.net/swagger/index.html)
+[CHECK HOW IT WORKS (swagger documentation)](https://cabanoss.azurewebsites.net/swagger/index.html)
 
 (further under construction/improvement)
