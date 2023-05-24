@@ -1,5 +1,4 @@
-﻿using Cabanoss.Core.Common;
-using Cabanoss.Core.Model.Board;
+﻿using Cabanoss.Core.Model.Board;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -7,7 +6,6 @@ namespace Cabanoss.Core.Service
 {
     public interface IBoardService
     {
-        Task<AuthorizationResult> CheckBoardMembership(int BoardId, ClaimsPrincipal user);
         Task CreateBoardAsync(CreateBoardDto createBoardDto, ClaimsPrincipal user);
         Task<List<ResponseBoardDto>> GetBoardsAsync(ClaimsPrincipal user);
         Task<List<ResponseBoardUser>> GetBoardUsersAsync(int BoardId, ClaimsPrincipal user);

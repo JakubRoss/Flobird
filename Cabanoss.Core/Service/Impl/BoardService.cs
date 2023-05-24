@@ -41,7 +41,7 @@ namespace Cabanoss.Core.Service.Impl
         /// <param name="id">Id tablicy.</param>
         /// <param name="user">Claims principal.</param>
         /// <returns>Authorization result</returns>
-        public async System.Threading.Tasks.Task<AuthorizationResult> CheckBoardMembership(int BoardId, ClaimsPrincipal user)
+        private async System.Threading.Tasks.Task<AuthorizationResult> CheckBoardMembership(int BoardId, ClaimsPrincipal user)
         {
             var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new MembershipRequirements());
@@ -109,14 +109,29 @@ namespace Cabanoss.Core.Service.Impl
             return responseBoards;
         }
 
-        public async Task<List<ResponseBoardUser>> GetBoardUsersAsync(int BoardId, ClaimsPrincipal user)
+        public async Task<List<ResponseBoardUser>> GetBoardUsersAsync(int BoardId, ClaimsPrincipal claims)
         {
-            var authorizationMembershipResult = await CheckBoardMembership(BoardId, user);
+            var authorizationMembershipResult = await CheckBoardMembership(BoardId, claims);
             if (!authorizationMembershipResult.Succeeded)
                 throw new ResourceNotFoundException("no access");
 
             var users = await _userBase.GetAllAsync(u => u.BoardUsers.Any(bu => bu.BoardId == BoardId));
-            var mapedUsers = _mapper.Map<List<ResponseBoardUser>>(users);
+
+            var mapedUsers = new List<ResponseBoardUser>();
+            if(users != null)
+            {
+                foreach (var user in users)
+                {
+                    var role = user.BoardUsers.Where(id=>id.BoardId ==BoardId).Select(r=>r.Roles).First();
+                    mapedUsers.Add(new ResponseBoardUser
+                    {
+                        Id = user.Id,
+                        Login = user.Login,
+                        Email = user.Email,
+                        IsAdmin = (role != Roles.User) ? true : false
+                    });
+                }
+            }
             return mapedUsers;
         }
 
