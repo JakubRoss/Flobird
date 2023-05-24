@@ -38,12 +38,12 @@ namespace Cabanoss.Core.Service.Impl
         /// <summary>
         /// Sprawdza przynaleznosc uzytkownika(pytajacego) do danej tablicy
         /// </summary>
-        /// <param name="id">Id tablicy.</param>
+        /// <param name="boardId">Id tablicy.</param>
         /// <param name="user">Claims principal.</param>
         /// <returns>Authorization result</returns>
-        private async System.Threading.Tasks.Task<AuthorizationResult> CheckBoardMembership(int BoardId, ClaimsPrincipal user)
+        private async System.Threading.Tasks.Task<AuthorizationResult> CheckBoardMembership(int boardId, ClaimsPrincipal user)
         {
-            var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
+            var board = await _boardRepository.GetFirstAsync(i => i.Id == boardId, i => i.BoardUsers);
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new MembershipRequirements());
             return authorizationResult;
         }
@@ -53,15 +53,15 @@ namespace Cabanoss.Core.Service.Impl
             return boardUser;
             
         }
-        private async Task<AuthorizationResult> ChceckCreatorRole(int BoardId,ClaimsPrincipal user)
+        private async Task<AuthorizationResult> CheckCreatorRole(int boardId, ClaimsPrincipal user)
         {
-            var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
+            var board = await _boardRepository.GetFirstAsync(i => i.Id == boardId, i => i.BoardUsers);
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new CreatorRoleRequirements());
             return authorizationResult;
         }
-        private async Task<AuthorizationResult> ChceckAdminRole(int BoardId, ClaimsPrincipal user)
+        private async Task<AuthorizationResult> CheckAdminRole(int boardId, ClaimsPrincipal user)
         {
-            var board = await _boardRepository.GetFirstAsync(i => i.Id == BoardId, i => i.BoardUsers);
+            var board = await _boardRepository.GetFirstAsync(i => i.Id == boardId, i => i.BoardUsers);
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, board, new AdminRoleRequirements());
             return authorizationResult;
         }
@@ -85,7 +85,7 @@ namespace Cabanoss.Core.Service.Impl
 
         public async Task DeleteBoardAsync(int boardId, ClaimsPrincipal user)
         {
-            var authorizationRoleResult = await ChceckCreatorRole(boardId, user);
+            var authorizationRoleResult = await CheckCreatorRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
             var board = await _boardRepository.GetFirstAsync(p => p.Id == boardId);
@@ -109,20 +109,20 @@ namespace Cabanoss.Core.Service.Impl
             return responseBoards;
         }
 
-        public async Task<List<ResponseBoardUser>> GetBoardUsersAsync(int BoardId, ClaimsPrincipal claims)
+        public async Task<List<ResponseBoardUser>> GetBoardUsersAsync(int boardId, ClaimsPrincipal claims)
         {
-            var authorizationMembershipResult = await CheckBoardMembership(BoardId, claims);
+            var authorizationMembershipResult = await CheckBoardMembership(boardId, claims);
             if (!authorizationMembershipResult.Succeeded)
                 throw new ResourceNotFoundException("no access");
 
-            var users = await _userBase.GetAllAsync(u => u.BoardUsers.Any(bu => bu.BoardId == BoardId));
+            var users = await _userBase.GetAllAsync(u => u.BoardUsers.Any(bu => bu.BoardId == boardId));
 
             var mapedUsers = new List<ResponseBoardUser>();
             if(users != null)
             {
                 foreach (var user in users)
                 {
-                    var role = user.BoardUsers.Where(id=>id.BoardId ==BoardId).Select(r=>r.Roles).First();
+                    var role = user.BoardUsers.Where(id=>id.BoardId == boardId).Select(r=>r.Roles).First();
                     mapedUsers.Add(new ResponseBoardUser
                     {
                         Id = user.Id,
@@ -141,7 +141,7 @@ namespace Cabanoss.Core.Service.Impl
             if (isUserExist == null)
                 throw new ResourceNotFoundException("User don't exists");
 
-            var authorizationRoleResult = await ChceckAdminRole(boardId, user);
+            var authorizationRoleResult = await CheckAdminRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
 
@@ -152,7 +152,7 @@ namespace Cabanoss.Core.Service.Impl
 
         public async Task RemoveUserAsync (int boardId, int userId, ClaimsPrincipal user)
         {
-            var authorizationRoleResult = await ChceckAdminRole(boardId, user);
+            var authorizationRoleResult = await CheckAdminRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
 
@@ -167,7 +167,7 @@ namespace Cabanoss.Core.Service.Impl
             if(board is null)
                 throw new ResourceNotFoundException("ResourceNotFound");
 
-            var authorizationRoleResult = await ChceckCreatorRole(boardId, user);
+            var authorizationRoleResult = await CheckCreatorRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
 
@@ -178,7 +178,7 @@ namespace Cabanoss.Core.Service.Impl
 
         public async Task SetUserRole (int boardId,int userId, int roles, ClaimsPrincipal user)
         {
-            var authorizationRoleResult = await ChceckAdminRole(boardId, user);
+            var authorizationRoleResult = await CheckAdminRole(boardId, user);
             if (!authorizationRoleResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
             var boardUser = await CheckBoardMembership(boardId, userId);
