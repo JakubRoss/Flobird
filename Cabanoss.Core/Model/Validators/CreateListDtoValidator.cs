@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Cabanoss.Core.Model.Validators
 {
-    public class ListDtoValidator : AbstractValidator<ListDto>
+    public class CreateListDtoValidator : AbstractValidator<CreateListDto>
     {
-        public ListDtoValidator()
+        public CreateListDtoValidator()
         {
             RuleFor(p => p.Name)
                 .NotEmpty()

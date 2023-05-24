@@ -10,6 +10,7 @@ namespace Cabanoss.Core.Data.Entities
         public string PasswordHash { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string? AvatarPath { get; set; }
 
         //Navigation
         public virtual Workspace Workspace { get; set; }

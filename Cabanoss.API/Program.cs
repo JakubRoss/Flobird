@@ -163,6 +163,7 @@ builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<ICommentServices,  CommentServices>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 builder.Services.AddScoped<IElementService, ElementService>();
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 //Validation Services
@@ -170,11 +171,10 @@ builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
 builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginDtoValidator>();
 builder.Services.AddScoped<IValidator<CreateBoardDto>, CreateBoardDtoValidator>();
-builder.Services.AddScoped<IValidator<ListDto>, ListDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateBoardDto>, UpdateBoardDtoValidator>();
 builder.Services.AddScoped<IValidator<CreateCardDto>, CreateCardValidator>();
 builder.Services.AddScoped<IValidator<TaskDto>, TaskDtoValidator>();
-builder.Services.AddScoped<IValidator<ListDto>, ListDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateListDto>, CreateListDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateCardDto>, UpdateCardDtoValidator>();
 builder.Services.AddScoped<IValidator<CommentDto>, CommentDtoValidator>();
 builder.Services.AddScoped<IValidator<AttachmentDto>, AttachmentDtoValidator>();
@@ -185,7 +185,7 @@ builder.Services.AddScoped<IValidator<ElementDto>, ElementDtoValidator>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseStaticFiles();
 app.UseCors("FrontEndClient");
 
 app.UseSwagger();
