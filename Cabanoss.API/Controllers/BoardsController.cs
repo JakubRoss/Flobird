@@ -29,6 +29,19 @@ namespace Cabanoss.API.Controllers
         {
             await _boardService.CreateBoardAsync(createBoardDto , User);
         }
+        /// <summary>
+        /// downloads a specified board
+        /// </summary>
+        /// <param name="boardId">Board id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/boards/{id}
+        /// </remarks>
+        [HttpGet("/{boardId}")]
+        public async Task<ResponseBoardDto> GetBoard([FromRoute] int boardId)
+        {
+            var board = await _boardService.GetBoardAsync(User, boardId);
+            return board;
+        }
 
         /// <summary>
         /// Downloads list of boards

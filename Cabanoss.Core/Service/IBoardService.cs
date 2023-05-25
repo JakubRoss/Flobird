@@ -7,6 +7,7 @@ namespace Cabanoss.Core.Service
     public interface IBoardService
     {
         Task CreateBoardAsync(CreateBoardDto createBoardDto, ClaimsPrincipal user);
+        Task<ResponseBoardDto> GetBoardAsync(ClaimsPrincipal user, int boardId);
         Task<List<ResponseBoardDto>> GetBoardsAsync(ClaimsPrincipal user);
         Task<List<ResponseBoardUser>> GetBoardUsersAsync(int BoardId, ClaimsPrincipal user);
         Task DeleteBoardAsync(int boardId, ClaimsPrincipal user);

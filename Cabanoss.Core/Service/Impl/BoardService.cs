@@ -66,7 +66,15 @@ namespace Cabanoss.Core.Service.Impl
             return authorizationResult;
         }
         #endregion
+        public async Task<ResponseBoardDto> GetBoardAsync(ClaimsPrincipal user, int boardId)
+        {
+            var authorizationResult = await CheckBoardMembership(boardId, user);
+            if (!authorizationResult.Succeeded)
+                throw new UnauthorizedException("Unauthorized");
+            var board = await _boardRepository.GetFirstAsync(x => x.Id == boardId);
 
+            return _mapper.Map<ResponseBoardDto>(board); 
+        }
         public async Task CreateBoardAsync(CreateBoardDto createBoardDto, ClaimsPrincipal user)
         {
             var userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
