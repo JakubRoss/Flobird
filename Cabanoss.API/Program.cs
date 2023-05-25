@@ -91,6 +91,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
+    //komentarze przy akcjach
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile) ;
     c.IncludeXmlComments(xmlPath);
@@ -140,6 +141,7 @@ builder.Services.AddDbContext<CabanossDbContext>(options =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddHttpContextAccessor();
 
 //base repo Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();

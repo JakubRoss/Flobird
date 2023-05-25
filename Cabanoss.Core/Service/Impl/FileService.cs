@@ -1,4 +1,7 @@
-﻿using Cabanoss.Core.Exceptions;
+﻿using Azure.Core;
+using Cabanoss.Core.Exceptions;
+using Cabanoss.Core.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Security.Claims;
 
@@ -8,39 +11,110 @@ namespace Cabanoss.Core.Service.Impl
     {
         public byte[] fileContents { get; set; }
         public string contentType { get; set; }
+        public string fileName { get; set; }
 
-        public FileContResult(byte[] fileContents, string contentType)
+        public FileContResult(byte[] fileContents, string contentType, string fileName)
         {
             this.fileContents = fileContents;
             this.contentType = contentType;
+            this.fileName = fileName;
         }
-
     }
+
     public class FileService : IFileService
     {
-        public async Task<FileContResult> GetFile(string fileName, ClaimsPrincipal claimsPrincipal)
+        private IUserRepository _userRepository;
+        private readonly IHttpContextAccessor _IHttpContextAccessor;
+
+        public FileService(
+            IUserRepository userRepository,
+            IHttpContextAccessor IHttpContextAccessor)
+        {
+            _userRepository = userRepository;
+            _IHttpContextAccessor = IHttpContextAccessor;
+        }
+        private bool GetFileExtension(IFormFile file, out string ext)
+        {
+            string[] allowedExtensions = {".jpeg",".jpg",".png"}; 
+            var extension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(extension))
+            {
+                ext = extension;
+                return false;
+            }
+            ext = extension;
+            return true;
+        }
+        public async Task<FileContResult> GetFile(ClaimsPrincipal claimsPrincipal)
         {
             var id = claimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
             var rootPath = Directory.GetParent(Directory.GetCurrentDirectory());
-            var filePath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}\\{fileName}";
+            var folderPath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}";
 
-            var fileExists = System.IO.File.Exists(filePath);
-            if (!fileExists)
+            if (!Directory.Exists(folderPath))
             {
-                throw new ResourceNotFoundException("file doesn't exist");
+                throw new ResourceNotFoundException("File doesn't exist");
             }
 
+            var file = Directory.GetFiles(folderPath).First();
+            if(file == null)
+            {
+                throw new ResourceNotFoundException("File doesn't exist");
+            }
+
+            var fileName = Path.GetFileName(file);
+
             var contentProvider = new FileExtensionContentTypeProvider();
-            contentProvider.TryGetContentType(filePath, out var contentType);
+            contentProvider.TryGetContentType(file, out var contentType);
 
-            var fileContents = System.IO.File.ReadAllBytes(filePath);
+            var fileContents = System.IO.File.ReadAllBytes(file);
 
-            return new FileContResult(fileContents, contentType);
+            return new FileContResult(fileContents, contentType, fileName);
         }
 
-        public async Task UploadFile()
+        public async Task UploadFile(ClaimsPrincipal claims, IFormFile file)
         {
+            var id = claims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var login = claims.FindFirst(c => c.Type == ClaimTypes.Name).Value;
+
+            var ext = string.Empty;
+            var allowedExtension = GetFileExtension(file, out ext);
+            if (file is null || file.Length > 1048576 || !allowedExtension)
+            {
+                throw new ResourceNotFoundException("incorrect file format or size");
+            }
+
+            var rootPath = Directory.GetParent(Directory.GetCurrentDirectory());
+            var name = $"{id}_{login}AV{ext}";
+            var directoryPath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}";
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var files = Directory.GetFiles(directoryPath);
+            if(files.Length > 0)
+            {
+                foreach(var obj in files)
+                    File.Delete(obj);
+            }
+
+            var filePath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}\\{name}";
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            // Konstruowanie pełnej ścieżki URL na platformie
+            var baseUrl = $"{_IHttpContextAccessor.HttpContext.Request.Scheme}://{_IHttpContextAccessor.HttpContext.Request.Host}";
+            // Tworzenie ścieżki URL do pliku
+            var fileUrl = $"{baseUrl}/Cabanoss.Core/Files/{id}/{name}";
+            var user = await _userRepository.GetFirstAsync(x => x.Id == int.Parse(id));
+            user.AvatarPath = fileUrl;
+            await _userRepository.UpdateAsync(user);
         }
     }
 }

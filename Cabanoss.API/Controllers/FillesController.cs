@@ -1,14 +1,12 @@
 ﻿using Cabanoss.Core.Service;
-using Cabanoss.Core.Service.Impl;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using System.Security.Claims;
 
 namespace Cabanoss.API.Controllers
 {
     [Route("files")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class FillesController : ControllerBase
     {
         private IFileService _fileService;
@@ -17,31 +15,19 @@ namespace Cabanoss.API.Controllers
         {
             _fileService = fileService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetFile([FromQuery] string fileName)
-        {
-            var fileContents = await _fileService.GetFile(fileName, User);
 
-            return File(fileContents.fileContents, fileContents.contentType, fileName);
+        [HttpGet]
+        public async Task<IActionResult> GetFile()
+        {
+            var fileContents = await _fileService.GetFile(User);
+
+            return File(fileContents.fileContents, fileContents.contentType, fileContents.fileName);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        public async Task UploadFile(IFormFile file)
         {
-            var id = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            if(file != null && file.Length >0)
-            {
-                var rootPath = Directory.GetParent(Directory.GetCurrentDirectory());
-                var fileName = file.FileName;
-                var filePath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}\\{fileName}";
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
-                return Ok();
-            }
-            return BadRequest();
+            await _fileService.UploadFile(User, file);
         }
     }
 }
