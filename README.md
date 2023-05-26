@@ -34,3 +34,5 @@ problem and approach.
 [CHECK HOW IT WORKS (swagger documentation)](https://cabanoss.azurewebsites.net/swagger/index.html)
 
 (further under construction/improvement)
+
+![datbase diagram](DbDiagram.jpg)
