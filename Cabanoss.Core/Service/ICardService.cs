@@ -10,5 +10,6 @@ namespace Cabanoss.Core.Service
         Task<CardDto> GetCard(int cardId, ClaimsPrincipal claims);
         Task<List<CardDto>> GetCards(int listId, ClaimsPrincipal user);
         Task UpdateCard(int cardId, ClaimsPrincipal user, UpdateCardDto createCard);
+        Task SetDeadline(int cardId, DateOnly date, ClaimsPrincipal claims);
     }
 }

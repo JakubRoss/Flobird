@@ -4,6 +4,7 @@ using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Card;
 using Cabanoss.Core.Repositories;
+using Cabanoss.Core.Repositories.Impl;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -130,6 +131,22 @@ namespace Cabanoss.Core.Service.Impl
                 card.Description = createCard.Description;
             #endregion
             card.UpdateAt = DateTime.UtcNow;
+            await _cardRepository.UpdateAsync(card);
+        }
+
+        public async Task SetDeadline(int cardId, DateOnly date, ClaimsPrincipal claims)
+        {
+            var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Cards.Any(card => card.Id == cardId)), i => i.BoardUsers);
+            if (board is null)
+                throw new ResourceNotFoundException("Resource Not Found");
+
+            var authorizationResult = await CheckAdminRole(board.Id, claims);
+            if (!authorizationResult.Succeeded)
+                throw new ResourceNotFoundException("No Access");
+
+            var card = await GetCardById(cardId);
+
+            card.Deadline = date.ToDateTime(new TimeOnly());
             await _cardRepository.UpdateAsync(card);
         }
     }

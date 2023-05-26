@@ -1,5 +1,6 @@
 ﻿using Cabanoss.Core.Model.Card;
 using Cabanoss.Core.Service;
+using Cabanoss.Core.Service.Impl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -76,6 +77,19 @@ namespace Cabanoss.API.Controllers
             await _cardService.UpdateCard(cardId, User, createCard);
         }
 
+        /// <summary>
+        /// sets card deadline
+        /// </summary>
+        /// <param name="cardId">card Id</param>
+        /// <param name="date">short date to set card deadline</param>
+        /// <remarks>
+        /// PATCH cabanoss.azurewebsites.net/cards?cardId={id}
+        /// </remarks>
+        [HttpPatch]
+        public async Task SetDeadline([FromQuery] int cardId, [FromBody] DateOnly date)
+        {
+            await _cardService.SetDeadline(cardId, date, User);
+        }
         /// <summary>
         /// Deletes a specified card
         /// </summary>
