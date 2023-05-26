@@ -161,7 +161,7 @@ namespace Cabanoss.Core.Service.Impl
             element.IsComplete = updateElementDto.IsComplete;
             await _element.UpdateAsync(element);
         }
-
+        //For members
         public async Task<List<ResponseUserDto>> GetElementUsers(int elementId,ClaimsPrincipal claims)
         {
             var board = await GetBoardByElementId(elementId);

@@ -13,12 +13,16 @@ namespace Cabanoss.API.Controllers
     {
         private IBoardService _boardService;
         private IElementService _elementService;
+        private ICardService _cardService;
 
-        public MembersController(IBoardService boardService,
-            IElementService elementService)
+        public MembersController(
+            IBoardService boardService,
+            IElementService elementService,
+            ICardService cardService)
         {
             _boardService = boardService;
             _elementService = elementService;
+            _cardService = cardService;
         }
 
         /// <summary>
@@ -117,6 +121,46 @@ namespace Cabanoss.API.Controllers
         public async Task DeleteUserFromElement ([FromRoute] int elementId, [FromQuery] int userId)
         {
             await _elementService.DeleteUserFromElement(elementId, userId, User);
+        }
+
+        /// <summary>
+        /// downloads users of a certain card
+        /// </summary>
+        /// <param name="cardId">card id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/members/cards?cardId={id}
+        /// </remarks>
+        [HttpGet("cards")]
+        public async Task<List<ResponseUserDto>> GetCardUsers([FromQuery] int cardId)
+        {
+            var users = await _cardService.GetCardUsers(cardId, User);
+            return users;
+        }
+
+        /// <summary>
+        /// adds the specified user to the given card
+        /// </summary>
+        /// <param name="userId">user id</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/members/cards/{cardId}?userId={userId}
+        /// </remarks>
+        [HttpPost("cards/{cardId}")]
+        public async Task AddCardUsers([FromRoute] int cardId, [FromQuery] int userId)
+        {
+            await _cardService.AddUserToCard(cardId, userId, User);
+        }
+
+        /// <summary>
+        /// removes the specified user to the given card
+        /// </summary>
+        /// <param name="cardId">user id</param>
+        /// <remarks>
+        /// DELETE cabanoss.azurewebsites.net/members/cards/{cardId}?userId={userId}
+        /// </remarks>
+        [HttpDelete("cards/{cardId}")]
+        public async Task RemoveCardUsers([FromRoute] int cardId, [FromQuery] int userId)
+        {
+            await _cardService.DeleteUserFromCard(cardId, userId, User);
         }
     }
 }

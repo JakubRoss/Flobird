@@ -13,5 +13,6 @@ namespace Cabanoss.Core.Data.Entities
         public virtual User User { get; set; }
 
         public virtual ICollection<ElementUsers> ElementUsers { get; set; }
+        public virtual ICollection<CardUser> CardUsers { get; set; }
     }
 }

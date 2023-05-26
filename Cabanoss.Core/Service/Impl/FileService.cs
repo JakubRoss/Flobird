@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Cabanoss.Core.Exceptions;
+﻿using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
@@ -110,6 +109,7 @@ namespace Cabanoss.Core.Service.Impl
 
             // Konstruowanie pełnej ścieżki URL na platformie
             var baseUrl = $"{_IHttpContextAccessor.HttpContext.Request.Scheme}://{_IHttpContextAccessor.HttpContext.Request.Host}";
+
             // Tworzenie ścieżki URL do pliku
             var fileUrl = $"{baseUrl}/Cabanoss.Core/Files/{id}/{name}";
             var user = await _userRepository.GetFirstAsync(x => x.Id == int.Parse(id));
