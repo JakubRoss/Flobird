@@ -96,7 +96,10 @@ namespace Cabanoss.Core.Service.Impl
             if (userDto.Login!=null)
                 user.Login = userDto.Login;
             if (userDto.Password != null)
-                user.PasswordHash = userDto.Password;
+            {
+                var hashedPassword = _passwordHasher.HashPassword(user,userDto.Password);
+                user.PasswordHash = hashedPassword;
+            }
             if (userDto.Email != null)
                 user.Email = userDto.Email;
             user.UpdatedAt = DateTime.Now;
