@@ -1,4 +1,4 @@
-﻿namespace Cabanoss.Core.Common
+﻿namespace Cabanoss.Core.Data
 {
     public abstract class BaseEntity
     {

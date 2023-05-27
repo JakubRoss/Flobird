@@ -1,6 +1,4 @@
-﻿using Cabanoss.Core.Common;
-
-namespace Cabanoss.Core.Data.Entities
+﻿namespace Cabanoss.Core.Data.Entities
 {
     public class CardUser : BaseEntity
     {

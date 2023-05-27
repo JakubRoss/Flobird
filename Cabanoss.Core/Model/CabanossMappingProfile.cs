@@ -10,7 +10,7 @@ using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Model.Workspace;
 
-namespace Cabanoss.Core.Common
+namespace Cabanoss.Core
 {
     public class CabanossMappingProfile : Profile
     {
@@ -28,13 +28,13 @@ namespace Cabanoss.Core.Common
                 .ForMember(ud => ud.CreatedAt, f => f.MapFrom(u => u.CreatedAt))
                 .ForMember(ud => ud.UpdatedAt, f => f.MapFrom(u => u.UpdatedAt))
                 .ReverseMap();
-            CreateMap<UpdateUserDto,User>()
-                .ForMember(u => u.PasswordHash, f=>f.MapFrom(cud=>cud.Password))
-                .ReverseMap();
-            CreateMap<CreateUserDto,User>()
+            CreateMap<UpdateUserDto, User>()
                 .ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
                 .ReverseMap();
-            CreateMap<ResponseUserDto,User>().ReverseMap();
+            CreateMap<CreateUserDto, User>()
+                .ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
+                .ReverseMap();
+            CreateMap<ResponseUserDto, User>().ReverseMap();
             CreateMap<ResponseBoardDto, Board>().ReverseMap();
             CreateMap<ResponseBoardUser, User>().ReverseMap();
             CreateMap<UpdateBoardDto, Board>().ReverseMap();
@@ -42,13 +42,13 @@ namespace Cabanoss.Core.Common
             CreateMap<CardDto, Card>().ReverseMap();
             CreateMap<CreateCardDto, Card>().ReverseMap();
             CreateMap<TaskDto, Tasks>().ReverseMap();
-            CreateMap<ResponseCommentDto,Comment>().ReverseMap();
+            CreateMap<ResponseCommentDto, Comment>().ReverseMap();
             CreateMap<CommentDto, Comment>().ReverseMap();
             CreateMap<AttachmentResponseDto, Attachment>().ReverseMap();
-            CreateMap<AttachmentDto , Attachment>().ReverseMap();
+            CreateMap<AttachmentDto, Attachment>().ReverseMap();
             CreateMap<ResponseElementDto, Element>().ReverseMap();
             CreateMap<ElementDto, Element>().ReverseMap();
-            CreateMap<UpdateElementDto , Element>().ReverseMap();
+            CreateMap<UpdateElementDto, Element>().ReverseMap();
             CreateMap<ResponseTaskDto, Tasks>().ReverseMap();
         }
     }
