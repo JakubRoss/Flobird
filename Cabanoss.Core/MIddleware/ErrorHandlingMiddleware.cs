@@ -21,6 +21,11 @@ namespace Cabanoss.Core.MIddleware
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsync(ex.Message);
             } 
+            catch(ConflictExceptions ex)
+            {
+                context.Response.StatusCode = 409;
+                await context.Response.WriteAsync(ex.Message);
+            }
 
         }
     }

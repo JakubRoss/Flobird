@@ -25,8 +25,9 @@ namespace Cabanoss.Core.Data
 
             modelBuilder.Entity<ElementUsers>()
                 .HasKey(bu => new { bu.BoardUserId, bu.ElementId });
+
             modelBuilder.Entity<CardUser>()
-                .HasKey(bu => new { bu.BoardUserId, bu.CardId });
+                .HasKey(bu => new { bu.UserId_cu, bu.CardId_cu });
 
             #endregion
             #region Deleting_Behaviour
@@ -42,7 +43,6 @@ namespace Cabanoss.Core.Data
                 .WithOne(b => b.Workspace)
                 .HasForeignKey(b => b.WorkspaceId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Board>()
                 .HasMany(b => b.BoardUsers)
                 .WithOne(bu => bu.Board)
@@ -121,23 +121,30 @@ namespace Cabanoss.Core.Data
                 .HasForeignKey(bue=>bue.ElementId)
                 .OnDelete(DeleteBehavior.Cascade);
             //
-            modelBuilder.Entity<BoardUser>()
-                .HasMany(bue => bue.CardUsers)
-                .WithOne(bu => bu.BoardUser)
-                .HasForeignKey(bue => bue.BoardUserId)
+            modelBuilder.Entity<User>()
+                .HasMany(b => b.CardUsers)
+                .WithOne(bu => bu.User)
+                .HasForeignKey(bu => bu.UserId_cu)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CardUser>()
-                .HasOne(bu => bu.BoardUser)
-                .WithMany(bue => bue.CardUsers)
-                .HasForeignKey(eu => new { eu.BoardUserId, eu.CardId })
+                .HasOne(u => u.User)
+                .WithMany(bu => bu.CardUsers)
+                .HasForeignKey(bu => bu.UserId_cu)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Card>()
-                .HasMany(bue => bue.CardUsers)
-                .WithOne(e => e.Card)
-                .HasForeignKey(bue => bue.CardId)
+                .HasMany(cu => cu.CardUsers)
+                .WithOne(c=>c.Card)
+                .HasForeignKey(c=>c.CardId_cu)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CardUser>()
+                .HasOne(c=>c.Card)
+                .WithMany(cu=>cu.CardUsers)
+                .HasForeignKey(c=>c.CardId_cu)
+                .OnDelete(DeleteBehavior.NoAction);
+
 
             #endregion
             base.OnModelCreating(modelBuilder);
