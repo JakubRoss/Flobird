@@ -167,9 +167,7 @@ namespace Cabanoss.Core.Service.Impl
             var board = await GetBoardByElementId(elementId);
             await CheckBoardMembership(board,claims);
 
-            var boardUsers = await _boardUsersRepository.GetAllAsync(board => board.ElementUsers.Any(p=>p.ElementId == elementId));
-            if (boardUsers == null)
-                throw new ResourceNotFoundException("Resource not Found");
+            var boardUsers = board.BoardUsers.ToList();
 
             var users = new List<User>();
             foreach (var user in boardUsers)
@@ -187,12 +185,16 @@ namespace Cabanoss.Core.Service.Impl
             await ChceckAdminRole(board, claims);
             await CheckBoardMembership(board, userId);
 
-            var element = await _element.GetFirstAsync(_ => _.Id == elementId);
+            var element = await _element.GetFirstAsync(_ => _.Id == elementId, i=>i.ElementUsers);
+
+            var user = element.ElementUsers.FirstOrDefault(i => i.UserId_eu == userId);
+            if (user != null)
+                throw new ConflictExceptions("the object is in the resource");
 
             var userElement = new ElementUsers()
             {
-                BoardUserId = userId,
-                ElementId = elementId
+                UserId_eu = userId,
+                ElementId_eu = elementId
             };
 
             await _elementUsersRepository.AddAsync(userElement);
@@ -205,7 +207,7 @@ namespace Cabanoss.Core.Service.Impl
 
             var boardUser = board.BoardUsers.FirstOrDefault(p=>p.BoardId == board.Id && p.UserId==userId);
 
-            var element = await _elementUsersRepository.GetFirstAsync(_ => _.ElementId == elementId && _.BoardUserId == userId);
+            var element = await _elementUsersRepository.GetFirstAsync(_ => _.ElementId_eu == elementId && _.UserId_eu == userId);
             if (element == null)
                 throw new ResourceNotFoundException("Resource not Found");
             await _elementUsersRepository.DeleteAsync(element);
