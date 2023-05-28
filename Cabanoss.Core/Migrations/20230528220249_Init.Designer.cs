@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cabanoss.Core.Migrations
 {
     [DbContext(typeof(CabanossDbContext))]
-    [Migration("20230527123313_ElementUsers_NewRelations")]
-    partial class ElementUsers_NewRelations
+    [Migration("20230528220249_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -142,26 +142,18 @@ namespace Cabanoss.Core.Migrations
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.CardUser", b =>
                 {
-                    b.Property<int>("UserId_cu")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CardId_cu")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BoardUserBoardId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BoardUserUserId")
+                    b.Property<int>("CardId")
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId_cu", "CardId_cu");
+                    b.HasKey("UserId", "CardId");
 
-                    b.HasIndex("CardId_cu");
-
-                    b.HasIndex("BoardUserBoardId", "BoardUserUserId");
+                    b.HasIndex("CardId");
 
                     b.ToTable("CardUser");
                 });
@@ -226,26 +218,18 @@ namespace Cabanoss.Core.Migrations
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.ElementUsers", b =>
                 {
-                    b.Property<int>("UserId_eu")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ElementId_eu")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BoardUserBoardId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BoardUserUserId")
+                    b.Property<int>("ElementId")
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId_eu", "ElementId_eu");
+                    b.HasKey("UserId", "ElementId");
 
-                    b.HasIndex("ElementId_eu");
-
-                    b.HasIndex("BoardUserBoardId", "BoardUserUserId");
+                    b.HasIndex("ElementId");
 
                     b.ToTable("ElementUsers");
                 });
@@ -397,7 +381,7 @@ namespace Cabanoss.Core.Migrations
                     b.HasOne("Cabanoss.Core.Data.Entities.Workspace", "Workspace")
                         .WithMany("Boards")
                         .HasForeignKey("WorkspaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Workspace");
@@ -437,19 +421,15 @@ namespace Cabanoss.Core.Migrations
                 {
                     b.HasOne("Cabanoss.Core.Data.Entities.Card", "Card")
                         .WithMany("CardUsers")
-                        .HasForeignKey("CardId_cu")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Cabanoss.Core.Data.Entities.User", "User")
                         .WithMany("CardUsers")
-                        .HasForeignKey("UserId_cu")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("Cabanoss.Core.Data.Entities.BoardUser", null)
-                        .WithMany("CardUsers")
-                        .HasForeignKey("BoardUserBoardId", "BoardUserUserId");
 
                     b.Navigation("Card");
 
@@ -490,19 +470,15 @@ namespace Cabanoss.Core.Migrations
                 {
                     b.HasOne("Cabanoss.Core.Data.Entities.Element", "Element")
                         .WithMany("ElementUsers")
-                        .HasForeignKey("ElementId_eu")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasForeignKey("ElementId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Cabanoss.Core.Data.Entities.User", "User")
-                        .WithMany("UserElements")
-                        .HasForeignKey("UserId_eu")
+                        .WithMany("ElementUsers")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("Cabanoss.Core.Data.Entities.BoardUser", null)
-                        .WithMany("ElementUsers")
-                        .HasForeignKey("BoardUserBoardId", "BoardUserUserId");
 
                     b.Navigation("Element");
 
@@ -536,7 +512,7 @@ namespace Cabanoss.Core.Migrations
                     b.HasOne("Cabanoss.Core.Data.Entities.User", "User")
                         .WithOne("Workspace")
                         .HasForeignKey("Cabanoss.Core.Data.Entities.Workspace", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -547,13 +523,6 @@ namespace Cabanoss.Core.Migrations
                     b.Navigation("BoardUsers");
 
                     b.Navigation("Lists");
-                });
-
-            modelBuilder.Entity("Cabanoss.Core.Data.Entities.BoardUser", b =>
-                {
-                    b.Navigation("CardUsers");
-
-                    b.Navigation("ElementUsers");
                 });
 
             modelBuilder.Entity("Cabanoss.Core.Data.Entities.Card", b =>
@@ -592,7 +561,7 @@ namespace Cabanoss.Core.Migrations
 
                     b.Navigation("Comments");
 
-                    b.Navigation("UserElements");
+                    b.Navigation("ElementUsers");
 
                     b.Navigation("Workspace")
                         .IsRequired();

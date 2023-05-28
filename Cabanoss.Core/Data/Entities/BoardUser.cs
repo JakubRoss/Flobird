@@ -9,10 +9,8 @@ namespace Cabanoss.Core.Data.Entities
         //Navigation
         public int BoardId { get; set; }
         public virtual Board Board { get; set; }
+
         public int UserId { get; set; }
         public virtual User User { get; set; }
-
-        public virtual ICollection<ElementUsers> ElementUsers { get; set; }
-        public virtual ICollection<CardUser> CardUsers { get; set; }
     }
 }

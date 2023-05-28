@@ -17,6 +17,6 @@
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Attachment> Attachments { get; set; }
         public virtual ICollection<CardUser> CardUsers { get; set; }
-        public virtual ICollection<ElementUsers> UserElements { get; set; }
+        public virtual ICollection<ElementUsers> ElementUsers { get; set; }
     }
 }
