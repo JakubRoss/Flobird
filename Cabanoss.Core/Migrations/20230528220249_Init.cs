@@ -21,7 +21,8 @@ namespace Cabanoss.Core.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AvatarPath = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -46,8 +47,7 @@ namespace Cabanoss.Core.Migrations
                         name: "FK_Workspaces_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -68,8 +68,7 @@ namespace Cabanoss.Core.Migrations
                         name: "FK_Boards_Workspaces_WorkspaceId",
                         column: x => x.WorkspaceId,
                         principalTable: "Workspaces",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -129,6 +128,7 @@ namespace Cabanoss.Core.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Deadline = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ListId = table.Column<int>(type: "int", nullable: false)
@@ -167,6 +167,30 @@ namespace Cabanoss.Core.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Attachment_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CardUser",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CardId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CardUser", x => new { x.UserId, x.CardId });
+                    table.ForeignKey(
+                        name: "FK_CardUser_Card_CardId",
+                        column: x => x.CardId,
+                        principalTable: "Card",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CardUser_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -247,24 +271,24 @@ namespace Cabanoss.Core.Migrations
                 name: "ElementUsers",
                 columns: table => new
                 {
-                    BoardUserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     ElementId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ElementUsers", x => new { x.BoardUserId, x.ElementId });
-                    table.ForeignKey(
-                        name: "FK_ElementUsers_BoardsUser_BoardUserId_ElementId",
-                        columns: x => new { x.BoardUserId, x.ElementId },
-                        principalTable: "BoardsUser",
-                        principalColumns: new[] { "BoardId", "UserId" });
+                    table.PrimaryKey("PK_ElementUsers", x => new { x.UserId, x.ElementId });
                     table.ForeignKey(
                         name: "FK_ElementUsers_Element_ElementId",
                         column: x => x.ElementId,
                         principalTable: "Element",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ElementUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -291,6 +315,11 @@ namespace Cabanoss.Core.Migrations
                 name: "IX_Card_ListId",
                 table: "Card",
                 column: "ListId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CardUser_CardId",
+                table: "CardUser",
+                column: "CardId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_CardId",
@@ -336,13 +365,16 @@ namespace Cabanoss.Core.Migrations
                 name: "Attachment");
 
             migrationBuilder.DropTable(
+                name: "BoardsUser");
+
+            migrationBuilder.DropTable(
+                name: "CardUser");
+
+            migrationBuilder.DropTable(
                 name: "Comment");
 
             migrationBuilder.DropTable(
                 name: "ElementUsers");
-
-            migrationBuilder.DropTable(
-                name: "BoardsUser");
 
             migrationBuilder.DropTable(
                 name: "Element");

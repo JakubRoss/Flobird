@@ -181,7 +181,7 @@ namespace Cabanoss.Core.Service.Impl
         {
             await CheckBoardMembership(cardId, claims);
 
-            var cardUsers = await _userRepository.GetAllAsync(cu=>cu.CardUsers.Any(cu=>cu.CardId_cu == cardId));
+            var cardUsers = await _userRepository.GetAllAsync(cu=>cu.CardUsers.Any(cu=>cu.CardId == cardId));
             if (cardUsers == null)
                 throw new ResourceNotFoundException("Resource not Found");
 
@@ -192,7 +192,7 @@ namespace Cabanoss.Core.Service.Impl
         public async Task AddUserToCard(int cardId, int userId, ClaimsPrincipal claims)
         {
             var card = await GetCardById(cardId);
-            var user = card.CardUsers.FirstOrDefault(i=>i.UserId_cu == userId);
+            var user = card.CardUsers.FirstOrDefault(i=>i.UserId == userId);
             if (user != null)
                 throw new ConflictExceptions("the object is in the resource");
 
@@ -205,8 +205,8 @@ namespace Cabanoss.Core.Service.Impl
 
             var userCard = new CardUser()
             {
-                UserId_cu = userId,
-                CardId_cu = cardId
+                UserId = userId,
+                CardId = cardId
             };
 
             await _cardUserRepository.AddAsync(userCard);
@@ -221,7 +221,7 @@ namespace Cabanoss.Core.Service.Impl
             await CheckBoardMembership(cardId, userId);
 
             var card = await GetCardById(cardId);
-            var cardUser = card.CardUsers.FirstOrDefault(id=>id.UserId_cu == userId);
+            var cardUser = card.CardUsers.FirstOrDefault(id=>id.UserId == userId);
             if (cardUser == null)
                 throw new ResourceNotFoundException("the user you want to add does not belong to the card or does not exist");
             await _cardUserRepository.DeleteAsync(cardUser);

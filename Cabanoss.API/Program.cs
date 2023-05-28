@@ -96,6 +96,8 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile) ;
     c.IncludeXmlComments(xmlPath);
 
+    c.OrderActionsBy(controller => controller.RelativePath);
+
     // Dodanie opisu autoryzacji JWT
     var securityScheme = new OpenApiSecurityScheme
     {
