@@ -1,16 +1,15 @@
-﻿using Cabanoss.Core.Model.Card;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.Card;
+using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Service;
-using Cabanoss.Core.Service.Impl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Cabanoss.API.Controllers
 {
-    [Route("cards")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(4)]
     public class CardsController : ControllerBase
     {
         private ICardService _cardService;
@@ -21,13 +20,55 @@ namespace Cabanoss.API.Controllers
         }
 
         /// <summary>
+        /// Adding card to a given list
+        /// </summary>
+        /// <param name="listId">list Id</param>
+        /// <param name="createCard">Request's payload</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/cards/lists?listId={id}
+        /// </remarks>
+        [HttpPost("cards/lists")]
+        public async Task AddCard([FromQuery] int listId, [FromBody] CreateCardDto createCard)
+        {
+            await _cardService.AddCard(listId, User, createCard);
+        }
+
+        /// <summary>
+        /// Updates a specified card
+        /// </summary>
+        /// <param name="cardId">card Id</param>
+        /// <param name="createCard">Request's payload</param>
+        /// <remarks>
+        /// PUT cabanoss.azurewebsites.net/cards?cardId={id}
+        /// </remarks>
+        [HttpPut("cards")]
+        public async Task UpdateCard([FromQuery] int cardId, [FromBody] UpdateCardDto createCard)
+        {
+            await _cardService.UpdateCard(cardId, User, createCard);
+        }
+
+        /// <summary>
+        /// sets card deadline
+        /// </summary>
+        /// <param name="cardId">card Id</param>
+        /// <param name="date">short date to set card deadline</param>
+        /// <remarks>
+        /// PATCH cabanoss.azurewebsites.net/cards?cardId={id}
+        /// </remarks>
+        [HttpPatch("cards")]
+        public async Task SetDeadline([FromQuery] int cardId, [FromBody] DateOnly date)
+        {
+            await _cardService.SetDeadline(cardId, date, User);
+        }
+
+        /// <summary>
         /// Downloads a list of cards for a given list
         /// </summary>
         /// <param name="listId">list Id</param>
         /// <remarks>
         /// GET cabanoss.azurewebsites.net/cards/lists?listId={id}
         /// </remarks>
-        [HttpGet("lists")]
+        [HttpGet("cards/lists")]
         public async Task<List<CardDto>> GetCards([FromQuery] int listId)
         {
             var cards = await _cardService.GetCards(listId, User);
@@ -42,7 +83,7 @@ namespace Cabanoss.API.Controllers
         /// GET cabanoss.azurewebsites.net/cards?cardId={id}
         /// </remarks>
         /// <returns>Created card</returns>
-        [HttpGet]
+        [HttpGet("cards")]
         public async Task<CardDto> GetCard([FromQuery] int cardId)
         {
             var card = await _cardService.GetCard(cardId, User);
@@ -50,57 +91,56 @@ namespace Cabanoss.API.Controllers
         }
 
         /// <summary>
-        /// Adding card to a given list
-        /// </summary>
-        /// <param name="listId">list Id</param>
-        /// <param name="createCard">Request's payload</param>
-        /// <remarks>
-        /// POST cabanoss.azurewebsites.net/cards/lists?listId={id}
-        /// </remarks>
-        [HttpPost("lists")]
-        public async Task AddCard([FromQuery] int listId , [FromBody] CreateCardDto createCard)
-        {
-            await _cardService.AddCard(listId,User, createCard);
-        }
-
-        /// <summary>
-        /// Updates a specified card
-        /// </summary>
-        /// <param name="cardId">card Id</param>
-        /// <param name="createCard">Request's payload</param>
-        /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/cards?cardId={id}
-        /// </remarks>
-        [HttpPut]
-        public async Task UpdateCard([FromQuery] int cardId,[FromBody] UpdateCardDto createCard)
-        {
-            await _cardService.UpdateCard(cardId, User, createCard);
-        }
-
-        /// <summary>
-        /// sets card deadline
-        /// </summary>
-        /// <param name="cardId">card Id</param>
-        /// <param name="date">short date to set card deadline</param>
-        /// <remarks>
-        /// PATCH cabanoss.azurewebsites.net/cards?cardId={id}
-        /// </remarks>
-        [HttpPatch]
-        public async Task SetDeadline([FromQuery] int cardId, [FromBody] DateOnly date)
-        {
-            await _cardService.SetDeadline(cardId, date, User);
-        }
-        /// <summary>
         /// Deletes a specified card
         /// </summary>
         /// <param name="cardId">card Id</param>
         /// <remarks>
         /// DELETE cabanoss.azurewebsites.net/cards?cardId={id}
         /// </remarks>
-        [HttpDelete]
+        [HttpDelete("cards")]
         public async Task DeleteCard([FromQuery] int cardId)
         {
             await _cardService.DeleteCard(cardId, User);
+        }
+
+        /// <summary>
+        /// downloads users of a certain card
+        /// </summary>
+        /// <param name="cardId">card id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/members/cards?cardId={id}
+        /// </remarks>
+        [HttpGet("members/cards")]
+        public async Task<List<ResponseUserDto>> GetCardUsers([FromQuery] int cardId)
+        {
+            var users = await _cardService.GetCardUsers(cardId, User);
+            return users;
+        }
+
+        /// <summary>
+        /// adds the specified user to the given card
+        /// </summary>
+        /// <param name="userId">user id</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/members/cards/{cardId}?userId={userId}
+        /// </remarks>
+        [HttpPost("members/cards/{cardId}")]
+        public async Task AddCardUsers([FromRoute] int cardId, [FromQuery] int userId)
+        {
+            await _cardService.AddUserToCard(cardId, userId, User);
+        }
+
+        /// <summary>
+        /// removes the specified user to the given card
+        /// </summary>
+        /// <param name="cardId">user id</param>
+        /// <remarks>
+        /// DELETE cabanoss.azurewebsites.net/members/cards/{cardId}?userId={userId}
+        /// </remarks>
+        [HttpDelete("members/cards/{cardId}")]
+        public async Task RemoveCardUsers([FromRoute] int cardId, [FromQuery] int userId)
+        {
+            await _cardService.DeleteUserFromCard(cardId, userId, User);
         }
     }
 }

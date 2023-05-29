@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Model.Comment;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.Comment;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace Cabanoss.API.Controllers
     [Route("comments")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(5)]
     public class CommentsController : ControllerBase
     {
         private ICommentServices _commentServices;
@@ -15,6 +17,34 @@ namespace Cabanoss.API.Controllers
         public CommentsController(ICommentServices commentServices)
         {
             _commentServices = commentServices;
+        }
+
+        /// <summary>
+        /// adds commentary to a given card
+        /// </summary>
+        /// <param name="cardId">card id</param>
+        /// <param name="commentDto">Request's payload</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/comments/cards?cardId={id}
+        /// </remarks>
+        [HttpPost("cards")]
+        public async Task AddComment([FromQuery] int cardId, [FromBody] CommentDto commentDto)
+        {
+            await _commentServices.AddComment(cardId, commentDto.Text, User);
+        }
+
+        /// <summary>
+        /// updates a given comment
+        /// </summary>
+        /// <param name="commentId">comment id</param>
+        /// <param name="commentDto">Request's payload</param>
+        /// <remarks>
+        /// PUT cabanoss.azurewebsites.net/comments?commentId={id}
+        /// </remarks>
+        [HttpPut]
+        public async Task UpdateComment([FromQuery] int commentId, [FromBody] CommentDto commentDto)
+        {
+            await _commentServices.UpdateComment(commentId, commentDto.Text, User);
         }
 
         /// <summary>
@@ -43,34 +73,6 @@ namespace Cabanoss.API.Controllers
         {
             var comment = await _commentServices.GetComment(commentId, User);
             return comment;
-        }
-
-        /// <summary>
-        /// adds commentary to a given card
-        /// </summary>
-        /// <param name="cardId">card id</param>
-        /// <param name="commentDto">Request's payload</param>
-        /// <remarks>
-        /// POST cabanoss.azurewebsites.net/comments/cards?cardId={id}
-        /// </remarks>
-        [HttpPost("cards")]
-        public async Task AddComment([FromQuery] int cardId, [FromBody] CommentDto commentDto)
-        {
-            await _commentServices.AddComment(cardId, commentDto.Text , User);
-        }
-
-        /// <summary>
-        /// updates a given comment
-        /// </summary>
-        /// <param name="commentId">comment id</param>
-        /// <param name="commentDto">Request's payload</param>
-        /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/comments?commentId={id}
-        /// </remarks>
-        [HttpPut]
-        public async Task UpdateComment([FromQuery] int commentId, [FromBody] CommentDto commentDto)
-        {
-            await _commentServices.UpdateComment(commentId , commentDto.Text , User);
         }
 
         /// <summary>

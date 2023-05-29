@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Service;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace Cabanoss.API.Controllers
     [Route("files")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(9)]
     public class FillesController : ControllerBase
     {
         private IFileService _fileService;

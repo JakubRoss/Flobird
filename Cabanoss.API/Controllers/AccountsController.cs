@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Model.User;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ namespace Cabanoss.API.Controllers
 {
     [Route("accounts")]
     [ApiController]
+    [SwaggerControllerOrder(0)]
     public class AccountsController : ControllerBase
     {
         private IUserService _userService;
@@ -14,6 +16,20 @@ namespace Cabanoss.API.Controllers
         {
             _userService = userService;
         }
+
+        /// <summary>
+        /// Create new account
+        /// </summary>
+        /// <param name="user">Request's payload</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/accounts/register
+        /// </remarks>
+        [HttpPost("register")]
+        public async System.Threading.Tasks.Task register([FromBody] CreateUserDto user)
+        {
+            await _userService.AddUserAsync(user);
+        }
+
         /// <summary>
         /// Logging in
         /// </summary>
@@ -27,19 +43,6 @@ namespace Cabanoss.API.Controllers
             var token = await _userService.LogIn(userLoginDto);
             
             return Ok(token);
-        }
-
-        /// <summary>
-        /// Create new account
-        /// </summary>
-        /// <param name="user">Request's payload</param>
-        /// <remarks>
-        /// POST cabanoss.azurewebsites.net/accounts/register
-        /// </remarks>
-        [HttpPost("register")]
-        public async System.Threading.Tasks.Task register([FromBody] CreateUserDto user)
-        {
-             await _userService.AddUserAsync(user);
         }
     }
 }

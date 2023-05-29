@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Authorization;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Authorization;
 using Cabanoss.Core.Common;
 using Cabanoss.Core.Data;
 using Cabanoss.Core.Data.Entities;
@@ -20,6 +21,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -76,6 +78,7 @@ builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddEndpointsApiExplorer();
 
 #region SwaggerConf
+SwaggerControllerOrder<ControllerBase> swaggerControllerOrder = new SwaggerControllerOrder<ControllerBase>(Assembly.GetEntryAssembly());
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
@@ -91,12 +94,12 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
+    c.OrderActionsBy((apiDesc) => $"{swaggerControllerOrder.SortKey(apiDesc.ActionDescriptor.RouteValues["controller"])}");
+
     //komentarze przy akcjach
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile) ;
     c.IncludeXmlComments(xmlPath);
-
-    c.OrderActionsBy(controller => controller.RelativePath);
 
     // Dodanie opisu autoryzacji JWT
     var securityScheme = new OpenApiSecurityScheme

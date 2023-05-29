@@ -1,13 +1,15 @@
-﻿using Cabanoss.Core.Model.Element;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.Element;
+using Cabanoss.Core.Model.User;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("elements")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(8)]
     public class ElementsController : ControllerBase
     {
         private IElementService _elementService;
@@ -18,34 +20,6 @@ namespace Cabanoss.API.Controllers
         }
 
         /// <summary>
-        /// downloads the elements of a given task 
-        /// </summary>
-        /// <param name="taskId">task id</param>
-        /// <remarks>
-        /// GET cabanoss.azurewebsites.net/elements?taskId={id}
-        /// </remarks>
-        [HttpGet("tasks")]
-        public async Task<List<ResponseElementDto>> GetElements([FromQuery] int taskId)
-        {
-            var elements = await _elementService.GetElements(taskId, User);
-            return elements;
-        }
-
-        /// <summary>
-        /// downloads the indicated task element
-        /// </summary>
-        /// <param name="elementId">element id</param>
-        /// <remarks>
-        /// GET cabanoss.azurewebsites.net/elements?elementId={id}
-        /// </remarks>
-        [HttpGet]
-        public async Task<ResponseElementDto> GetElement([FromQuery] int elementId)
-        {
-            var element = await _elementService.GetElement(elementId, User);
-            return element;
-        }
-
-        /// <summary>
         /// adds a new element to the task
         /// </summary>
         /// <param name="elementDto">Request's payload</param>
@@ -53,7 +27,7 @@ namespace Cabanoss.API.Controllers
         /// <remarks>
         /// POST cabanoss.azurewebsites.net/elements/tasks?taskId={id}
         /// </remarks>
-        [HttpPost("tasks")]
+        [HttpPost("elements/tasks")]
         public async Task AddElement([FromQuery] int taskId, [FromBody] ElementDto elementDto)
         {
             await _elementService.AddElement(taskId, elementDto, User);
@@ -67,10 +41,38 @@ namespace Cabanoss.API.Controllers
         /// <remarks>
         /// PUT cabanoss.azurewebsites.net/elements?elementId={id}
         /// </remarks>
-        [HttpPut]
+        [HttpPut("elements")]
         public async Task UpdateElement([FromQuery] int elementId, [FromBody] UpdateElementDto updateElementDto)
         {
             await _elementService.UpdateElement(elementId, updateElementDto, User);
+        }
+
+        /// <summary>
+        /// downloads the elements of a given task 
+        /// </summary>
+        /// <param name="taskId">task id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/elements?taskId={id}
+        /// </remarks>
+        [HttpGet("elements/tasks")]
+        public async Task<List<ResponseElementDto>> GetElements([FromQuery] int taskId)
+        {
+            var elements = await _elementService.GetElements(taskId, User);
+            return elements;
+        }
+
+        /// <summary>
+        /// downloads the indicated task element
+        /// </summary>
+        /// <param name="elementId">element id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/elements?elementId={id}
+        /// </remarks>
+        [HttpGet("elements")]
+        public async Task<ResponseElementDto> GetElement([FromQuery] int elementId)
+        {
+            var element = await _elementService.GetElement(elementId, User);
+            return element;
         }
 
         /// <summary>
@@ -80,10 +82,24 @@ namespace Cabanoss.API.Controllers
         /// <remarks>
         /// DELETE cabanoss.azurewebsites.net/elements?elementId={id}
         /// </remarks>
-        [HttpDelete]
+        [HttpDelete("elements")]
         public async Task DeleteElement([FromQuery] int elementId)
         {
             await _elementService.DeleteElement(elementId, User);
+        }
+
+        /// <summary>
+        /// adds a user to a specific task element
+        /// </summary>
+        /// <param name="elementId">element id</param>
+        /// <param name="userId">user id</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/members/elements/{elementId}?userId={id}
+        /// </remarks>
+        [HttpPost("members/elements/{elementId}")]
+        public async Task AddUserToElement([FromRoute] int elementId, [FromQuery] int userId)
+        {
+            await _elementService.AddUserToElement(elementId, userId, User);
         }
 
         /// <summary>
@@ -93,10 +109,37 @@ namespace Cabanoss.API.Controllers
         /// <remarks>
         /// PATCH cabanoss.azurewebsites.net/elements?elementId={id}
         /// </remarks>
-        [HttpPatch]
+        [HttpPatch("elements")]
         public async Task CheckElement([FromQuery] int elementId, UpdateElementDto updateElement)
         {
             await _elementService.CheckElement(elementId, updateElement, User);
+        }
+        //
+        /// <summary>
+        /// retrieves users assigned to a specific task element
+        /// </summary>
+        /// <param name="elementId">element id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/members/elements?elementId={id}
+        /// </remarks>
+        [HttpGet("members/elements")]
+        public async Task<List<ResponseUserDto>> GetElementUsers([FromQuery] int elementId)
+        {
+            return await _elementService.GetElementUsers(elementId, User);
+        }
+
+        /// <summary>
+        /// removes the user to the specified task element
+        /// </summary>
+        /// <param name="elementId">element id</param>
+        /// <param name="userId">user id</param>
+        /// <remarks>
+        /// DELETE cabanoss.azurewebsites.net/members/elements/{elementId}?userId={id}
+        /// </remarks>
+        [HttpDelete("members/elements/{elementId}")]
+        public async Task DeleteUserFromElement([FromRoute] int elementId, [FromQuery] int userId)
+        {
+            await _elementService.DeleteUserFromElement(elementId, userId, User);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Model.Task;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.Task;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace Cabanoss.API.Controllers
     [Route("tasks")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(7)]
     public class TasksController : ControllerBase
     {
         private ITasksService _tasksService;
@@ -29,6 +31,19 @@ namespace Cabanoss.API.Controllers
         public async Task AddNewTask([FromQuery]int cardId,[FromBody]TaskDto createTaskDto)
         {
             await _tasksService.AddTask(cardId, createTaskDto, User);
+        }
+
+        /// <summary>
+        /// updates the specified task
+        /// </summary>
+        /// <param name="taskId">   task id</param>
+        /// <remarks>
+        /// PUT cabanoss.azurewebsites.net/tasks?taskId={id}
+        /// </remarks>
+        [HttpPut]
+        public async Task UpdateTask([FromQuery] int taskId, [FromBody] TaskDto updateTask)
+        {
+            await _tasksService.UpdateTask(taskId, updateTask, User);
         }
 
         /// <summary>
@@ -57,19 +72,6 @@ namespace Cabanoss.API.Controllers
         {
            var task = await _tasksService.GetTask(taskId,User);
            return task;
-        }
-
-        /// <summary>
-        /// updates the specified task
-        /// </summary>
-        /// <param name="taskId">   task id</param>
-        /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/tasks?taskId={id}
-        /// </remarks>
-        [HttpPut]
-        public async Task UpdateTask([FromQuery] int taskId, [FromBody] TaskDto updateTask)
-        {
-            await _tasksService.UpdateTask(taskId, updateTask, User);
         }
 
         /// <summary>

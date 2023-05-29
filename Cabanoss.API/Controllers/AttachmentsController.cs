@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Model.Attachments;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.Attachments;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace Cabanoss.API.Controllers
     [Route("attachments")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(6)]
     public class AttachmentsController : ControllerBase
     {
         private IAttachmentService _attachmentService;
@@ -15,34 +17,6 @@ namespace Cabanoss.API.Controllers
         public AttachmentsController(IAttachmentService attachmentService)
         {
             _attachmentService = attachmentService;
-        }
-
-        /// <summary>
-        /// Downloads attachments from a given card
-        /// </summary>
-        /// <param name="cardId">Card id</param>
-        /// <remarks>
-        /// GET cabanoss.azurewebsites.net/attachments/cards?cardId={id}
-        /// </remarks>
-        [HttpGet("cards")]
-        public async Task<List<AttachmentResponseDto>> GetAttachments([FromQuery] int cardId)
-        {
-            var attachments = await _attachmentService.GetAttachments(cardId, User);
-            return attachments;
-        }
-
-        /// <summary>
-        /// downloads the indicated attachment
-        /// </summary>
-        /// <param name="attachmentId">attachment id</param>
-        /// <remarks>
-        /// GET cabanoss.azurewebsites.net/attachments?attachmentId={id}
-        /// </remarks>
-        [HttpGet]
-        public async Task<AttachmentResponseDto> GetAttachment([FromQuery] int attachmentId)
-        {
-            var attachment = await _attachmentService.GetAttachment(attachmentId, User);
-            return attachment;
         }
 
         /// <summary>
@@ -71,6 +45,34 @@ namespace Cabanoss.API.Controllers
         public async Task UpdateAttachment([FromQuery] int attachmentId, [FromBody] AttachmentDto attachmentDto)
         {
             await _attachmentService.UpdateAttachment(attachmentId, attachmentDto, User);
+        }
+
+        /// <summary>
+        /// Downloads attachments from a given card
+        /// </summary>
+        /// <param name="cardId">Card id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/attachments/cards?cardId={id}
+        /// </remarks>
+        [HttpGet("cards")]
+        public async Task<List<AttachmentResponseDto>> GetAttachments([FromQuery] int cardId)
+        {
+            var attachments = await _attachmentService.GetAttachments(cardId, User);
+            return attachments;
+        }
+
+        /// <summary>
+        /// downloads the indicated attachment
+        /// </summary>
+        /// <param name="attachmentId">attachment id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/attachments?attachmentId={id}
+        /// </remarks>
+        [HttpGet]
+        public async Task<AttachmentResponseDto> GetAttachment([FromQuery] int attachmentId)
+        {
+            var attachment = await _attachmentService.GetAttachment(attachmentId, User);
+            return attachment;
         }
 
         /// <summary>
