@@ -50,6 +50,7 @@ namespace Cabanoss.Core
             CreateMap<ElementDto, Element>().ReverseMap();
             CreateMap<UpdateElementDto, Element>().ReverseMap();
             CreateMap<ResponseTaskDto, Tasks>().ReverseMap();
+            CreateMap<ElementCheckDto , Element>().ReverseMap();
         }
     }
 }

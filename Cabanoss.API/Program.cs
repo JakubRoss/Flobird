@@ -68,7 +68,7 @@ builder.Services.AddScoped<IAuthorizationHandler, AdminRoleRequirementsHandler>(
 builder.Services.AddScoped<IAuthorizationHandler, CreatorRoleRequirementsHandler>();
 
 builder.Services.AddScoped<CabanossSeeder>();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 #region FluentValidations
 builder.Services.AddFluentValidationAutoValidation();
@@ -146,7 +146,6 @@ builder.Services.AddDbContext<CabanossDbContext>(options =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddHttpContextAccessor();
 
 //base repo Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
