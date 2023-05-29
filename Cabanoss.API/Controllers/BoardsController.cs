@@ -1,13 +1,14 @@
-﻿using Cabanoss.Core.Model.Board;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.Board;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cabanoss.API.Controllers
 {
-    [Route("boards")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(2)]
     public class BoardsController : ControllerBase
     {
         private IBoardService _boardService;
@@ -24,23 +25,24 @@ namespace Cabanoss.API.Controllers
         /// <remarks>
         /// POST cabanoss.azurewebsites.net/boards
         /// </remarks>
-        [HttpPost]
+        [HttpPost("boards")]
         public async Task PostBoard([FromBody] CreateBoardDto createBoardDto)
         {
             await _boardService.CreateBoardAsync(createBoardDto , User);
         }
+
         /// <summary>
-        /// downloads a specified board
+        /// Renames the board
         /// </summary>
+        /// <param name="updateBoard">Request's payload</param>
         /// <param name="boardId">Board id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/boards/{id}
+        /// PUT cabanoss.azurewebsites.net/boards?boardId={id}
         /// </remarks>
-        [HttpGet("/{boardId}")]
-        public async Task<ResponseBoardDto> GetBoard([FromRoute] int boardId)
+        [HttpPut("boards")]
+        public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard, [FromQuery] int boardId)
         {
-            var board = await _boardService.GetBoardAsync(User, boardId);
-            return board;
+            await _boardService.UpdateBoardAsync(boardId, updateBoard, User);
         }
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace Cabanoss.API.Controllers
         /// <remarks>
         /// GET cabanoss.azurewebsites.net/boards
         /// </remarks>
-        [HttpGet]
+        [HttpGet("boards")]
         public async Task<List<ResponseBoardDto>> GetBoards()
         {
             var boards = await _boardService.GetBoardsAsync(User);
@@ -60,17 +62,17 @@ namespace Cabanoss.API.Controllers
         }
 
         /// <summary>
-        /// Renames the board
+        /// downloads a specified board
         /// </summary>
-        /// <param name="updateBoard">Request's payload</param>
         /// <param name="boardId">Board id</param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/boards?boardId={id}
+        /// GET cabanoss.azurewebsites.net/boards/{id}
         /// </remarks>
-        [HttpPut]
-        public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard , [FromQuery] int boardId)
+        [HttpGet("boards/{boardId}")]
+        public async Task<ResponseBoardDto> GetBoard([FromRoute] int boardId)
         {
-            await _boardService.UpdateBoardAsync(boardId, updateBoard, User);
+            var board = await _boardService.GetBoardAsync(User, boardId);
+            return board;
         }
 
         /// <summary>
@@ -80,11 +82,68 @@ namespace Cabanoss.API.Controllers
         /// <remarks>
         /// DELETE cabanoss.azurewebsites.net/boards?boardId={id}
         /// </remarks>
-        [HttpDelete]
+        [HttpDelete("boards")]
         public async Task DeleteBoard([FromQuery] int boardId)
         {
             await _boardService.DeleteBoardAsync(boardId, User);
         }
 
+        /// <summary>
+        /// adds the specified user to the given board
+        /// </summary>
+        /// <param name="boardId">board id</param>
+        /// <param name="userId">user id</param>
+        /// <remarks>
+        /// POST cabanoss.azurewebsites.net/members/boards/{boardId}?userId={userId}
+        /// </remarks>
+        [HttpPost("members/boards/{boardId}")]
+        public async Task AddBoardUsers([FromRoute] int boardId, [FromQuery] int userId)
+        {
+            await _boardService.AddUsersAsync(boardId, userId, User);
+        }
+
+        /// <summary>
+        /// sets the user role in the given board
+        /// </summary>
+        /// <param name="boardId">board id</param>
+        /// <param name="userId">user id</param>
+        /// <param name="userRole">user role [0 - Admin, 1 - User]</param>
+        /// <remarks>
+        /// PATCH cabanoss.azurewebsites.net/members/boards/{boardId}?userId={userId}
+        /// </remarks>
+        [HttpPatch("members/boards/{boardId}")]
+        public async Task SetUserRole([FromRoute] int boardId, [FromQuery] int userId, [FromBody] int userRole)
+        {
+            await _boardService.SetUserRole(boardId, userId, userRole, User);
+        }
+
+        /// <summary>
+        /// downloads users of a certain board
+        /// </summary>
+        /// <param name="boardId">board id</param>
+        /// <remarks>
+        /// GET cabanoss.azurewebsites.net/members/boards?boardId={id}
+        /// </remarks>
+        [HttpGet("members/boards")]
+        public async Task<List<ResponseBoardUser>> GetBoardUsers([FromQuery] int boardId)
+        {
+            var users = await _boardService.GetBoardUsersAsync(boardId, User);
+            return users;
+        }
+
+
+        /// <summary>
+        /// removes the specified user to the given board
+        /// </summary>
+        /// <param name="boardId">board id</param>
+        /// <param name="userId">user id</param>
+        /// <remarks>
+        /// DELETE cabanoss.azurewebsites.net/members/{boardId}?userId={userId}
+        /// </remarks>
+        [HttpDelete("members/boards/{boardId}")]
+        public async Task RemoveBoardUsers([FromRoute] int boardId, [FromQuery] int userId)
+        {
+            await _boardService.RemoveUserAsync(boardId, userId, User);
+        }
     }
 }

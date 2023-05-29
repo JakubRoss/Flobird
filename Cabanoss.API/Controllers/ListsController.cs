@@ -1,4 +1,5 @@
-﻿using Cabanoss.Core.Model.List;
+﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Model.List;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace Cabanoss.API.Controllers
     [Route("lists")]
     [ApiController]
     [Authorize]
+    [SwaggerControllerOrder(3)]
     public class ListsController : ControllerBase
     {
         private IListService _listService;
@@ -15,6 +17,19 @@ namespace Cabanoss.API.Controllers
         public ListsController(IListService listService)
         {
             _listService = listService;
+        }
+
+        /// <summary>
+        /// Creating list for a given board
+        /// </summary>
+        /// <param name="boardId">board Id</param>
+        /// <param name="createList">Request's payload</param>
+        /// <remarks>POST cabanoss.azurewebsites.net/lists?boardId={id}
+        /// </remarks>
+        [HttpPost]
+        public async Task CreateList([FromQuery] int boardId, [FromBody] CreateListDto createList)
+        {
+            await _listService.CreateListAsync(boardId, createList.Name, User);
         }
 
         /// <summary>
@@ -29,19 +44,6 @@ namespace Cabanoss.API.Controllers
         {
             var lists = await _listService.GetAllAsync(boardId, User);
             return lists;
-        }
-
-        /// <summary>
-        /// Creating list for a given board
-        /// </summary>
-        /// <param name="boardId">board Id</param>
-        /// <param name="createList">Request's payload</param>
-        /// <remarks>POST cabanoss.azurewebsites.net/lists?boardId={id}
-        /// </remarks>
-        [HttpPost]
-        public async Task CreateList([FromQuery]int boardId, [FromBody] CreateListDto createList)
-        {
-            await _listService.CreateListAsync(boardId, createList.Name, User);
         }
 
         /// <summary>
