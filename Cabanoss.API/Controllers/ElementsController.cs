@@ -110,7 +110,7 @@ namespace Cabanoss.API.Controllers
         /// PATCH cabanoss.azurewebsites.net/elements?elementId={id}
         /// </remarks>
         [HttpPatch("elements")]
-        public async Task CheckElement([FromQuery] int elementId, UpdateElementDto updateElement)
+        public async Task CheckElement([FromQuery] int elementId, ElementCheckDto updateElement)
         {
             await _elementService.CheckElement(elementId, updateElement, User);
         }

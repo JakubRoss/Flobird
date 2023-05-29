@@ -146,7 +146,7 @@ namespace Cabanoss.Core.Service.Impl
 
             await _element.DeleteAsync(element);
         }
-        public async Task CheckElement(int elementId, UpdateElementDto updateElementDto, ClaimsPrincipal claims)
+        public async Task CheckElement(int elementId, ElementCheckDto updateElementDto, ClaimsPrincipal claims)
         {
             var board = await GetBoardByElementId(elementId);
             await CheckBoardMembership(board, claims);
