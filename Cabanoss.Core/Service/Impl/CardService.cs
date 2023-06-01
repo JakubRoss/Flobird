@@ -104,7 +104,7 @@ namespace Cabanoss.Core.Service.Impl
             return cardDto;
         }
 
-        public async Task AddCard(int listId, ClaimsPrincipal user, CreateCardDto createCard)
+        public async Task AddCard(int listId, ClaimsPrincipal user, CreateCardDto createCard, int? cardId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Id == listId), i => i.BoardUsers);
             if (board is null)
@@ -113,15 +113,26 @@ namespace Cabanoss.Core.Service.Impl
             var authorizationResult = await CheckAdminRole(board.Id, user);
             if (!authorizationResult.Succeeded)
                 throw new ResourceNotFoundException("No Access");
-
-            Card card = new Card
+            if(cardId == null)
             {
-                Name = createCard.Name,
-                Description = createCard.Description,
-                CreatedAt = DateTime.UtcNow,
-                ListId = listId
-            };
-            await _cardRepository.AddAsync(card);
+                Card card = new Card
+                {
+                    Name = createCard.Name,
+                    Description = createCard.Description,
+                    CreatedAt = DateTime.UtcNow,
+                    ListId = listId
+
+                };
+                await _cardRepository.AddAsync(card);
+            }
+            if(cardId != null)
+            {
+                var exist = await _boardRepository.GetFirstAsync(b => b.Lists.Any(l => l.Cards.Any(c => c.Id == cardId)));
+                var transferCard = await _cardRepository.GetFirstAsync(c => c.Id == cardId);
+                var card = exist != null ? _cardRepository.GetFirstAsync(c => c.Id == cardId).Result : throw new ConflictExceptions("card does not belong to the board or does not exist");
+                card.ListId = listId;
+                await _cardRepository.UpdateAsync(card);
+            }
         }
 
         public async Task DeleteCard(int cardId, ClaimsPrincipal user)
