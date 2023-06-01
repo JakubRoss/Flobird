@@ -25,12 +25,12 @@ namespace Cabanoss.API.Controllers
         /// <param name="listId">list Id</param>
         /// <param name="createCard">Request's payload</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/cards/lists?listId={id}
+        /// POST cabanoss.azurewebsites.net/cards/lists?listId={id} or transfer to another card POST cabanoss.azurewebsites.net/cards/lists?listId={id}?cardId={id}
         /// </remarks>
         [HttpPost("cards/lists")]
-        public async Task AddCard([FromQuery] int listId, [FromBody] CreateCardDto createCard)
+        public async Task AddCard([FromQuery] int listId,[FromQuery] int? cardId, [FromBody] CreateCardDto createCard)
         {
-            await _cardService.AddCard(listId, User, createCard);
+            await _cardService.AddCard(listId, User, createCard, cardId);
         }
 
         /// <summary>

@@ -41,7 +41,7 @@ namespace Cabanoss.Core.Service.Impl
         private async Task<Board> GetBoardByElementId(int elementId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Lists
-                    .Any(list => list.Cards.Any(card => card.Tasks.Any(task => task.Elements.Any(eId => eId.Id == elementId)))), i => i.BoardUsers);
+                    .Any(list => list.Cards.Any(card => card.Tasks.Any(task => task.Elements.Any(eId => eId.Id == elementId)))), i=>i.BoardUsers);
 
             if (board is null)
                 throw new ResourceNotFoundException("Resource Not Found");
@@ -97,7 +97,7 @@ namespace Cabanoss.Core.Service.Impl
 
             await CheckBoardMembership(board, claims);
 
-            var element = await _element.GetFirstAsync(p => p.Id == elementId);
+            var element = await _element.GetFirstAsync(p => p.Id == elementId, i=>i.ElementUsers);
             var elementDto = _mapper.Map<ResponseElementDto>(element);
             return elementDto;
         }
@@ -167,10 +167,11 @@ namespace Cabanoss.Core.Service.Impl
             var board = await GetBoardByElementId(elementId);
             await CheckBoardMembership(board,claims);
 
-            var boardUsers = board.BoardUsers.ToList();
+            var element = await _element.GetFirstAsync(eid => eid.Id == elementId, i => i.ElementUsers);
+            var elementUsers = element.ElementUsers.ToList();
 
             var users = new List<User>();
-            foreach (var user in boardUsers)
+            foreach (var user in elementUsers)
             {
                 var cos = _userRepository.GetFirstAsync(u=>u.Id == user.UserId).Result;
                 users.Add(cos);
