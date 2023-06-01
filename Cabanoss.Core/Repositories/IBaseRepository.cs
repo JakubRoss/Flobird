@@ -1,5 +1,4 @@
 ﻿using Cabanoss.Core.Data;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Cabanoss.Core.Repositories
@@ -8,6 +7,7 @@ namespace Cabanoss.Core.Repositories
     {
         Task<TEntity> AddAsync(TEntity entity);
         Task<TEntity> DeleteAsync(TEntity entity);
+        Task DeleteRangeAsync(IEnumerable<TEntity> entity);
         Task<List<TEntity>> GetAllAsync();
         Task<List<TEntity>> GetAllAsync(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> GetFirstAsync(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate);

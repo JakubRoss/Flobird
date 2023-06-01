@@ -1,7 +1,6 @@
 ﻿using Cabanoss.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Cabanoss.Core.Repositories.Impl
 {
@@ -28,6 +27,11 @@ namespace Cabanoss.Core.Repositories.Impl
             await Context.SaveChangesAsync();
 
             return removedEntity;
+        }
+        public async Task DeleteRangeAsync(IEnumerable<TEntity> entity)
+        {
+            DbSet.RemoveRange(entity);
+            await Context.SaveChangesAsync();
         }
 
         public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)

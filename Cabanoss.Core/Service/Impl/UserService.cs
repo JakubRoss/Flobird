@@ -19,18 +19,25 @@ namespace Cabanoss.Core.Service.Impl
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IWorkspaceService _workspaceBussiness;
         private readonly AuthenticationSettings _authenticationSettings;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IWorkspaceRepository _workspaceRepository;
 
-        public UserService(IUserRepository userBase
-            ,IMapper mapper
-            , IWorkspaceService workspaceBussiness
-            ,IPasswordHasher<User>passwordHasher
-            ,AuthenticationSettings authenticationSettings)
+        public UserService(
+            IUserRepository userBase,
+            IBoardRepository boardRepository,
+            IWorkspaceRepository workspaceRepository,
+            IMapper mapper,
+            IWorkspaceService workspaceBussiness,
+            IPasswordHasher<User>passwordHasher,
+            AuthenticationSettings authenticationSettings)
         {
             _userBase = userBase;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _workspaceBussiness = workspaceBussiness;
             _authenticationSettings = authenticationSettings;
+            _boardRepository = boardRepository;
+            _workspaceRepository = workspaceRepository;
         }
         #region Utils
         private async System.Threading.Tasks.Task<User> GetUser(ClaimsPrincipal claims)
@@ -112,6 +119,11 @@ namespace Cabanoss.Core.Service.Impl
         public async Task RemoveUserAsync(ClaimsPrincipal claims)
         {
             var user = await GetUser(claims);
+            var boards = await _boardRepository.GetAllAsync(b=>b.BoardUsers.Any(id=>id.UserId == user.Id));
+            if(boards!=null)
+                await _boardRepository.DeleteRangeAsync(boards);
+            var workspace = await _workspaceRepository.GetFirstAsync(x=>x.UserId == user.Id);
+            await _workspaceRepository.DeleteAsync(workspace);
             await _userBase.DeleteAsync(user);
         }
         public async Task<List<ResponseUserDto>> GetUsersAsync(string searchingPhrase)
