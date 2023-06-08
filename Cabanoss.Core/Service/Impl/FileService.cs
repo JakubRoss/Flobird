@@ -1,8 +1,11 @@
-﻿using Cabanoss.Core.Exceptions;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Cabanoss.Core.Common;
+using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Repositories;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.StaticFiles;
 using System.Security.Claims;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Cabanoss.Core.Service.Impl
 {
@@ -32,6 +35,7 @@ namespace Cabanoss.Core.Service.Impl
             _userRepository = userRepository;
             _IHttpContextAccessor = IHttpContextAccessor;
         }
+        #region Utils
         private bool GetFileExtension(IFormFile file, out string ext)
         {
             string[] allowedExtensions = {".jpeg",".jpg",".png"}; 
@@ -44,35 +48,78 @@ namespace Cabanoss.Core.Service.Impl
             ext = extension;
             return true;
         }
-        public async Task<FileContResult> GetFile(ClaimsPrincipal claimsPrincipal)
+        public async Task<BlobClient> FindFile(string fileName, AzureProps azureProps)
+        {
+            BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.containerName);
+
+            await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
+            {
+                if (blobItem.Name.Contains(fileName))
+                {
+                    return containerClient.GetBlobClient(blobItem.Name);
+                }
+            }
+
+            return null;
+        }
+        private string GetContentType(string fileName)
+        {
+            var fileExtension = $".{fileName.Split('.').Last()}";
+            if (fileExtension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                fileExtension.Equals(".jpg", StringComparison.OrdinalIgnoreCase))
+            {
+                return "image/jpeg";
+            }
+            else if (fileExtension.Equals(".png", StringComparison.OrdinalIgnoreCase))
+            {
+                return "image/png";
+            }
+            else
+            {
+                // Domyślny typ zawartości dla innych plików
+                return "application/octet-stream";
+            }
+        }
+        #endregion
+
+        public async Task<FileContResult> GetFile(ClaimsPrincipal claimsPrincipal, AzureProps azureProps)
         {
             var id = claimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var login = claimsPrincipal.FindFirst(c => c.Type == ClaimTypes.Name).Value;
+            var name = $"{id}_{login}AV";
 
-            var rootPath = Directory.GetParent(Directory.GetCurrentDirectory());
-            var folderPath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}";
+            var blobClient = await FindFile(name,azureProps);
 
-            if (!Directory.Exists(folderPath))
+            // Ustaw nagłówek Content-Disposition, aby wskazać, że plik ma być wyświetlany w przeglądarce, a nie pobierany
+            await blobClient.SetHttpHeadersAsync(new BlobHttpHeaders
             {
-                throw new ResourceNotFoundException("File doesn't exist");
+                ContentDisposition = "inline"
+            });
+
+            byte[] file;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                await blobClient.DownloadToAsync(memoryStream);
+                 file = memoryStream.ToArray();
             }
 
-            var file = Directory.GetFiles(folderPath).First();
-            if(file == null)
+            var contentType = GetContentType(blobClient.Name);
+            if (contentType != null)
             {
-                throw new ResourceNotFoundException("File doesn't exist");
+                blobClient.SetHttpHeaders(new BlobHttpHeaders
+                {
+                    ContentType = contentType
+                });
             }
 
-            var fileName = Path.GetFileName(file);
+            string uri = blobClient.Uri.AbsoluteUri;
+            string fileName = uri.Substring(uri.LastIndexOf('/') + 1);
 
-            var contentProvider = new FileExtensionContentTypeProvider();
-            contentProvider.TryGetContentType(file, out var contentType);
-
-            var fileContents = System.IO.File.ReadAllBytes(file);
-
-            return new FileContResult(fileContents, contentType, fileName);
+            return new FileContResult(file, contentType, fileName);
         }
 
-        public async Task UploadFile(ClaimsPrincipal claims, IFormFile file)
+        public async Task UploadFile(AzureProps azureProps,ClaimsPrincipal claims, IFormFile file)
         {
             var id = claims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var login = claims.FindFirst(c => c.Type == ClaimTypes.Name).Value;
@@ -84,37 +131,26 @@ namespace Cabanoss.Core.Service.Impl
                 throw new ResourceNotFoundException("incorrect file format or size");
             }
 
-            var rootPath = Directory.GetParent(Directory.GetCurrentDirectory());
             var name = $"{id}_{login}AV{ext}";
-            var directoryPath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}";
-
-            if (!Directory.Exists(directoryPath))
+            var blobFile = await FindFile(name.Split('.').First(), azureProps);
+            if (blobFile != null)
             {
-                Directory.CreateDirectory(directoryPath);
+                blobFile.DeleteIfExists();
             }
 
-            var files = Directory.GetFiles(directoryPath);
-            if(files.Length > 0)
-            {
-                foreach(var obj in files)
-                    File.Delete(obj);
-            }
+            BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.containerName);
 
-            var filePath = $"{rootPath}\\Cabanoss.Core\\Files\\{id}\\{name}";
+            BlobClient blobClient = containerClient.GetBlobClient(name);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyTo(stream);
-            }
+            var stream = file.OpenReadStream();
+            await blobClient.UploadAsync(stream, overwrite: true);
+            var uri = blobClient.Uri;
 
-            // Konstruowanie pełnej ścieżki URL na platformie
-            var baseUrl = $"{_IHttpContextAccessor.HttpContext.Request.Scheme}://{_IHttpContextAccessor.HttpContext.Request.Host}";
-
-            // Tworzenie ścieżki URL do pliku
-            var fileUrl = $"{baseUrl}/Cabanoss.Core/Files/{id}/{name}";
             var user = await _userRepository.GetFirstAsync(x => x.Id == int.Parse(id));
-            user.AvatarPath = fileUrl;
+            user.AvatarPath = uri.ToString();
             await _userRepository.UpdateAsync(user);
+
         }
     }
 }

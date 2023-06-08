@@ -1,4 +1,5 @@
 ﻿using Cabanoss.API.Swagger;
+using Cabanoss.Core.Common;
 using Cabanoss.Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace Cabanoss.API.Controllers
     public class FillesController : ControllerBase
     {
         private IFileService _fileService;
+        private readonly AzureProps _azureProps;
 
-        public FillesController(IFileService fileService)
+        public FillesController(IFileService fileService, AzureProps azureProps)
         {
             _fileService = fileService;
+            _azureProps = azureProps;
         }
 
         /// <summary>
@@ -27,7 +30,7 @@ namespace Cabanoss.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetFile()
         {
-            var fileContents = await _fileService.GetFile(User);
+            var fileContents = await _fileService.GetFile(User, _azureProps);
 
             return File(fileContents.fileContents, fileContents.contentType, fileContents.fileName);
         }
@@ -42,7 +45,7 @@ namespace Cabanoss.API.Controllers
         [HttpPost]
         public async Task UploadFile(IFormFile file)
         {
-            await _fileService.UploadFile(User, file);
+            await _fileService.UploadFile(_azureProps,User, file);
         }
     }
 }
