@@ -60,6 +60,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 #endregion
+#region Azure
+var azureProps = new AzureProps();
+builder.Configuration.GetSection("Azure").Bind(azureProps);
+builder.Services.AddSingleton(azureProps);
+#endregion
 
 builder.Services.AddAuthorization();
 //Authorization services
