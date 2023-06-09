@@ -5,7 +5,6 @@ using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Repositories;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Cabanoss.Core.Service.Impl
 {
@@ -26,14 +25,12 @@ namespace Cabanoss.Core.Service.Impl
     public class FileService : IFileService
     {
         private IUserRepository _userRepository;
-        private readonly IHttpContextAccessor _IHttpContextAccessor;
 
         public FileService(
-            IUserRepository userRepository,
-            IHttpContextAccessor IHttpContextAccessor)
+            IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _IHttpContextAccessor = IHttpContextAccessor;
+
         }
         #region Utils
         private bool GetFileExtension(IFormFile file, out string ext)
