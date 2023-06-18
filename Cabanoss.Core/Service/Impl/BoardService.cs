@@ -122,6 +122,7 @@ namespace Cabanoss.Core.Service.Impl
                         Id = user.Id,
                         Login = user.Login,
                         Email = user.Email,
+                        AvatarPath = user.AvatarPath,
                         IsAdmin = (role != Roles.User) ? true : false
                     });
                 }

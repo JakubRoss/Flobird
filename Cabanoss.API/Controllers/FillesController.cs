@@ -30,13 +30,13 @@ namespace Cabanoss.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetFile()
         {
-            var fileContents = await _fileService.GetFile(User, _azureProps);
+            var fileContents = await _fileService.GetFile(_azureProps);
 
             return File(fileContents.fileContents, fileContents.contentType, fileContents.fileName);
         }
 
         /// <summary>
-        /// uploads files like "jpeg", "jpg", "png" up to 1MB (eventually avatar support)
+        /// uploads files like "jpeg", "jpg", "png" up to 1MB (avatar support)
         /// </summary>
         /// <param name="file">Request's payload</param>
         /// <remarks>
@@ -45,7 +45,7 @@ namespace Cabanoss.API.Controllers
         [HttpPost]
         public async Task UploadFile(IFormFile file)
         {
-            await _fileService.UploadFile(_azureProps,User, file);
+            await _fileService.UploadFile(_azureProps,file);
         }
     }
 }

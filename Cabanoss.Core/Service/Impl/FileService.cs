@@ -4,7 +4,6 @@ using Cabanoss.Core.Common;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Repositories;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace Cabanoss.Core.Service.Impl
 {
@@ -25,11 +24,14 @@ namespace Cabanoss.Core.Service.Impl
     public class FileService : IFileService
     {
         private IUserRepository _userRepository;
+        private IHttpUserContextService _httpUserContextService;
 
         public FileService(
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IHttpUserContextService httpUserContextService)
         {
             _userRepository = userRepository;
+            _httpUserContextService = httpUserContextService;
 
         }
         #region Utils
@@ -80,19 +82,17 @@ namespace Cabanoss.Core.Service.Impl
         }
         #endregion
 
-        public async Task<FileContResult> GetFile(ClaimsPrincipal claimsPrincipal, AzureProps azureProps)
+        public async Task<FileContResult> GetFile(AzureProps azureProps)
         {
-            var id = claimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var login = claimsPrincipal.FindFirst(c => c.Type == ClaimTypes.Name).Value;
+            var id = _httpUserContextService.UserId;
+            var login = _httpUserContextService.UserLogin;
             var name = $"{id}_{login}AV";
 
             var blobClient = await FindFile(name,azureProps);
-
-            // Ustaw nagłówek Content-Disposition, aby wskazać, że plik ma być wyświetlany w przeglądarce, a nie pobierany
-            await blobClient.SetHttpHeadersAsync(new BlobHttpHeaders
+            if (blobClient is null)
             {
-                ContentDisposition = "inline"
-            });
+                throw new ResourceNotFoundException("File doesn't exist");
+            }
 
             byte[] file;
             using (MemoryStream memoryStream = new MemoryStream())
@@ -106,7 +106,7 @@ namespace Cabanoss.Core.Service.Impl
             {
                 blobClient.SetHttpHeaders(new BlobHttpHeaders
                 {
-                    ContentType = contentType
+                    ContentType = contentType,
                 });
             }
 
@@ -116,16 +116,16 @@ namespace Cabanoss.Core.Service.Impl
             return new FileContResult(file, contentType, fileName);
         }
 
-        public async Task UploadFile(AzureProps azureProps,ClaimsPrincipal claims, IFormFile file)
+        public async Task UploadFile(AzureProps azureProps,IFormFile file)
         {
-            var id = claims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var login = claims.FindFirst(c => c.Type == ClaimTypes.Name).Value;
+            var id = _httpUserContextService.UserId;
+            var login = _httpUserContextService.UserLogin;
 
             var ext = string.Empty;
             var allowedExtension = GetFileExtension(file, out ext);
             if (file is null || file.Length > 1048576 || !allowedExtension)
             {
-                throw new ResourceNotFoundException("incorrect file format or size");
+                throw new ConflictExceptions("incorrect file format or size");
             }
 
             var name = $"{id}_{login}AV{ext}";
@@ -142,9 +142,13 @@ namespace Cabanoss.Core.Service.Impl
 
             var stream = file.OpenReadStream();
             await blobClient.UploadAsync(stream, overwrite: true);
+            blobClient.SetHttpHeaders(new BlobHttpHeaders
+            {
+                ContentDisposition = "inline" // Ustaw nagłówek Content-Disposition, aby wskazać, że plik ma być wyświetlany w przeglądarce, a nie pobierany
+            });
             var uri = blobClient.Uri;
 
-            var user = await _userRepository.GetFirstAsync(x => x.Id == int.Parse(id));
+            var user = await _userRepository.GetFirstAsync(x => x.Id == id);
             user.AvatarPath = uri.ToString();
             await _userRepository.UpdateAsync(user);
 
