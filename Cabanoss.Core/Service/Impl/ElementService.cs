@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Cabanoss.Core.Authorization;
+using Cabanoss.Core.Common;
 using Cabanoss.Core.Data.Entities;
 using Cabanoss.Core.Exceptions;
 using Cabanoss.Core.Model.Element;
@@ -141,20 +142,27 @@ namespace Cabanoss.Core.Service.Impl
         }
         public async Task CheckElement(int elementId, ElementCheckDto updateElementDto)
         {
-            var board = await GetBoardByElementId(elementId);
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User, board, new ResourceOperationRequirement(ResourceOperations.Read));
-            if (!authorizationResult.Succeeded)
-                throw new UnauthorizedException("Unauthorized");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User,
+                await GetBoardByElementId(elementId),
+                new ResourceOperationRequirement(ResourceOperations.Update));
 
-            var element = await _element.GetFirstAsync(p => p.Id == elementId);
+            #region Validation
+            var element = await _element.GetFirstAsync(p => p.Id == elementId, i=>i.ElementUsers);
             if (element == null)
                 throw new ResourceNotFoundException("Resource Not Found");
 
             if (element.IsComplete != true && element.IsComplete != false)
                 throw new ResourceNotFoundException("Is Complete must be true or false");
+            #endregion
 
-            element.IsComplete = updateElementDto.IsComplete;
-            await _element.UpdateAsync(element);
+            if (authorizationResult.Succeeded || (element.ElementUsers
+                    .FirstOrDefault(id => id.UserId == _httpUserContextService.UserId) != null) ? true : false )
+            {
+                element.IsComplete = updateElementDto.IsComplete;
+                await _element.UpdateAsync(element);
+            }
+            else
+                throw new UnauthorizedException("Unauthorized");
         }
         //For members
         public async Task<List<ResponseUserDto>> GetElementUsers(int elementId)
