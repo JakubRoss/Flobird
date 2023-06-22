@@ -75,7 +75,7 @@ namespace Cabanoss.Core.Service.Impl
         public async Task AddAttachment(int cardId, AttachmentDto attachment)
         {
             var board = await GetBoardByCardId(cardId);
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User, board, new ResourceOperationRequirement(ResourceOperations.Create));
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User, board, new ResourceOperationRequirement(ResourceOperations.Read));
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
