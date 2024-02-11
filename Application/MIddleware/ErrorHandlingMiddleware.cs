@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Middleware
 {
@@ -16,14 +17,19 @@ namespace Application.Middleware
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(ex.Message);
             }
-            catch (UnauthorizedException  ex) 
+            catch (UnauthorizedException ex)
             {
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsync(ex.Message);
-            } 
-            catch(ConflictExceptions ex)
+            }
+            catch (ConflictExceptions ex)
             {
                 context.Response.StatusCode = 409;
+                await context.Response.WriteAsync(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                context.Response.StatusCode = 500;
                 await context.Response.WriteAsync(ex.Message);
             }
 

@@ -1,15 +1,15 @@
-﻿using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Application.Common;
+﻿using Application.Common;
 using Application.Data.Entities;
 using Application.Exceptions;
 using Application.Model.User;
 using Application.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Application.Service.Impl
 {
@@ -112,14 +112,28 @@ namespace Application.Service.Impl
             var updatedDto = _mapper.Map<UserDto>(updated);
             return updatedDto;
         }
+
         public async Task RemoveUserAsync()
         {
             var user = await GetUser();
-            var boards = await _boardRepository.GetAllAsync(b=>b.BoardUsers.Any(id=>id.UserId == user.Id));
-            if(boards!=null)
-                await _boardRepository.DeleteRangeAsync(boards);
-            await _userBase.DeleteAsync(user);
+            var boards = await _boardRepository.GetAllAsync(b => b.BoardUsers.Any(id => id.UserId == user.Id));
+            using (_boardRepository.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _boardRepository.DeleteRangeAsync(boards);
+                    await _userBase.DeleteAsync(user);
+
+                    await _boardRepository.CommitTransactionAsync();
+                }
+                catch (Exception)
+                {
+                    await _boardRepository.RollbackTransactionAsync();
+                    throw new DbUpdateException("Wystąpił błąd podczas usuwania danych z bazy danych.");
+                }
+            }
         }
+
         public async Task<List<ResponseUserDto>> GetUsersAsync(string searchingPhrase)
         {
             var users = await _userBase.GetUsersAsync(searchingPhrase);
