@@ -53,12 +53,12 @@ namespace Application.Service.Impl
                 throw new ResourceNotFoundException("Resource Not Found");
             return board;
         }
-        private async Task CheckBoardMembership(Board board, int userId)
+        private void CheckBoardMembership(Board board, int userId)
         {
             if (board is null)
                 throw new ResourceNotFoundException("Resource Not Found");
 
-            var isUser = board.BoardUsers.Any(u=>u.UserId == userId);
+            var isUser = board.BoardUsers.Any(u => u.UserId == userId);
             if (!isUser)
                 throw new ResourceNotFoundException("no access");
         }
@@ -96,9 +96,8 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var newElement = new Element()
+            var newElement = new Element(elementDto.Description)
             {
-                Description = elementDto.Description,
                 IsComplete = false,
                 CreatedAt = DateTime.UtcNow,
                 TaskId = taskId
@@ -121,8 +120,7 @@ namespace Application.Service.Impl
             if (element.Description != null)
                 element.Description = updateElementDto.Description;
 
-            if (element.IsComplete != null)
-                element.IsComplete = updateElementDto.IsComplete;
+            element.IsComplete = updateElementDto.IsComplete;
 
             await _element.UpdateAsync(element);
         }
@@ -190,7 +188,7 @@ namespace Application.Service.Impl
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User, board, new ResourceOperationRequirement(ResourceOperations.Update));
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
-            await CheckBoardMembership(board, userId);
+            CheckBoardMembership(board, userId);
 
             var element = await _element.GetFirstAsync(_ => _.Id == elementId, i=>i.ElementUsers);
 
@@ -212,7 +210,7 @@ namespace Application.Service.Impl
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User, board, new ResourceOperationRequirement(ResourceOperations.Update));
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
-            await CheckBoardMembership(board, userId);
+            CheckBoardMembership(board, userId);
 
             var boardUser = board.BoardUsers.FirstOrDefault(p=>p.BoardId == board.Id && p.UserId==userId);
 

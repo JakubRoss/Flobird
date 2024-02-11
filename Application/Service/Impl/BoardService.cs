@@ -117,10 +117,9 @@ namespace Application.Service.Impl
                 foreach (var user in users)
                 {
                     var role = user.BoardUsers.Where(id=>id.BoardId == boardId).Select(r=>r.Roles).First();
-                    mapedUsers.Add(new ResponseBoardUser
+                    mapedUsers.Add(new ResponseBoardUser(user.Login)
                     {
                         Id = user.Id,
-                        Login = user.Login,
                         Email = user.Email,
                         AvatarPath = user.AvatarPath,
                         IsAdmin = (role != Roles.User) ? true : false

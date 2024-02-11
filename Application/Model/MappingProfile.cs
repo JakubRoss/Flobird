@@ -21,18 +21,12 @@ namespace Application.Model
             CreateMap<CreateBoardDto, Data.Entities.Board>().ReverseMap();
             CreateMap<UserLoginDto, Data.Entities.User>().ReverseMap();
 
-            CreateMap<UserDto, Data.Entities.User>()
-                .ForMember(ud => ud.Login, f => f.MapFrom(u => u.Login))
-                .ForMember(ud => ud.Email, f => f.MapFrom(u => u.Email))
-                .ForMember(ud => ud.PasswordHash, f => f.MapFrom(u => u.PasswordHash))
-                .ForMember(ud => ud.CreatedAt, f => f.MapFrom(u => u.CreatedAt))
-                .ForMember(ud => ud.UpdatedAt, f => f.MapFrom(u => u.UpdatedAt))
-                .ReverseMap();
+            CreateMap<UserDto, Data.Entities.User>().ReverseMap();
             CreateMap<UpdateUserDto, Data.Entities.User>()
-                .ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
+                //.ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
                 .ReverseMap();
             CreateMap<CreateUserDto, Data.Entities.User>()
-                .ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
+                //.ForMember(u => u.PasswordHash, f => f.MapFrom(cud => cud.Password))
                 .ReverseMap();
             CreateMap<ResponseUserDto, Data.Entities.User>().ReverseMap();
             CreateMap<ResponseBoardDto, Data.Entities.Board>().ReverseMap();

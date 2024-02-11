@@ -47,7 +47,7 @@ namespace Application.Service.Impl
             ext = extension;
             return true;
         }
-        public async Task<BlobClient> FindFile(string fileName, AzureProps azureProps)
+        public async Task<BlobClient?> FindFile(string fileName, AzureProps azureProps)
         {
             BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.ContainerName);

@@ -100,9 +100,8 @@ namespace Application.Service.Impl
 
             if (cardId == null)
             {
-                Card card = new Card
+                Card card = new(createCard.Name)
                 {
-                    Name = createCard.Name,
                     Description = createCard.Description,
                     CreatedAt = DateTime.UtcNow,
                     ListId = listId

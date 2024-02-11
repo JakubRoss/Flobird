@@ -4,6 +4,6 @@ namespace Application.Repositories
 {
     public interface IUserRepository : IBaseRepository<User>
     {
-        Task<List<User>> GetUsersAsync(string searchphrase);
+        Task<List<User>> GetUsersAsync(string searchPhrase);
     }
 }

@@ -2,6 +2,11 @@
 {
     public class ResponseBoardUser
     {
+        public ResponseBoardUser(string login)
+        {
+            Login = login;
+        }
+
         public int Id { get; set; }
         public string Login { get; set; }
         public string? Email { get; set; }

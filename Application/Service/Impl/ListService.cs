@@ -70,11 +70,10 @@ namespace Application.Service.Impl
                 throw new UnauthorizedException("Unauthorized");
 
             var i = GetAllAsync(boardId).Result.Count;
-            var list = new List()
+            var list = new List(name)
             {
                 CreatedAt = DateTime.Now,
                 BoardId = boardId,
-                Name = name,
                 Position = i++
         };
             await _listRepository.AddAsync(list);

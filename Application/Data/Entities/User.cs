@@ -2,7 +2,18 @@
 {
     public class User : BaseEntity
     {
-        public int Id { get; set; }
+        public User(string login, string passwordHash)
+        {
+            Login = login;
+            PasswordHash = passwordHash;
+        }
+
+        /// <summary>
+        /// Ogólnie rzecz biorąc, zastosowanie new do właściwości Id może być interpretowane
+        /// jako sposób na ukrycie tej właściwości, aby była ona dostępna tylko
+        /// wewnętrznie, np. dla potrzeb EF i operacji bazodanowych, a nie dla użytkownika klasy. 
+        /// </summary>
+        public new int Id { get; set; }
         public string Login { get; set; }
         public string? Email { get; set; }
         public string PasswordHash { get; set; }
@@ -11,12 +22,12 @@
         public string? AvatarPath { get; set; }
 
         //Navigation
-        public virtual Workspace Workspace { get; set; }
+        public virtual Workspace Workspace { get; set; } = null!;
 
-        public virtual ICollection<BoardUser> BoardUsers { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<Attachment> Attachments { get; set; }
-        public virtual ICollection<CardUser> CardUsers { get; set; }
-        public virtual ICollection<ElementUsers> ElementUsers { get; set; }
+        public virtual ICollection<BoardUser> BoardUsers { get; set; } = new List<BoardUser>();
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual ICollection<Attachment> Attachments { get; set; } = new List<Attachment>();
+        public virtual ICollection<CardUser> CardUsers { get; set; } = new List<CardUser>();
+        public virtual ICollection<ElementUsers> ElementUsers { get; set; } = new List<ElementUsers>();
     }
 }

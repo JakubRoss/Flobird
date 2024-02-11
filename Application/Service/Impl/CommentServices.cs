@@ -59,12 +59,9 @@ namespace Application.Service.Impl
             foreach (var comment in cardComments)
             {
                 var user = await _userRepository.GetFirstAsync(x => x.Id == comment.UserId);
-                cardDtoComments.Add(new ResponseCommentDto
+
+                cardDtoComments.Add(new ResponseCommentDto(comment.Id, user.Id, user.Login,comment.Text)
                 {
-                    Id = comment.Id,
-                    UserId = user.Id,
-                    Author = user.Login,
-                    Text = comment.Text,
                     CreatedAt = comment.CreatedAt
                 });
             }
@@ -82,12 +79,8 @@ namespace Application.Service.Impl
             if (comment is null)
                 throw new ResourceNotFoundException("comment does not exist");
 
-            return new ResponseCommentDto 
+            return new ResponseCommentDto (comment.Id,comment.User.Id,comment.User.Login,comment.Text)
             { 
-                Id = comment.Id,
-                UserId = comment.UserId,
-                Author = _userRepository.GetFirstAsync(i=>i.Id==comment.UserId).Result.Login,
-                Text = comment.Text,
                 CreatedAt = comment.CreatedAt
             };
         }
@@ -98,11 +91,10 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var userId = (int)_httpUserContextService.UserId;
+            var userId = (int)_httpUserContextService.UserId!;
 
-            var comment = new Comment()
+            var comment = new Comment(text)
             {
-                Text = text,
                 CreatedAt = DateTime.Now,
                 UserId = userId,
                 CardId = cardId
@@ -120,7 +112,7 @@ namespace Application.Service.Impl
             if (comment is null)
                 throw new ResourceNotFoundException("Reosurce not found");
 
-            if ((int)_httpUserContextService.UserId == comment.UserId || authorizationResult.Succeeded)
+            if ((int)_httpUserContextService.UserId! == comment.UserId || authorizationResult.Succeeded)
             {
                 comment.Text = text;
                 await _commentRepository.UpdateAsync(comment);
@@ -136,7 +128,7 @@ namespace Application.Service.Impl
 
             var comment = await _commentRepository.GetFirstAsync(p => p.Id == commentId);
 
-            if ((int)_httpUserContextService.UserId == comment.UserId || authorizationResult.Succeeded)
+            if ((int)_httpUserContextService.UserId! == comment.UserId || authorizationResult.Succeeded)
                 await _commentRepository.DeleteAsync(comment);
             else
                 throw new UnauthorizedException("Unauthorized");

@@ -2,6 +2,14 @@
 {
     public class ResponseCommentDto
     {
+        public ResponseCommentDto(int id, int userId, string author, string text)
+        {
+            Id = id;
+            UserId = userId;
+            Author = author;
+            Text = text;
+        }
+
         public int Id { get; set; }
         public int UserId { get; set; }
         public string Author { get; set; }
