@@ -18,9 +18,6 @@
         public DateTime? UpdatedAt { get; set; }
 
         //Navigation
-        public int WorkspaceId { get; set; }
-        public virtual Workspace Workspace { get; set; } = null!;
-
         public virtual ICollection<BoardUser> BoardUsers { get; set; } = new List<BoardUser>();
         public virtual ICollection<List> Lists { get; set; } = new List<List>();
     }

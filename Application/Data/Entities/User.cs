@@ -22,7 +22,6 @@
         public string? AvatarPath { get; set; }
 
         //Navigation
-        public virtual Workspace Workspace { get; set; } = null!;
 
         public virtual ICollection<BoardUser> BoardUsers { get; set; } = new List<BoardUser>();
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();

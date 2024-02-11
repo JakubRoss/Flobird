@@ -18,18 +18,14 @@ namespace Application.Service.Impl
         private readonly IUserRepository _userBase;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IWorkspaceService _workspaceBusiness;
         private readonly AuthenticationSettings _authenticationSettings;
         private readonly IBoardRepository _boardRepository;
-        private readonly IWorkspaceRepository _workspaceRepository;
         private readonly IHttpUserContextService _httpUserContextService;
 
         public UserService(
             IUserRepository userBase,
             IBoardRepository boardRepository,
-            IWorkspaceRepository workspaceRepository,
             IMapper mapper,
-            IWorkspaceService workspaceBusiness,
             IPasswordHasher<User>passwordHasher,
             AuthenticationSettings authenticationSettings,
             IHttpUserContextService httpUserContextService)
@@ -37,10 +33,8 @@ namespace Application.Service.Impl
             _userBase = userBase;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
-            _workspaceBusiness = workspaceBusiness;
             _authenticationSettings = authenticationSettings;
             _boardRepository = boardRepository;
-            _workspaceRepository = workspaceRepository;
             _httpUserContextService = httpUserContextService;
         }
         #region Utils
@@ -91,8 +85,6 @@ namespace Application.Service.Impl
             user.PasswordHash = hashedPassword;
             user.CreatedAt = DateTime.Now;
             var newUser = await _userBase.AddAsync(user);
-
-            await _workspaceBusiness.AddWorkspaceAsync(newUser);
         }
         public async Task<UserDto> GetUserAsync()
         {
@@ -126,8 +118,6 @@ namespace Application.Service.Impl
             var boards = await _boardRepository.GetAllAsync(b=>b.BoardUsers.Any(id=>id.UserId == user.Id));
             if(boards!=null)
                 await _boardRepository.DeleteRangeAsync(boards);
-            var workspace = await _workspaceRepository.GetFirstAsync(x=>x.UserId == user.Id);
-            await _workspaceRepository.DeleteAsync(workspace);
             await _userBase.DeleteAsync(user);
         }
         public async Task<List<ResponseUserDto>> GetUsersAsync(string searchingPhrase)

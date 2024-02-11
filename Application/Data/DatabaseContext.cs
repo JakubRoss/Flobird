@@ -10,7 +10,6 @@ namespace Application.Data
         public DbSet<Board> Boards { get; set; }
         public DbSet<BoardUser> BoardsUser { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Workspace> Workspaces { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -56,12 +55,6 @@ namespace Application.Data
                 .HasMany(bu=>bu.BoardUsers)
                 .WithOne(u=>u.User)
                 .HasForeignKey(k=>k.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<User>()
-                .HasOne(ws=>ws.Workspace)
-                .WithOne(u=>u.User)
-                .HasForeignKey<Workspace>(w => w.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>()
@@ -125,20 +118,6 @@ namespace Application.Data
                 .WithMany(bu=>bu.BoardUsers)
                 .HasForeignKey(k=>k.BoardId)
                 .OnDelete(DeleteBehavior.NoAction);
-            #endregion
-
-            #region WorkSpace_Relations
-            modelBuilder.Entity<Workspace>()
-                .HasOne(u => u.User)
-                .WithOne(w => w.Workspace)
-                .HasForeignKey<Workspace>(k => k.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<Workspace>()
-                .HasMany(b=>b.Boards)
-                .WithOne(w=>w.Workspace)
-                .HasForeignKey(k=>k.WorkspaceId)
-                .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
             #region Attachment_Relations
@@ -230,12 +209,6 @@ namespace Application.Data
             #endregion
 
             #region Boards_Relations
-            modelBuilder.Entity<Board>()
-                .HasOne(w=>w.Workspace)
-                .WithMany(b=>b.Boards)
-                .HasForeignKey(k=>k.WorkspaceId)
-                .OnDelete(DeleteBehavior.NoAction);
-
             modelBuilder.Entity<Board>()
                 .HasMany(bu => bu.BoardUsers)
                 .WithOne(b => b.Board)
