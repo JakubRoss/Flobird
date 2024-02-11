@@ -5,7 +5,7 @@ namespace Application.Repositories.Impl
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private DatabaseContext _context;
+        private readonly DatabaseContext _context;
 
         public UserRepository(DatabaseContext context) : base(context) 
         {

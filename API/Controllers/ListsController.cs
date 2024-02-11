@@ -12,7 +12,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(3)]
     public class ListsController : ControllerBase
     {
-        private IListService _listService;
+        private readonly IListService _listService;
 
         public ListsController(IListService listService)
         {

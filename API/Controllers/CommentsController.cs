@@ -12,7 +12,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(5)]
     public class CommentsController : ControllerBase
     {
-        private ICommentServices _commentServices;
+        private readonly ICommentServices _commentServices;
 
         public CommentsController(ICommentServices commentServices)
         {

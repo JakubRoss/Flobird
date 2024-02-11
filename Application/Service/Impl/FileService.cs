@@ -9,22 +9,22 @@ namespace Application.Service.Impl
 {
     public class FileContResult
     {
-        public byte[] fileContents { get; set; }
-        public string contentType { get; set; }
-        public string fileName { get; set; }
+        public byte[] FileContents { get; set; }
+        public string ContentType { get; set; }
+        public string FileName { get; set; }
 
         public FileContResult(byte[] fileContents, string contentType, string fileName)
         {
-            this.fileContents = fileContents;
-            this.contentType = contentType;
-            this.fileName = fileName;
+            this.FileContents = fileContents;
+            this.ContentType = contentType;
+            this.FileName = fileName;
         }
     }
 
     public class FileService : IFileService
     {
-        private IUserRepository _userRepository;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly IUserRepository _userRepository;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public FileService(
             IUserRepository userRepository,
@@ -50,7 +50,7 @@ namespace Application.Service.Impl
         public async Task<BlobClient> FindFile(string fileName, AzureProps azureProps)
         {
             BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
-            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.containerName);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.ContainerName);
 
             await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
             {
@@ -136,7 +136,7 @@ namespace Application.Service.Impl
             }
 
             BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
-            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.containerName);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.ContainerName);
 
             BlobClient blobClient = containerClient.GetBlobClient(name);
 

@@ -12,7 +12,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(9)]
     public class FillesController : ControllerBase
     {
-        private IFileService _fileService;
+        private readonly IFileService _fileService;
         private readonly AzureProps _azureProps;
 
         public FillesController(IFileService fileService, AzureProps azureProps)
@@ -32,7 +32,7 @@ namespace API.Controllers
         {
             var fileContents = await _fileService.GetFile(_azureProps);
 
-            return File(fileContents.fileContents, fileContents.contentType, fileContents.fileName);
+            return File(fileContents.FileContents, fileContents.ContentType, fileContents.FileName);
         }
 
         /// <summary>

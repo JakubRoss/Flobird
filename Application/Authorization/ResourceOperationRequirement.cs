@@ -4,11 +4,11 @@ namespace Application.Authorization
 {
     public class ResourceOperationRequirement : IAuthorizationRequirement
     {
-        public ResourceOperations resourceOperations { get; }
+        public ResourceOperations ResourceOperations { get; }
 
         public ResourceOperationRequirement(ResourceOperations resourceOperations) 
         {
-            this.resourceOperations = resourceOperations;
+            this.ResourceOperations = resourceOperations;
         }
     }
 }

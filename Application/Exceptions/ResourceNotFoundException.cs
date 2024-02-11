@@ -5,7 +5,7 @@ namespace Application.Exceptions
     [Serializable]
     internal class ResourceNotFoundException : Exception
     {
-        private Type type;
+        private Type _type;
 
         public ResourceNotFoundException()
         {
@@ -13,7 +13,7 @@ namespace Application.Exceptions
 
         private ResourceNotFoundException(Type type)
         {
-            this.type = type;
+            this._type = type;
         }
 
         public ResourceNotFoundException(string? message) : base(message)

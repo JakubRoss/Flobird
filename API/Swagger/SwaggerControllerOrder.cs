@@ -13,7 +13,7 @@ namespace API.Swagger
     /// </remarks>
     public class SwaggerControllerOrder<T>
     {
-        private readonly Dictionary<string, uint> orders;   // Our lookup table which contains controllername -> sortorder pairs.
+        private readonly Dictionary<string, uint> _orders;   // Our lookup table which contains controllername -> sortorder pairs.
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SwaggerControllerOrder&lt;TargetException&gt;"/> class.
@@ -32,7 +32,7 @@ namespace API.Swagger
         {
             // Initialize our dictionary; scan the given controllers for our custom attribute, read the Order property
             // from the attribute and store it as controllername -> sorderorder pair in the (case-insensitive) dicationary.
-            orders = new Dictionary<string, uint>(
+            _orders = new Dictionary<string, uint>(
                 controllers.Where(c => c.GetCustomAttributes<SwaggerControllerOrderAttribute>().Any())
                 .Select(c => new { Name = ResolveControllerName(c.Name), c.GetCustomAttribute<SwaggerControllerOrderAttribute>().Order })
                 .ToDictionary(v => v.Name, v => v.Order), StringComparer.OrdinalIgnoreCase);
@@ -75,7 +75,7 @@ namespace API.Swagger
         private uint Order(string controller)
         {
             // Try to get the sort order value from our lookup; if none is found, assume uint.MaxValue.
-            if (!orders.TryGetValue(controller, out uint order))
+            if (!_orders.TryGetValue(controller, out uint order))
                 order = uint.MaxValue;
 
             return order;

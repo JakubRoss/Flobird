@@ -12,7 +12,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(6)]
     public class AttachmentsController : ControllerBase
     {
-        private IAttachmentService _attachmentService;
+        private readonly IAttachmentService _attachmentService;
 
         public AttachmentsController(IAttachmentService attachmentService)
         {

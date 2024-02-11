@@ -11,13 +11,13 @@ namespace Application.Service.Impl
 {
     public class ElementService : IElementService
     {
-        private IBoardRepository _boardRepository;
-        private IAuthorizationService _authorizationService;
-        private IElementRepository _element;
-        private IMapper _mapper;
-        private IElementUsersRepository _elementUsersRepository;
-        private IUserRepository _userRepository;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IElementRepository _element;
+        private readonly IMapper _mapper;
+        private readonly IElementUsersRepository _elementUsersRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public ElementService(IBoardRepository boardRepository,
             IAuthorizationService authorizationService,

@@ -3,6 +3,6 @@
     public class AzureProps
     {
         public string AzureStorageConnection { get; set; }
-        public string containerName { get; set; }
+        public string ContainerName { get; set; }
     }
 }

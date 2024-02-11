@@ -10,11 +10,11 @@ namespace Application.Service.Impl
 {
     public class TasksService : ITasksService
     {
-        private ITasksRepository _tasksRepository;
-        private IBoardRepository _boardRepository;
-        private IAuthorizationService _authorizationService;
-        private IMapper _mapper;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly ITasksRepository _tasksRepository;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IMapper _mapper;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public TasksService(
             IMapper mapper,
