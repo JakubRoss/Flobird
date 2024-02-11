@@ -55,9 +55,8 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var task = new Tasks()
+            var task = new Tasks(createTaskDto.Name)
             {
-                Name = createTaskDto.Name,
                 CreatedAt = DateTime.UtcNow,
                 CardId = cardId
             };

@@ -1,5 +1,6 @@
 ﻿using Application.Data;
 using Application.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Repositories.Impl
 {
@@ -12,9 +13,9 @@ namespace Application.Repositories.Impl
             _context = context;
         }
 
-        public async Task<List<User>> GetUsersAsync(string searchphrase)
+        public async Task<List<User>> GetUsersAsync(string searchPhrase)
         {
-            var users = _context.Users.Where(x=>searchphrase == null || (x.Login.ToLower().Contains(searchphrase)) || x.Email.ToLower().Contains(searchphrase)).ToList();
+            var users =  await _context.Users.Where(x=>searchPhrase == null || (x.Login.ToLower().Contains(searchPhrase)) || x.Email.ToLower().Contains(searchPhrase)).ToListAsync();
             return users;
         }
     }

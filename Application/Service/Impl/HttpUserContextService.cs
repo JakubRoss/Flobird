@@ -12,9 +12,9 @@ namespace Application.Service.Impl
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
+        public ClaimsPrincipal User => _httpContextAccessor.HttpContext!.User;
 
-        public int? UserId => User is null ? null : int.Parse(User.FindFirst(t => t.Type == ClaimTypes.NameIdentifier).Value);
+        public int? UserId => false ? null : int.Parse(User.FindFirst(t => t.Type == ClaimTypes.NameIdentifier)!.Value);
         public string UserLogin => User?.FindFirst(t => t.Type == ClaimTypes.Name)?.Value ?? string.Empty;
     }
 }

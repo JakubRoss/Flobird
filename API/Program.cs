@@ -13,7 +13,7 @@ using Application.Authorization;
 using Application.Common;
 using Application.Data;
 using Application.Data.Entities;
-using Application.MIddleware;
+using Application.Middleware;
 using Application.Model.Attachments;
 using Application.Model.Board;
 using Application.Model.Card;
@@ -81,7 +81,7 @@ builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddEndpointsApiExplorer();
 
 #region SwaggerConf
-SwaggerControllerOrder<ControllerBase> swaggerControllerOrder = new SwaggerControllerOrder<ControllerBase>(Assembly.GetEntryAssembly());
+SwaggerControllerOrder<ControllerBase> swaggerControllerOrder = new(Assembly.GetEntryAssembly()!);
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
@@ -97,7 +97,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
-    c.OrderActionsBy((apiDesc) => $"{swaggerControllerOrder.SortKey(apiDesc.ActionDescriptor.RouteValues["controller"])}");
+    c.OrderActionsBy((apiDesc) => $"{swaggerControllerOrder.SortKey(apiDesc.ActionDescriptor.RouteValues["controller"]!)}");
 
     //komentarze przy akcjach
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

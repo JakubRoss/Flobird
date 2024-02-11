@@ -56,7 +56,9 @@ namespace API.Controllers
         [HttpGet("all")]
         public async Task<List<ResponseUserDto>> GetUsersAsync([FromQuery]string? searchingPhrase)
         {
-            return await _userService.GetUsersAsync(searchingPhrase);
+            if(!string.IsNullOrEmpty(searchingPhrase))
+                return await _userService.GetUsersAsync(searchingPhrase);
+            return new List<ResponseUserDto>();
         }
 
         /// <summary>

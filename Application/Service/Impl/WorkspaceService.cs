@@ -24,7 +24,7 @@ namespace Application.Service.Impl
         #region Utils
         private async Task<Workspace> GetWorkspaceAsync()
         {
-            var workspace = await _workspaceBaserepository.GetFirstAsync(id => id.UserId == (int)_httpUserContextService.UserId);
+            var workspace = await _workspaceBaserepository.GetFirstAsync(id => id.UserId == (int)_httpUserContextService.UserId!);
             if (workspace == null)
                 throw new ResourceNotFoundException("Uzytkownik nie posiada przestrzeni roboczej");
             return workspace;
@@ -50,9 +50,8 @@ namespace Application.Service.Impl
         #region nieuzywane
         public async Task AddWorkspaceAsync(User user)
         {
-            var workspaceDto = new WorkspaceDto
+            var workspaceDto = new WorkspaceDto($"{user.Login} Workspace")
             {
-                Name = $"{user.Login} Workspace",
                 CreatedAt = DateTime.Now,
                 UserId = user.Id,
             };

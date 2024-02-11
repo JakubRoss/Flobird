@@ -79,13 +79,12 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var newAttachment = new Attachment()
+            var newAttachment = new Attachment(attachment.Path)
             {
                 Name = attachment.Name,
-                Path = attachment.Path,
                 DateCreated = DateTime.UtcNow,
                 CardId = cardId,
-                UserId = (int)_httpUserContextService.UserId
+                UserId = (int)_httpUserContextService.UserId!
             };
 
             await _attachmentRepository.AddAsync(newAttachment);

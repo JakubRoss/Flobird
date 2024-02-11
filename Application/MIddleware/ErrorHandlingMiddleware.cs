@@ -1,7 +1,7 @@
 ﻿using Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.MIddleware
+namespace Application.Middleware
 {
     public class ErrorHandlingMiddleware : IMiddleware
     {

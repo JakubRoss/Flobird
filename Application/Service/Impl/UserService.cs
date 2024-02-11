@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Application.Common;
@@ -17,7 +18,7 @@ namespace Application.Service.Impl
         private readonly IUserRepository _userBase;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IWorkspaceService _workspaceBussiness;
+        private readonly IWorkspaceService _workspaceBusiness;
         private readonly AuthenticationSettings _authenticationSettings;
         private readonly IBoardRepository _boardRepository;
         private readonly IWorkspaceRepository _workspaceRepository;
@@ -28,7 +29,7 @@ namespace Application.Service.Impl
             IBoardRepository boardRepository,
             IWorkspaceRepository workspaceRepository,
             IMapper mapper,
-            IWorkspaceService workspaceBussiness,
+            IWorkspaceService workspaceBusiness,
             IPasswordHasher<User>passwordHasher,
             AuthenticationSettings authenticationSettings,
             IHttpUserContextService httpUserContextService)
@@ -36,14 +37,14 @@ namespace Application.Service.Impl
             _userBase = userBase;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
-            _workspaceBussiness = workspaceBussiness;
+            _workspaceBusiness = workspaceBusiness;
             _authenticationSettings = authenticationSettings;
             _boardRepository = boardRepository;
             _workspaceRepository = workspaceRepository;
             _httpUserContextService = httpUserContextService;
         }
         #region Utils
-        private async System.Threading.Tasks.Task<User> GetUser()
+        private async Task<User> GetUser()
         {
             var id = _httpUserContextService.UserId;
             var user = await _userBase.GetFirstAsync(p => p.Id == id);
@@ -69,7 +70,7 @@ namespace Application.Service.Impl
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpiredays);
+            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
 
             var token = new JwtSecurityToken(_authenticationSettings.JwtIssuer,
                 _authenticationSettings.JwtIssuer,
@@ -91,7 +92,7 @@ namespace Application.Service.Impl
             user.CreatedAt = DateTime.Now;
             var newUser = await _userBase.AddAsync(user);
 
-            await _workspaceBussiness.AddWorkspaceAsync(newUser);
+            await _workspaceBusiness.AddWorkspaceAsync(newUser);
         }
         public async Task<UserDto> GetUserAsync()
         {
@@ -151,11 +152,7 @@ namespace Application.Service.Impl
             string tokenText = GenerateJwt(user, userLoginDto.Password);
 
             var userDto = _mapper.Map<ResponseUserDto>(user);
-            var loginResult = new LoginResult()
-            {
-                Token = tokenText,
-                User = userDto
-            };
+            var loginResult = new LoginResult(tokenText, userDto);
             return loginResult;
         }
     }
