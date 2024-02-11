@@ -10,11 +10,11 @@ namespace Application.Service.Impl
 {
     public class ListService : IListService
     {
-        private IListRepository _listRepository;
-        private IMapper _mapper;
-        private IBoardRepository _boardRepository;
-        private IAuthorizationService _authorizationService;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly IListRepository _listRepository;
+        private readonly IMapper _mapper;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public ListService(
             IListRepository listRepository,

@@ -12,7 +12,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(8)]
     public class ElementsController : ControllerBase
     {
-        private IElementService _elementService;
+        private readonly IElementService _elementService;
 
         public ElementsController(IElementService elementService)
         {

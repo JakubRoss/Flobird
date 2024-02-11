@@ -14,8 +14,8 @@ namespace Application.Service.Impl
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userBase;
-        private IMapper _mapper;
+        private readonly IUserRepository _userBase;
+        private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IWorkspaceService _workspaceBussiness;
         private readonly AuthenticationSettings _authenticationSettings;
@@ -77,9 +77,9 @@ namespace Application.Service.Impl
                 expires: expires,
                 signingCredentials: cred);
 
-            var TokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
 
-            return TokenHandler.WriteToken(token);
+            return tokenHandler.WriteToken(token);
         }
         #endregion
 

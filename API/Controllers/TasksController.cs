@@ -12,7 +12,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(7)]
     public class TasksController : ControllerBase
     {
-        private ITasksService _tasksService;
+        private readonly ITasksService _tasksService;
 
         public TasksController(ITasksService tasksService)
         {

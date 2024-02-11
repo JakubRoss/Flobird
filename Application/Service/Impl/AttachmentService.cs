@@ -10,11 +10,11 @@ namespace Application.Service.Impl
 {
     public class AttachmentService : IAttachmentService
     {
-        private IAttachmentRepository _attachmentRepository;
-        private IMapper _mapper;
-        private IBoardRepository _boardRepository;
-        private IAuthorizationService _authorizationService;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly IAttachmentRepository _attachmentRepository;
+        private readonly IMapper _mapper;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public AttachmentService(
             IAttachmentRepository attachmentRepository,

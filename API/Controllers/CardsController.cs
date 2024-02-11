@@ -12,7 +12,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(4)]
     public class CardsController : ControllerBase
     {
-        private ICardService _cardService;
+        private readonly ICardService _cardService;
 
         public CardsController(ICardService cardService)
         {

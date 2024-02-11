@@ -9,11 +9,11 @@ namespace Application.Service.Impl
 {
     public class CommentServices : ICommentServices
     {
-        private ICommentRepository _commentRepository;
-        private IBoardRepository _boardRepository;
-        private IAuthorizationService _authorizationService;
-        private IUserRepository _userRepository;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IUserRepository _userRepository;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public CommentServices(
             ICommentRepository commentRepository,

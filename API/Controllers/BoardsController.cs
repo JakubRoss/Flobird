@@ -11,7 +11,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(2)]
     public class BoardsController : ControllerBase
     {
-        private IBoardService _boardService;
+        private readonly IBoardService _boardService;
 
         public BoardsController(IBoardService boardService)
         {

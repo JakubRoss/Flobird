@@ -11,13 +11,13 @@ namespace Application.Service.Impl
 {
     public class CardService : ICardService
     {
-        private ICardRepository _cardRepository;
-        private IMapper _mapper;
-        private IBoardRepository _boardRepository;
-        private IAuthorizationService _authorizationService;
-        private IUserRepository _userRepository;
-        private ICardUserRepository _cardUserRepository;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly ICardRepository _cardRepository;
+        private readonly IMapper _mapper;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IUserRepository _userRepository;
+        private readonly ICardUserRepository _cardUserRepository;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public CardService(
             ICardRepository cardRepository,

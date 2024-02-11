@@ -32,9 +32,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 #region Authetictaion
-var AuthenticationSettings = new AuthenticationSettings();
-builder.Configuration.GetSection("Authentication").Bind(AuthenticationSettings);
-builder.Services.AddSingleton(AuthenticationSettings);
+var authenticationSettings = new AuthenticationSettings();
+builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+builder.Services.AddSingleton(authenticationSettings);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = "Bearer";
@@ -52,11 +52,11 @@ builder.Services.AddAuthentication(options =>
     cfg.TokenValidationParameters = new TokenValidationParameters
     {
 
-        ValidIssuer = AuthenticationSettings.JwtIssuer,
+        ValidIssuer = authenticationSettings.JwtIssuer,
 
-        ValidAudience = AuthenticationSettings.JwtIssuer,
+        ValidAudience = authenticationSettings.JwtIssuer,
 
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationSettings.JwtKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
     };
 });
 #endregion

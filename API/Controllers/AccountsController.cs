@@ -10,7 +10,7 @@ namespace API.Controllers
     [SwaggerControllerOrder(0)]
     public class AccountsController : ControllerBase
     {
-        private IUserService _userService;
+        private readonly IUserService _userService;
 
         public AccountsController(IUserService userService)
         {
@@ -25,7 +25,7 @@ namespace API.Controllers
         /// POST cabanoss.azurewebsites.net/accounts/register
         /// </remarks>
         [HttpPost("register")]
-        public async System.Threading.Tasks.Task register([FromBody] CreateUserDto user)
+        public async System.Threading.Tasks.Task Register([FromBody] CreateUserDto user)
         {
             await _userService.AddUserAsync(user);
         }

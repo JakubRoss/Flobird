@@ -11,13 +11,13 @@ namespace Application.Service.Impl
 {
     public class BoardService : IBoardService
     {
-        private IBoardRepository _boardRepository;
-        private IMapper _mapper;
-        private IBoardUsersRepository _boardUsersBaseRepository;
-        private IUserRepository _userBase;
-        private IAuthorizationService _authorizationService;
-        private IUserRepository _userRepository;
-        private IHttpUserContextService _httpUserContextService;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IMapper _mapper;
+        private readonly IBoardUsersRepository _boardUsersBaseRepository;
+        private readonly IUserRepository _userBase;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IUserRepository _userRepository;
+        private readonly IHttpUserContextService _httpUserContextService;
 
         public BoardService(IBoardRepository boardBaseRepository,
             IMapper mapper,

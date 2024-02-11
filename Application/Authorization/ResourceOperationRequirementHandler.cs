@@ -13,7 +13,7 @@ namespace Application.Authorization
             var userId = int.Parse(context.User.Claims.FirstOrDefault(t => t.Type == ClaimTypes.NameIdentifier).Value);
             var boardUser = board.BoardUsers.FirstOrDefault(p => p.UserId == userId);
 
-            switch (requirement.resourceOperations)
+            switch (requirement.ResourceOperations)
             {
                 case ResourceOperations.Create:
                     if (boardUser.Roles == Roles.User)
