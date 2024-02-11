@@ -68,5 +68,18 @@ namespace Application.Repositories.Impl
 
             return entity;
         }
+        public async Task BeginTransactionAsync()
+        {
+            await Context.Database.BeginTransactionAsync();
+        }
+        public async Task CommitTransactionAsync()
+        {
+            await Context.SaveChangesAsync();
+            await Context.Database.CurrentTransaction!.CommitAsync();
+        }
+        public async Task RollbackTransactionAsync()
+        {
+            await Context.Database.CurrentTransaction!.RollbackAsync();
+        }
     }
 }
