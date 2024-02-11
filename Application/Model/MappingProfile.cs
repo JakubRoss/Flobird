@@ -16,8 +16,6 @@ namespace Application.Model
     {
         public MappingProfile()
         {
-            CreateMap<Data.Entities.Workspace, WorkspaceDto>().ReverseMap();
-            CreateMap<UpdateWorkspaceDto, Data.Entities.Workspace>().ReverseMap();
             CreateMap<CreateBoardDto, Data.Entities.Board>().ReverseMap();
             CreateMap<UserLoginDto, Data.Entities.User>().ReverseMap();
 

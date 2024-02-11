@@ -159,7 +159,6 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //base repo Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<IBoardUsersRepository, BoardUsersRepository>();
 builder.Services.AddScoped<IListRepository,ListRepository>();
@@ -173,7 +172,6 @@ builder.Services.AddScoped<ICardUserRepository, CardUserRepository>();
 builder.Services.AddScoped<IHttpUserContextService, HttpUserContextService>();
 //Bussiness Logic Services
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IWorkspaceService,  WorkspaceService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IListService, ListService>();
 builder.Services.AddScoped<ICardService, CardService>();

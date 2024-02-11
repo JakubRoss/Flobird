@@ -65,11 +65,10 @@ namespace Application.Service.Impl
         }
         public async Task CreateBoardAsync(CreateBoardDto createBoardDto)
         {
-            var userDb = await _userBase.GetFirstAsync(p => p.Id == _httpUserContextService.UserId, i => i.Workspace);
+            var userDb = await _userBase.GetFirstAsync(p => p.Id == _httpUserContextService.UserId);
 
             var board = _mapper.Map<Board>(createBoardDto);
             board.CreatedAt = DateTime.Now;
-            board.WorkspaceId = userDb.Workspace.Id;
             var sboard = await _boardRepository.AddAsync(board);
 
             var newBoardUser = new BoardUser { BoardId = sboard.Id, UserId = userDb.Id };
