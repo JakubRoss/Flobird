@@ -104,7 +104,7 @@ namespace Application.Service.Impl
             var contentType = GetContentType(blobClient.Name);
             if (contentType != null)
             {
-                blobClient.SetHttpHeaders(new BlobHttpHeaders
+                await blobClient.SetHttpHeadersAsync(new BlobHttpHeaders
                 {
                     ContentType = contentType,
                 });
@@ -132,7 +132,7 @@ namespace Application.Service.Impl
             var blobFile = await FindFile(name.Split('.').First(), azureProps);
             if (blobFile != null)
             {
-                blobFile.DeleteIfExists();
+                await blobFile.DeleteIfExistsAsync();
             }
 
             BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
@@ -142,7 +142,7 @@ namespace Application.Service.Impl
 
             var stream = file.OpenReadStream();
             await blobClient.UploadAsync(stream, overwrite: true);
-            blobClient.SetHttpHeaders(new BlobHttpHeaders
+            await blobClient.SetHttpHeadersAsync(new BlobHttpHeaders
             {
                 ContentDisposition = "inline" // Ustaw nagłówek Content-Disposition, aby wskazać, że plik ma być wyświetlany w przeglądarce, a nie pobierany
             });
