@@ -9,7 +9,7 @@ namespace Application.Model.Validators
         public CreateUserDtoValidator(IUserRepository userRepository)
         {
             RuleFor(e => e.Password)
-                .MinimumLength(6)
+                .MinimumLength(8)
                 .Equal(x => x.ConfirmPassword);
 
             RuleFor(e => e.Email)

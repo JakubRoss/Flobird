@@ -11,7 +11,7 @@ namespace Application.Model.Validators
                 .NotEmpty()
                 .NotNull()
                 .MinimumLength(3)
-                .MaximumLength(15);
+                .MaximumLength(25);
         }
     }
 }

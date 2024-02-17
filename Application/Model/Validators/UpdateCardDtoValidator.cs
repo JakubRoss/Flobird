@@ -13,7 +13,7 @@ namespace Application.Model.Validators
                     if (value != null)
                     {
 
-                        if (value.Length < 3 || string.IsNullOrEmpty(value) || value.Length > 15)
+                        if (value.Length < 3 || string.IsNullOrEmpty(value) || value.Length > 25)
                             context.AddFailure("Name", "Name is too short/long or is empty");
                     }
                 });

@@ -14,7 +14,7 @@ namespace Application.Model.Validators
                     if (value != null)
                     {
                         var updateUserDto = context.InstanceToValidate;
-                        if (!(value.Equals(updateUserDto.ConfirmPassword) || value.Length < 6))
+                        if (!(value.Equals(updateUserDto.ConfirmPassword) || value.Length < 8))
                             context.AddFailure("Password", "passwords are not equal or password is too short");
                     }
                 });
@@ -27,7 +27,7 @@ namespace Application.Model.Validators
                         var emailInUse = userRepository.GetFirstAsync(x => x.Email == value).Result;
                         if (emailInUse != null)
                         {
-                            context.AddFailure("Email", "Adres email jest zajety");
+                            context.AddFailure("Email", "Address email is taken");
                         }
                     }
                 });
@@ -39,10 +39,12 @@ namespace Application.Model.Validators
                         var emailInUse = userRepository.GetFirstAsync(x => x.Login == value).Result;
                         if (emailInUse != null)
                         {
-                            context.AddFailure("Login", "Login jest zajety");
+                            context.AddFailure("Login", "Login is taken");
                         }
                     }
-                });
+                })
+                .MinimumLength(4)
+                .MaximumLength(20);
         }
     }
 }
