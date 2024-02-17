@@ -7,12 +7,54 @@ namespace Infrastructure
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
-        public DbSet<Board> Boards { get; set; }
-        public DbSet<BoardUser> BoardsUser { get; set; }
-        public DbSet<User> Users { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region lengthProperty
+
+            modelBuilder.Entity<User>()
+                .Property(p => p.Login)
+                .HasMaxLength(20)
+                .IsRequired();
+            modelBuilder.Entity<User>()
+                .Property(p => p.PasswordHash)
+                .HasMaxLength(128)
+                .IsRequired();
+
+            modelBuilder.Entity<Board>()
+                .Property(p => p.Name)
+                .HasMaxLength(25)
+                .IsRequired();
+
+            modelBuilder.Entity<List>()
+                .Property(p => p.Name)
+                .HasMaxLength(25)
+                .IsRequired();
+
+            modelBuilder.Entity<Card>()
+                .Property(p => p.Name)
+                .HasMaxLength(25)
+                .IsRequired();
+
+            modelBuilder.Entity<Card>()
+                .Property(p => p.Description)
+                .HasMaxLength(250);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(p => p.Name)
+                .HasMaxLength(25)
+                .IsRequired();
+
+            modelBuilder.Entity<Element>()
+                .Property(p => p.Description)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            modelBuilder.Entity<Comment>()
+                .Property(p => p.Text)
+                .HasMaxLength(250)
+                .IsRequired();
+            #endregion
+
             #region Set_Keys
 
             modelBuilder.Entity<BoardUser>()
@@ -219,6 +261,7 @@ namespace Infrastructure
             #endregion
 
             #endregion
+
             base.OnModelCreating(modelBuilder);
         }
     }
