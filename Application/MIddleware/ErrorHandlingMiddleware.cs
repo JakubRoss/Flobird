@@ -1,6 +1,5 @@
-﻿using Application.Exceptions;
+﻿using Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Middleware
 {

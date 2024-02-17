@@ -25,7 +25,7 @@ namespace API.Controllers
         /// <param name="elementDto">Request's payload</param>
         /// <param name="taskId">task id</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/elements/tasks?taskId={id}
+        /// POST flobird.azurewebsites.net/elements/tasks?taskId={id}
         /// </remarks>
         [HttpPost("elements/tasks")]
         public async Task AddElement([FromQuery] int taskId, [FromBody] ElementDto elementDto)
@@ -39,7 +39,7 @@ namespace API.Controllers
         /// <param name="updateElementDto">Request's payload</param>
         /// <param name="elementId">element id</param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/elements?elementId={id}
+        /// PUT flobird.azurewebsites.net/elements?elementId={id}
         /// </remarks>
         [HttpPut("elements")]
         public async Task UpdateElement([FromQuery] int elementId, [FromBody] UpdateElementDto updateElementDto)
@@ -52,7 +52,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="taskId">task id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/elements?taskId={id}
+        /// GET flobird.azurewebsites.net/elements?taskId={id}
         /// </remarks>
         [HttpGet("elements/tasks")]
         public async Task<List<ResponseElementDto>> GetElements([FromQuery] int taskId)
@@ -66,7 +66,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="elementId">element id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/elements?elementId={id}
+        /// GET flobird.azurewebsites.net/elements?elementId={id}
         /// </remarks>
         [HttpGet("elements")]
         public async Task<ResponseElementDto> GetElement([FromQuery] int elementId)
@@ -80,7 +80,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="elementId">element id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/elements?elementId={id}
+        /// DELETE flobird.azurewebsites.net/elements?elementId={id}
         /// </remarks>
         [HttpDelete("elements")]
         public async Task DeleteElement([FromQuery] int elementId)
@@ -94,7 +94,7 @@ namespace API.Controllers
         /// <param name="elementId">element id</param>
         /// <param name="userId">user id</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/members/elements/{elementId}?userId={id}
+        /// POST flobird.azurewebsites.net/members/elements/{elementId}?userId={id}
         /// </remarks>
         [HttpPost("members/elements/{elementId}")]
         public async Task AddUserToElement([FromRoute] int elementId, [FromQuery] int userId)
@@ -106,8 +106,9 @@ namespace API.Controllers
         /// checks the "checkbox" (true or false)
         /// </summary>
         /// <param name="elementId">element id</param>
+        /// <param name="updateElement"></param>
         /// <remarks>
-        /// PATCH cabanoss.azurewebsites.net/elements?elementId={id}
+        /// PATCH flobird.azurewebsites.net/elements?elementId={id}
         /// </remarks>
         [HttpPatch("elements")]
         public async Task CheckElement([FromQuery] int elementId, ElementCheckDto updateElement)
@@ -120,7 +121,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="elementId">element id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/members/elements?elementId={id}
+        /// GET flobird.azurewebsites.net/members/elements?elementId={id}
         /// </remarks>
         [HttpGet("members/elements")]
         public async Task<List<ResponseUserDto>> GetElementUsers([FromQuery] int elementId)
@@ -134,7 +135,7 @@ namespace API.Controllers
         /// <param name="elementId">element id</param>
         /// <param name="userId">user id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/members/elements/{elementId}?userId={id}
+        /// DELETE flobird.azurewebsites.net/members/elements/{elementId}?userId={id}
         /// </remarks>
         [HttpDelete("members/elements/{elementId}")]
         public async Task DeleteUserFromElement([FromRoute] int elementId, [FromQuery] int userId)

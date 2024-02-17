@@ -1,8 +1,8 @@
 ﻿using Application.Common;
-using Application.Exceptions;
-using Application.Repositories;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Domain.Exceptions;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Service.Impl
@@ -15,9 +15,9 @@ namespace Application.Service.Impl
 
         public FileContResult(byte[] fileContents, string contentType, string fileName)
         {
-            this.FileContents = fileContents;
-            this.ContentType = contentType;
-            this.FileName = fileName;
+            FileContents = fileContents;
+            ContentType = contentType;
+            FileName = fileName;
         }
     }
 
@@ -35,7 +35,7 @@ namespace Application.Service.Impl
 
         }
         #region Utils
-        private bool GetFileExtension(IFormFile file, out string ext)
+        private static bool GetFileExtension(IFormFile file, out string ext)
         {
             string[] allowedExtensions = {".jpeg",".jpg",".png"}; 
             var extension = Path.GetExtension(file.FileName).ToLower();
@@ -47,9 +47,9 @@ namespace Application.Service.Impl
             ext = extension;
             return true;
         }
-        public async Task<BlobClient?> FindFile(string fileName, AzureProps azureProps)
+        public static async Task<BlobClient?> FindFile(string fileName, AzureProps azureProps)
         {
-            BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
+            BlobServiceClient blobServiceClient = new(azureProps.AzureStorageConnection);
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.ContainerName);
 
             await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
@@ -62,7 +62,7 @@ namespace Application.Service.Impl
 
             return null;
         }
-        private string GetContentType(string fileName)
+        private static string GetContentType(string fileName)
         {
             var fileExtension = $".{fileName.Split('.').Last()}";
             if (fileExtension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
@@ -88,14 +88,9 @@ namespace Application.Service.Impl
             var login = _httpUserContextService.UserLogin;
             var name = $"{id}_{login}AV";
 
-            var blobClient = await FindFile(name,azureProps);
-            if (blobClient is null)
-            {
-                throw new ResourceNotFoundException("File doesn't exist");
-            }
-
+            var blobClient = await FindFile(name,azureProps) ?? throw new ResourceNotFoundException("File doesn't exist");
             byte[] file;
-            using (MemoryStream memoryStream = new MemoryStream())
+            using (MemoryStream memoryStream = new())
             {
                 await blobClient.DownloadToAsync(memoryStream);
                  file = memoryStream.ToArray();
@@ -135,7 +130,7 @@ namespace Application.Service.Impl
                 await blobFile.DeleteIfExistsAsync();
             }
 
-            BlobServiceClient blobServiceClient = new BlobServiceClient(azureProps.AzureStorageConnection);
+            BlobServiceClient blobServiceClient = new(azureProps.AzureStorageConnection);
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(azureProps.ContainerName);
 
             BlobClient blobClient = containerClient.GetBlobClient(name);

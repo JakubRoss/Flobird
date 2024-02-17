@@ -25,7 +25,7 @@ namespace API.Controllers
         /// <param name="cardId">Card id</param>
         /// <param name="attachmentDto">Request's payload</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/attachments/cards?cardId={id}
+        /// POST flobird.azurewebsites.net/attachments/cards?cardId={id}
         /// </remarks>
         [HttpPost("cards")]
         public async Task AddAttachment([FromQuery] int cardId, [FromBody] AttachmentDto attachmentDto)
@@ -39,7 +39,7 @@ namespace API.Controllers
         /// <param name="attachmentId">attachment id</param>
         /// <param name="attachmentDto">Request's payload</param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/attachments?attachmentId={id}
+        /// PUT flobird.azurewebsites.net/attachments?attachmentId={id}
         /// </remarks>
         [HttpPut]
         public async Task UpdateAttachment([FromQuery] int attachmentId, [FromBody] AttachmentDto attachmentDto)
@@ -52,7 +52,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="cardId">Card id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/attachments/cards?cardId={id}
+        /// GET flobird.azurewebsites.net/attachments/cards?cardId={id}
         /// </remarks>
         [HttpGet("cards")]
         public async Task<List<AttachmentResponseDto>> GetAttachments([FromQuery] int cardId)
@@ -66,7 +66,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="attachmentId">attachment id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/attachments?attachmentId={id}
+        /// GET flobird.azurewebsites.net/attachments?attachmentId={id}
         /// </remarks>
         [HttpGet]
         public async Task<AttachmentResponseDto> GetAttachment([FromQuery] int attachmentId)
@@ -80,7 +80,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="attachmentId">attachment id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/attachments?attachmentId={id}
+        /// DELETE flobird.azurewebsites.net/attachments?attachmentId={id}
         /// </remarks>
         [HttpDelete]
         public async Task DeleteAttachment([FromQuery] int attachmentId)

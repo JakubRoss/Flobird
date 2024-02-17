@@ -22,10 +22,10 @@ namespace API.Controllers
         /// </summary>
         /// <param name="user">Request's payload</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/accounts/register
+        /// POST flobird.azurewebsites.net/accounts/register
         /// </remarks>
         [HttpPost("register")]
-        public async System.Threading.Tasks.Task Register([FromBody] CreateUserDto user)
+        public async Task Register([FromBody] CreateUserDto user)
         {
             await _userService.AddUserAsync(user);
         }
@@ -35,10 +35,10 @@ namespace API.Controllers
         /// </summary>
         /// <returns>authorization token</returns>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/accounts/login
+        /// POST flobird.azurewebsites.net/accounts/login
         /// </remarks>
         [HttpPost("login")]
-        public async System.Threading.Tasks.Task<IActionResult> Login(UserLoginDto userLoginDto)
+        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
             var token = await _userService.LogIn(userLoginDto);
             

@@ -1,82 +1,23 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using API.Swagger;
+using Application.Extension;
+using Infrastructure;
+using Infrastructure.Extension;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using System.Text;
-using API.Swagger;
-using Application.Authorization;
-using Application.Common;
-using Application.Data;
-using Application.Data.Entities;
 using Application.Middleware;
-using Application.Model.Attachments;
-using Application.Model.Board;
-using Application.Model.Card;
-using Application.Model.Comment;
-using Application.Model.Element;
-using Application.Model.List;
-using Application.Model.Task;
-using Application.Model.User;
-using Application.Model.Validators;
-using Application.Repositories;
-using Application.Repositories.Impl;
-using Application.Service;
-using Application.Service.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-#region Authetictaion
-var authenticationSettings = new AuthenticationSettings();
-builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
-builder.Services.AddSingleton(authenticationSettings);
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = "Bearer";
+// Add builder.Servicess to the container.
+builder.Services.AddHttpContextAccessor();
 
-    options.DefaultScheme = "Bearer";
-
-    options.DefaultChallengeScheme = "Bearer";
-
-}).AddJwtBearer(cfg =>
-{
-    cfg.RequireHttpsMetadata = true;
-
-    cfg.SaveToken = true;
-
-    cfg.TokenValidationParameters = new TokenValidationParameters
-    {
-
-        ValidIssuer = authenticationSettings.JwtIssuer,
-
-        ValidAudience = authenticationSettings.JwtIssuer,
-
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
-    };
-});
-#endregion
-#region Azure
-var azureProps = new AzureProps();
-builder.Configuration.GetSection("Azure").Bind(azureProps);
-builder.Services.AddSingleton(azureProps);
-#endregion
+builder.Services.AddInfrastructure(builder.Environment,builder.Configuration);
+builder.Services.AddApplication(builder.Configuration);
 
 builder.Services.AddAuthorization();
-//Authorization services
-builder.Services.AddScoped<IAuthorizationHandler,ResourceOperationRequirementsHandler>();
 
-builder.Services.AddScoped<DatabaseSeeder>();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
-#region FluentValidations
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
-#endregion
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -142,60 +83,6 @@ builder.Services.AddCors(options =>
     .AllowAnyOrigin()
     );
 });
-
-builder.Services.AddDbContext<DatabaseContext>(options =>
-{
-    if (builder.Environment.IsDevelopment())
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDbConnection"));
-    }
-    else
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("AzureDbConnection"));
-    }
-});
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-//base repo Services
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IBoardRepository, BoardRepository>();
-builder.Services.AddScoped<IBoardUsersRepository, BoardUsersRepository>();
-builder.Services.AddScoped<IListRepository,ListRepository>();
-builder.Services.AddScoped<ICardRepository, CardRepository>();
-builder.Services.AddScoped<ITasksRepository, TasksRepository>();
-builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
-builder.Services.AddScoped<IElementRepository, ElementRepository>();
-builder.Services.AddScoped<IElementUsersRepository, ElementUsersRepository>();
-builder.Services.AddScoped<ICardUserRepository, CardUserRepository>();
-builder.Services.AddScoped<IHttpUserContextService, HttpUserContextService>();
-//Bussiness Logic Services
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IBoardService, BoardService>();
-builder.Services.AddScoped<IListService, ListService>();
-builder.Services.AddScoped<ICardService, CardService>();
-builder.Services.AddScoped<ITasksService, TasksService>();
-builder.Services.AddScoped<ICommentServices,  CommentServices>();
-builder.Services.AddScoped<IAttachmentService, AttachmentService>();
-builder.Services.AddScoped<IElementService, ElementService>();
-builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<ErrorHandlingMiddleware>();
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-//Validation Services
-builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
-builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
-builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginDtoValidator>();
-builder.Services.AddScoped<IValidator<CreateBoardDto>, CreateBoardDtoValidator>();
-builder.Services.AddScoped<IValidator<UpdateBoardDto>, UpdateBoardDtoValidator>();
-builder.Services.AddScoped<IValidator<CreateCardDto>, CreateCardValidator>();
-builder.Services.AddScoped<IValidator<TaskDto>, TaskDtoValidator>();
-builder.Services.AddScoped<IValidator<CreateListDto>, CreateListDtoValidator>();
-builder.Services.AddScoped<IValidator<UpdateCardDto>, UpdateCardDtoValidator>();
-builder.Services.AddScoped<IValidator<CommentDto>, CommentDtoValidator>();
-builder.Services.AddScoped<IValidator<AttachmentDto>, AttachmentDtoValidator>();
-builder.Services.AddScoped<IValidator<UpdateElementDto>, UpdateElementDtoValidator>();
-builder.Services.AddScoped<IValidator<ElementDto>, ElementDtoValidator>();
 
 
 var app = builder.Build();

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    /// <summary>
+    /// controller with main route set as tasks
+    /// </summary>
     [Route("tasks")]
     [ApiController]
     [Authorize]
@@ -14,6 +17,10 @@ namespace API.Controllers
     {
         private readonly ITasksService _tasksService;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="tasksService"></param>
         public TasksController(ITasksService tasksService)
         {
             _tasksService = tasksService;
@@ -25,7 +32,7 @@ namespace API.Controllers
         /// <param name="cardId">card id</param>
         /// <param name="createTaskDto">Request's payload id</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/tasks/cards?cardId={id}
+        /// POST flobird.azurewebsites.net/tasks/cards?cardId={id}
         /// </remarks>
         [HttpPost("cards")]
         public async Task AddNewTask([FromQuery]int cardId,[FromBody]TaskDto createTaskDto)
@@ -37,8 +44,9 @@ namespace API.Controllers
         /// updates the specified task
         /// </summary>
         /// <param name="taskId">   task id</param>
+        /// <param name="updateTask"> properties which we want to change </param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/tasks?taskId={id}
+        /// PUT flobird.azurewebsites.net/tasks?taskId={id}
         /// </remarks>
         [HttpPut]
         public async Task UpdateTask([FromQuery] int taskId, [FromBody] TaskDto updateTask)
@@ -51,7 +59,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="cardId">card id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/tasks/cards?cardId={id}
+        /// GET flobird.azurewebsites.net/tasks/cards?cardId={id}
         /// </remarks>
         [HttpGet("cards")]
         public async Task<List<ResponseTaskDto>> GetCardTasks([FromQuery] int cardId)
@@ -65,7 +73,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="taskId">   task id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/tasks?taskId={id}
+        /// GET flobird.azurewebsites.net/tasks?taskId={id}
         /// </remarks>
         [HttpGet]
         public async Task<ResponseTaskDto> GetTask([FromQuery] int taskId)
@@ -79,7 +87,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="taskId">   task id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/tasks?taskId={id}
+        /// DELETE flobird.azurewebsites.net/tasks?taskId={id}
         /// </remarks>
         [HttpDelete]
         public async Task DeleteTask([FromQuery] int taskId)

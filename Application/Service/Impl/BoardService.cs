@@ -1,10 +1,10 @@
 ﻿using Application.Authorization;
-using Application.Common;
-using Application.Data.Entities;
-using Application.Exceptions;
 using Application.Model.Board;
-using Application.Repositories;
 using AutoMapper;
+using Domain.Common;
+using Domain.Data.Entities;
+using Domain.Exceptions;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Application.Service.Impl
@@ -36,20 +36,15 @@ namespace Application.Service.Impl
             _httpUserContextService = httpUserContextService;
         }
         #region utils
-        private async System.Threading.Tasks.Task<BoardUser> CheckBoardMembership(int boardId, int? userId)
+        private async Task<BoardUser> CheckBoardMembership(int boardId, int? userId)
         {
             var boardUser = await _boardUsersBaseRepository.GetFirstAsync(i => i.BoardId == boardId && i.UserId == userId);
-            if (boardUser == null)
-                throw new ResourceNotFoundException("User don't exists");
-            return boardUser;
-            
+            return boardUser ?? throw new ResourceNotFoundException("User don't exists");
         }
         private async Task<Board> GetBoard(int boardId)
         {
             var board = await _boardRepository.GetFirstAsync(x => x.Id == boardId, i=>i.BoardUsers);
-            if (board == null)
-                throw new ResourceNotFoundException("Resource not found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource not found");
         }
         #endregion
 
@@ -58,10 +53,7 @@ namespace Application.Service.Impl
             var board = await GetBoard(boardId);
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User, board, new ResourceOperationRequirement(ResourceOperations.Read));
-            if (!authorizationResult.Succeeded)
-                throw new UnauthorizedException("Unauthorized");
-
-            return _mapper.Map<ResponseBoardDto>(board); 
+            return !authorizationResult.Succeeded ? throw new UnauthorizedException("Unauthorized") : _mapper.Map<ResponseBoardDto>(board);
         }
         public async Task CreateBoardAsync(CreateBoardDto createBoardDto)
         {
@@ -71,8 +63,10 @@ namespace Application.Service.Impl
             board.CreatedAt = DateTime.Now;
             var sboard = await _boardRepository.AddAsync(board);
 
-            var newBoardUser = new BoardUser { BoardId = sboard.Id, UserId = userDb.Id };
-            newBoardUser.Roles = Roles.Creator;
+            var newBoardUser = new BoardUser(sboard.Id, userDb.Id)
+            {
+                Roles = Roles.Creator
+        };
             await _boardUsersBaseRepository.AddAsync(newBoardUser);
 
         }
@@ -121,7 +115,7 @@ namespace Application.Service.Impl
                         Id = user.Id,
                         Email = user.Email,
                         AvatarPath = user.AvatarPath,
-                        IsAdmin = (role != Roles.User) ? true : false
+                        IsAdmin = role != Roles.User
                     });
                 }
             }
@@ -140,8 +134,10 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var newBoardUser = new BoardUser { BoardId = boardId, UserId = userId };
-            newBoardUser.Roles = Roles.User;
+            var newBoardUser = new BoardUser(boardId, userId)
+            {
+                Roles = Roles.User
+            };
             await _boardUsersBaseRepository.AddAsync(newBoardUser);
         }
 

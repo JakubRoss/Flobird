@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace Application.Model.Validators
 {
-    public class UpdateBoardDtoValidator :AbstractValidator<UpdateBoardDto>
+    public class UpdateBoardDtoValidator : AbstractValidator<UpdateBoardDto>
     {
-        public UpdateBoardDtoValidator() 
+        public UpdateBoardDtoValidator()
         {
-            RuleFor(p=>p.Name)
+            RuleFor(p => p.Name)
                 .NotEmpty()
                 .NotNull()
                 .MinimumLength(3)

@@ -1,9 +1,9 @@
 ﻿using Application.Authorization;
-using Application.Data.Entities;
-using Application.Exceptions;
 using Application.Model.List;
-using Application.Repositories;
 using AutoMapper;
+using Domain.Data.Entities;
+using Domain.Exceptions;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Application.Service.Impl
@@ -33,21 +33,17 @@ namespace Application.Service.Impl
         private async Task<List> GetList(int listId)
         {
             var list = await _listRepository.GetFirstAsync(p => p.Id == listId);
-            if (list is null)
-                throw new ResourceNotFoundException("ResourceNotFound");
-            return list;
+            return list ?? throw new ResourceNotFoundException("ResourceNotFound");
         }
         private async Task<Board> GetBoardById(int boardId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Id == boardId, i => i.BoardUsers);
-            if (board is null) throw new ResourceNotFoundException("Resource Not Found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource Not Found");
         }
         private async Task<Board> GetBoardByListId(int listId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Id == listId), i => i.BoardUsers);
-            if (board is null) throw new ResourceNotFoundException("Resource Not Found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource Not Found");
         }
         #endregion
 

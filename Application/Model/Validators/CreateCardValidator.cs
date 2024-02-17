@@ -5,7 +5,7 @@ namespace Application.Model.Validators
 {
     public class CreateCardValidator : AbstractValidator<CreateCardDto>
     {
-        public CreateCardValidator() 
+        public CreateCardValidator()
         {
             RuleFor(p => p.Name)
                 .NotEmpty()

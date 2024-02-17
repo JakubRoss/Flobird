@@ -1,10 +1,10 @@
 ﻿using Application.Authorization;
-using Application.Data.Entities;
-using Application.Exceptions;
 using Application.Model.Element;
 using Application.Model.User;
-using Application.Repositories;
 using AutoMapper;
+using Domain.Data.Entities;
+using Domain.Exceptions;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Application.Service.Impl
@@ -42,18 +42,14 @@ namespace Application.Service.Impl
             var board = await _boardRepository.GetFirstAsync(board => board.Lists
                     .Any(list => list.Cards.Any(card => card.Tasks.Any(task => task.Elements.Any(eId => eId.Id == elementId)))), i=>i.BoardUsers);
 
-            if (board is null)
-                throw new ResourceNotFoundException("Resource Not Found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource Not Found");
         }
         private async Task<Board> GetBoardByTaskId(int taskId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Cards.Any(card => card.Tasks.Any(task => task.Id == taskId))), i => i.BoardUsers);
-            if (board is null)
-                throw new ResourceNotFoundException("Resource Not Found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource Not Found");
         }
-        private void CheckBoardMembership(Board board, int userId)
+        private static void CheckBoardMembership(Board board, int userId)
         {
             if (board is null)
                 throw new ResourceNotFoundException("Resource Not Found");
@@ -147,13 +143,10 @@ namespace Application.Service.Impl
             var element = await _element.GetFirstAsync(p => p.Id == elementId, i=>i.ElementUsers);
             if (element == null)
                 throw new ResourceNotFoundException("Resource Not Found");
-
-            if (element.IsComplete != true && element.IsComplete != false)
-                throw new ResourceNotFoundException("Is Complete must be true or false");
             #endregion
 
             if (authorizationResult.Succeeded || (element.ElementUsers
-                    .FirstOrDefault(id => id.UserId == _httpUserContextService.UserId) != null) ? true : false )
+                    .FirstOrDefault(id => id.UserId == _httpUserContextService.UserId) != null))
             {
                 element.IsComplete = updateElementDto.IsComplete;
                 await _element.UpdateAsync(element);
@@ -172,7 +165,7 @@ namespace Application.Service.Impl
             var element = await _element.GetFirstAsync(eid => eid.Id == elementId, i => i.ElementUsers);
             var elementUsers = element.ElementUsers.ToList();
 
-            var users = new List<User>();
+            var users = new List<User?>();
             foreach (var user in elementUsers)
             {
                 var cos = _userRepository.GetFirstAsync(u=>u.Id == user.UserId).Result;

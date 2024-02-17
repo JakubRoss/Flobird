@@ -25,7 +25,7 @@ namespace API.Controllers
         /// downloads last uploaded image
         /// </summary>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/files
+        /// GET flobird.azurewebsites.net/files
         /// </remarks>
         [HttpGet]
         public async Task<IActionResult> GetFile()
@@ -40,7 +40,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="file">Request's payload</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/files
+        /// POST flobird.azurewebsites.net/files
         /// </remarks>
         [HttpPost]
         public async Task UploadFile(IFormFile file)
