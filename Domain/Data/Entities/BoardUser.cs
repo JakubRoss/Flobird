@@ -4,11 +4,6 @@ namespace Domain.Data.Entities
 {
     public class BoardUser : BaseEntity
     {
-        public BoardUser(int boardId, int userId)
-        {
-            BoardId = boardId;
-            UserId = userId;
-        }
         public virtual Roles Roles { get; set; }
 
         //Navigation

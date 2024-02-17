@@ -92,8 +92,9 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var newElement = new Element(elementDto.Description)
+            var newElement = new Element
             {
+                Description = elementDto.Description,
                 IsComplete = false,
                 CreatedAt = DateTime.UtcNow,
                 TaskId = taskId
