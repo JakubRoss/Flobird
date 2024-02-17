@@ -84,12 +84,11 @@ namespace Application.Service.Impl
 
         public async Task<List<ResponseBoardDto>> GetBoardsAsync()
         {
-            var userboards = await _boardUsersBaseRepository.GetAllAsync(p=>p.UserId == _httpUserContextService.UserId);
+            var userBoards = await _boardUsersBaseRepository.GetAllAsync(p=>p.UserId == _httpUserContextService.UserId, i=>i.Board);
             var boards = new List<Board>();
-            foreach (var board in userboards)
+            foreach (var board in userBoards)
             {
-                var cos = await _boardRepository.GetFirstAsync(p=>p.Id == board.BoardId);
-                boards.Add(cos);
+                boards.Add(board.Board);
             }
             var responseBoards = _mapper.Map<List<ResponseBoardDto>>(boards);
             return responseBoards;
