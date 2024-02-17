@@ -1,10 +1,10 @@
 ﻿using Application.Authorization;
-using Application.Data.Entities;
-using Application.Exceptions;
 using Application.Model.Card;
 using Application.Model.User;
-using Application.Repositories;
 using AutoMapper;
+using Domain.Data.Entities;
+using Domain.Exceptions;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Application.Service.Impl
@@ -40,18 +40,14 @@ namespace Application.Service.Impl
         private async Task<Card> GetCardById(int cardId)
         {
             var card = await _cardRepository.GetFirstAsync(p => p.Id == cardId, i=>i.CardUsers);
-            if (card == null)
-                throw new ResourceNotFoundException("ResourceNotFound");
-            return card;
+            return card ?? throw new ResourceNotFoundException("ResourceNotFound");
         }
         private async Task<Board> GetBoard(int cardId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(c=>c.Cards.Any(c=>c.Id == cardId)), i=>i.BoardUsers);
-            if (board == null)
-                throw new ResourceNotFoundException("Resource not found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource not found");
         }
-        private async System.Threading.Tasks.Task CheckBoardMembership(int cardId, int userId)
+        private async Task CheckBoardMembership(int cardId, int userId)
         {
             var board = await GetBoard(cardId);
             var user = board.BoardUsers.FirstOrDefault(x => x.UserId == userId);
@@ -112,7 +108,6 @@ namespace Application.Service.Impl
             if(cardId != null)
             {
                 var exist = await _boardRepository.GetFirstAsync(b => b.Lists.Any(l => l.Cards.Any(c => c.Id == cardId)));
-                var transferCard = await _cardRepository.GetFirstAsync(c => c.Id == cardId);
                 var card = exist != null ? _cardRepository.GetFirstAsync(c => c.Id == cardId).Result : throw new ConflictExceptions("card does not belong to the board or does not exist");
                 card.ListId = listId;
                 await _cardRepository.UpdateAsync(card);

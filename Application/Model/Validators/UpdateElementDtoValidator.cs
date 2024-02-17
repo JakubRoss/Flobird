@@ -10,11 +10,6 @@ namespace Application.Model.Validators
             RuleFor(e => e.Description)
                 .Custom((value, context) =>
                 {
-                    var updateAttachment = context.InstanceToValidate;
-
-                    if (updateAttachment.Description == null && updateAttachment.IsComplete == null)
-                        context.AddFailure("Description", "Description or check must be filled in");
-
                     if (value != null)
                     {
                         if (value.Length < 3)

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    /// <summary>
+    /// we're setting main route of controller by [route] attribute 
+    /// </summary>
     [Route("users")]
     [ApiController]
     [Authorize]
@@ -14,6 +17,10 @@ namespace API.Controllers
     {
         private readonly IUserService _userService;
 
+        /// <summary>
+        /// konstruktor
+        /// </summary>
+        /// <param name="userService"></param>
         public UsersController(IUserService userService)
         {
             _userService = userService;
@@ -24,10 +31,10 @@ namespace API.Controllers
         /// </summary>
         /// <param name="user">Request's payload</param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/users
+        /// PUT flobird.azurewebsites.net/users
         /// </remarks>
         [HttpPut]
-        public async System.Threading.Tasks.Task<UserDto> PutUser([FromBody] UpdateUserDto user)
+        public async Task<UserDto> PutUser([FromBody] UpdateUserDto user)
         {
             var updatedUser = await _userService.UpdateUserAsync(user);
             return updatedUser;
@@ -37,7 +44,7 @@ namespace API.Controllers
         /// downloads account details
         /// </summary>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/users
+        /// GET flobird.azurewebsites.net/users
         /// </remarks>
         [HttpGet]
         public async Task<UserDto> GetUser()
@@ -51,24 +58,22 @@ namespace API.Controllers
         /// </summary>
         /// /// <param name="searchingPhrase">phrase search in login or email if null returns all users</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/users/all?searchingPhrase={phrase}
+        /// GET flobird.azurewebsites.net/users/all?searchingPhrase={phrase}
         /// </remarks>
         [HttpGet("all")]
         public async Task<List<ResponseUserDto>> GetUsersAsync([FromQuery]string? searchingPhrase)
         {
-            if(!string.IsNullOrEmpty(searchingPhrase))
-                return await _userService.GetUsersAsync(searchingPhrase);
-            return new List<ResponseUserDto>();
+            return !string.IsNullOrEmpty(searchingPhrase) ? await _userService.GetUsersAsync(searchingPhrase) : new List<ResponseUserDto>();
         }
 
         /// <summary>
         /// deletes account
         /// </summary>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/users
+        /// DELETE flobird.azurewebsites.net/users
         /// </remarks>
         [HttpDelete]
-        public async System.Threading.Tasks.Task DeleteUser()
+        public async Task DeleteUser()
         {
             await _userService.RemoveUserAsync();
         }

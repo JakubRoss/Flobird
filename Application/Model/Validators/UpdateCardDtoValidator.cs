@@ -1,6 +1,5 @@
 ﻿using Application.Model.Card;
 using FluentValidation;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Model.Validators
 {
@@ -13,8 +12,8 @@ namespace Application.Model.Validators
                 {
                     if (value != null)
                     {
-                        
-                        if (value.Length<3 || value.IsNullOrEmpty() ||value.Length>15)
+
+                        if (value.Length < 3 || string.IsNullOrEmpty(value) || value.Length > 15)
                             context.AddFailure("Name", "Name is too short/long or is empty");
                     }
                 });
@@ -24,7 +23,7 @@ namespace Application.Model.Validators
                     if (value != null)
                     {
 
-                        if (value.Length >250)
+                        if (value.Length > 250)
                             context.AddFailure("Name", "the description can contain a maximum of 250 characters");
                     }
                 });

@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using Application.Common;
-using Application.Data.Entities;
+﻿using Domain.Common;
+using Domain.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Application.Authorization
 {
@@ -16,7 +16,7 @@ namespace Application.Authorization
             switch (requirement.ResourceOperations)
             {
                 case ResourceOperations.Create:
-                    if (boardUser.Roles == Roles.User)
+                    if (boardUser!.Roles == Roles.User)
                     {
                         context.Fail();
                         break;
@@ -32,7 +32,7 @@ namespace Application.Authorization
                     context.Succeed(requirement);
                     break;
                 case ResourceOperations.Update:
-                    if (boardUser.Roles ==Roles.User)
+                    if (boardUser!.Roles ==Roles.User)
                     {
                         context.Fail();
                         break;
@@ -40,7 +40,7 @@ namespace Application.Authorization
                     context.Succeed(requirement);
                     break;
                 case ResourceOperations.Delete:
-                    if (boardUser.Roles == Roles.User)
+                    if (boardUser!.Roles == Roles.User)
                     {
                         context.Fail();
                         break;

@@ -1,81 +1,43 @@
 ﻿using Application.Common;
-using Application.Data.Entities;
-using Application.Exceptions;
 using Application.Model.User;
-using Application.Repositories;
 using AutoMapper;
+using Domain.Authentication;
+using Domain.Data.Entities;
+using Domain.Exceptions;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Application.Service.Impl
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userBase;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly AuthenticationSettings _authenticationSettings;
-        private readonly IBoardRepository _boardRepository;
         private readonly IHttpUserContextService _httpUserContextService;
+        private readonly IAuthenticationService _authenticationService;
 
         public UserService(
-            IUserRepository userBase,
-            IBoardRepository boardRepository,
+            IUserRepository userRepository,
             IMapper mapper,
             IPasswordHasher<User>passwordHasher,
-            AuthenticationSettings authenticationSettings,
-            IHttpUserContextService httpUserContextService)
+            IHttpUserContextService httpUserContextService,
+            IAuthenticationService authenticationService)
         {
-            _userBase = userBase;
+            _userRepository = userRepository;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
-            _authenticationSettings = authenticationSettings;
-            _boardRepository = boardRepository;
             _httpUserContextService = httpUserContextService;
+            _authenticationService = authenticationService;
         }
         #region Utils
         private async Task<User> GetUser()
         {
             var id = _httpUserContextService.UserId;
-            var user = await _userBase.GetFirstAsync(p => p.Id == id);
-            if (user == null)
-                throw new ResourceNotFoundException("User don't exists");
-            return user;
+            var user = await _userRepository.GetFirstAsync(p => p.Id == id);
+            return user ?? throw new ResourceNotFoundException("User don't exists");
         }
-        private string GenerateJwt(User user, string password)
-        {
-            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
 
-            if (result == PasswordVerificationResult.Failed)
-            {
-                throw new ResourceNotFoundException("Invalid User name or password");
-            }
-
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Login),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
-
-            var token = new JwtSecurityToken(_authenticationSettings.JwtIssuer,
-                _authenticationSettings.JwtIssuer,
-                claims,
-                expires: expires,
-                signingCredentials: cred);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            return tokenHandler.WriteToken(token);
-        }
         #endregion
 
         public async Task AddUserAsync(CreateUserDto userDto)
@@ -84,7 +46,7 @@ namespace Application.Service.Impl
             var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
             user.PasswordHash = hashedPassword;
             user.CreatedAt = DateTime.Now;
-            var newUser = await _userBase.AddAsync(user);
+            await _userRepository.AddAsync(user);
         }
         public async Task<UserDto> GetUserAsync()
         {
@@ -108,7 +70,7 @@ namespace Application.Service.Impl
             user.UpdatedAt = DateTime.Now;
             #endregion
 
-            var updated = await _userBase.UpdateAsync(user);
+            var updated = await _userRepository.UpdateAsync(user);
             var updatedDto = _mapper.Map<UserDto>(updated);
             return updatedDto;
         }
@@ -116,27 +78,12 @@ namespace Application.Service.Impl
         public async Task RemoveUserAsync()
         {
             var user = await GetUser();
-            var boards = await _boardRepository.GetAllAsync(b => b.BoardUsers.Any(id => id.UserId == user.Id));
-            using (_boardRepository.BeginTransactionAsync())
-            {
-                try
-                {
-                    await _boardRepository.DeleteRangeAsync(boards);
-                    await _userBase.DeleteAsync(user);
-
-                    await _boardRepository.CommitTransactionAsync();
-                }
-                catch (Exception)
-                {
-                    await _boardRepository.RollbackTransactionAsync();
-                    throw new DbUpdateException("Wystąpił błąd podczas usuwania danych z bazy danych.");
-                }
-            }
+            await _userRepository.DeleteAsync(user);
         }
 
-        public async Task<List<ResponseUserDto>> GetUsersAsync(string searchingPhrase)
+        public async Task<List<ResponseUserDto>> GetUsersAsync(string? searchingPhrase)
         {
-            var users = await _userBase.GetUsersAsync(searchingPhrase);
+            var users = await _userRepository.GetUsersAsync(searchingPhrase);
             if(users is null)
                 throw new ResourceNotFoundException("The application has no users");
             var usersDto = new List<ResponseUserDto>();
@@ -149,11 +96,9 @@ namespace Application.Service.Impl
         }
         public async Task<LoginResult> LogIn(UserLoginDto userLoginDto)
         {
-            var user = await _userBase.GetFirstAsync(u => u.Login.ToLower() == userLoginDto.Login.ToLower());
-            if (user == null)
-                throw new UnauthorizedException("Invalid User name or password");
+            var user = await _userRepository.GetFirstAsync(u => u.Login.ToLower() == userLoginDto.Login.ToLower());
 
-            string tokenText = GenerateJwt(user, userLoginDto.Password);
+            string tokenText = _authenticationService.GenerateJwt(user!, userLoginDto.Password);
 
             var userDto = _mapper.Map<ResponseUserDto>(user);
             var loginResult = new LoginResult(tokenText, userDto);

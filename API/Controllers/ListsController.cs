@@ -24,7 +24,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="boardId">board Id</param>
         /// <param name="createList">Request's payload</param>
-        /// <remarks>POST cabanoss.azurewebsites.net/lists?boardId={id}
+        /// <remarks>POST flobird.azurewebsites.net/lists?boardId={id}
         /// </remarks>
         [HttpPost]
         public async Task CreateList([FromQuery] int boardId, [FromBody] CreateListDto createList)
@@ -37,7 +37,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="boardId">board Id</param>
         /// <returns>List of board task lists</returns>
-        /// <remarks>GET cabanoss.azurewebsites.net/lists/boards?boardId={id}
+        /// <remarks>GET flobird.azurewebsites.net/lists/boards?boardId={id}
         /// </remarks>
         [HttpGet("boards")]
         public async Task<List<ListDto>> GetLists([FromQuery] int boardId)
@@ -51,7 +51,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="listId">list Id</param>
         /// <returns>task list</returns>
-        /// <remarks>GET cabanoss.azurewebsites.net/lists?listId={id}
+        /// <remarks>GET flobird.azurewebsites.net/lists?listId={id}
         /// </remarks>
         [HttpGet]
         public async Task<ListDto> GetList([FromQuery]int listId)
@@ -64,7 +64,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="listId">list Id</param>
         /// <param name="createList">Request's payload</param>
-        /// <remarks>PUT cabanoss.azurewebsites.net/lists?listId={id}
+        /// <remarks>PUT flobird.azurewebsites.net/lists?listId={id}
         /// </remarks>
         [HttpPut]
         public async Task UpdateList([FromQuery] int listId , [FromBody] CreateListDto createList)
@@ -77,7 +77,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="listId">list Id</param>
         /// <param name="date">deadline time</param>
-        /// <remarks>PATCH cabanoss.azurewebsites.net/lists?listId={id}
+        /// <remarks>PATCH flobird.azurewebsites.net/lists?listId={id}
         /// </remarks>
         [HttpPatch]
         public async Task SetDeadline([FromQuery] int listId, [FromBody] DateOnly date)
@@ -89,7 +89,7 @@ namespace API.Controllers
         /// Deleting a given list
         /// </summary>
         /// <param name="listId">list Id</param>
-        /// <remarks>DELETE cabanoss.azurewebsites.net/lists?listId={id}
+        /// <remarks>DELETE flobird.azurewebsites.net/lists?listId={id}
         /// </remarks>
         [HttpDelete]
         public async Task DeleteList([FromQuery] int listId)

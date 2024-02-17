@@ -5,7 +5,7 @@ namespace Application.Model.Validators
 {
     public class TaskDtoValidator : AbstractValidator<TaskDto>
     {
-        public TaskDtoValidator() 
+        public TaskDtoValidator()
         {
             RuleFor(p => p.Name)
                 .NotEmpty()

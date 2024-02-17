@@ -1,12 +1,12 @@
-﻿using Application.Data;
-using Application.Model.User;
+﻿using Application.Model.User;
+using Domain.Repositories;
 using FluentValidation;
 
 namespace Application.Model.Validators
 {
     public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
     {
-        public CreateUserDtoValidator(DatabaseContext dbContext)
+        public CreateUserDtoValidator(IUserRepository userRepository)
         {
             RuleFor(e => e.Password)
                 .MinimumLength(6)
@@ -16,18 +16,18 @@ namespace Application.Model.Validators
                 .EmailAddress()
                 .Custom((value, context) =>
                 {
-                    var emailInUse = dbContext.Users.Any(x => x.Email == value);
-                    if(emailInUse)
+                    var emailInUse = userRepository.GetFirstAsync(x => x.Email == value).Result;
+                    if (emailInUse != null)
                     {
-                        context.AddFailure("Email", "Email Adress is taken");
+                        context.AddFailure("Email", "Email Address is taken");
                     }
                 });
 
             RuleFor(e => e.Login)
                 .Custom((value, context) =>
                 {
-                    var emailInUse = dbContext.Users.Any(x => x.Login == value);
-                    if (emailInUse)
+                    var emailInUse = userRepository.GetFirstAsync(x => x.Login == value).Result;
+                    if (emailInUse != null)
                     {
                         context.AddFailure("Login", "Login is taken");
                     }

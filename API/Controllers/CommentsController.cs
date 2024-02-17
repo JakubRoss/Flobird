@@ -14,6 +14,10 @@ namespace API.Controllers
     {
         private readonly ICommentServices _commentServices;
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="commentServices"></param>
         public CommentsController(ICommentServices commentServices)
         {
             _commentServices = commentServices;
@@ -25,7 +29,7 @@ namespace API.Controllers
         /// <param name="cardId">card id</param>
         /// <param name="commentDto">Request's payload</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/comments/cards?cardId={id}
+        /// POST flobird.azurewebsites.net/comments/cards?cardId={id}
         /// </remarks>
         [HttpPost("cards")]
         public async Task AddComment([FromQuery] int cardId, [FromBody] CommentDto commentDto)
@@ -39,7 +43,7 @@ namespace API.Controllers
         /// <param name="commentId">comment id</param>
         /// <param name="commentDto">Request's payload</param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/comments?commentId={id}
+        /// PUT flobird.azurewebsites.net/comments?commentId={id}
         /// </remarks>
         [HttpPut]
         public async Task UpdateComment([FromQuery] int commentId, [FromBody] CommentDto commentDto)
@@ -52,7 +56,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="cardId">Card id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/comments/cards?cardId={id}
+        /// GET flobird.azurewebsites.net/comments/cards?cardId={id}
         /// </remarks>
         [HttpGet("cards")]
         public async Task<List<ResponseCommentDto>> GetComments([FromQuery] int cardId)
@@ -66,7 +70,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="commentId">comment id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/comments?commentId={id}
+        /// GET flobird.azurewebsites.net/comments?commentId={id}
         /// </remarks>
         [HttpGet]
         public async Task<ResponseCommentDto> GetComment([FromQuery] int commentId)
@@ -80,7 +84,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="commentId">comment id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/comments?commentId={id}
+        /// DELETE flobird.azurewebsites.net/comments?commentId={id}
         /// </remarks>
         [HttpDelete]
         public async Task DeleteCard([FromQuery] int commentId)

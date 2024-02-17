@@ -1,8 +1,8 @@
 ﻿using Application.Authorization;
-using Application.Data.Entities;
-using Application.Exceptions;
 using Application.Model.Comment;
-using Application.Repositories;
+using Domain.Data.Entities;
+using Domain.Exceptions;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Application.Service.Impl
@@ -33,16 +33,12 @@ namespace Application.Service.Impl
         private async Task<Board> GetBoardByCardId(int cardId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(list => list.Cards.Any(card => card.Id == cardId)), i => i.BoardUsers);
-            if (board is null)
-                throw new ResourceNotFoundException("Resource Not Found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource Not Found");
         }
         private async Task<Board> GetBoardByCommentId(int commentId)
         {
             var board = await _boardRepository.GetFirstAsync(board => board.Lists.Any(card => card.Cards.Any(comm => comm.Comments.Any(id => id.Id == commentId))), i => i.BoardUsers);
-            if (board is null)
-                throw new ResourceNotFoundException("Resource Not Found");
-            return board;
+            return board ?? throw new ResourceNotFoundException("Resource Not Found");
         }
         #endregion
 
@@ -76,11 +72,10 @@ namespace Application.Service.Impl
                 throw new UnauthorizedException("Unauthorized");
 
             var comment = await _commentRepository.GetFirstAsync(p => p.Id == commentId);
-            if (comment is null)
-                throw new ResourceNotFoundException("comment does not exist");
-
-            return new ResponseCommentDto (comment.Id,comment.User.Id,comment.User.Login,comment.Text)
-            { 
+            return comment is null
+                ? throw new ResourceNotFoundException("comment does not exist")
+                : new ResponseCommentDto (comment.Id,comment.User.Id,comment.User.Login,comment.Text)
+            {
                 CreatedAt = comment.CreatedAt
             };
         }
@@ -110,7 +105,7 @@ namespace Application.Service.Impl
 
             var comment = await _commentRepository.GetFirstAsync(p => p.Id == commentId);
             if (comment is null)
-                throw new ResourceNotFoundException("Reosurce not found");
+                throw new ResourceNotFoundException("Resource not found");
 
             if ((int)_httpUserContextService.UserId! == comment.UserId || authorizationResult.Succeeded)
             {

@@ -23,7 +23,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="createBoardDto">Request's payload</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/boards
+        /// POST flobird.azurewebsites.net/boards
         /// </remarks>
         [HttpPost("boards")]
         public async Task PostBoard([FromBody] CreateBoardDto createBoardDto)
@@ -37,7 +37,7 @@ namespace API.Controllers
         /// <param name="updateBoard">Request's payload</param>
         /// <param name="boardId">Board id</param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/boards?boardId={id}
+        /// PUT flobird.azurewebsites.net/boards?boardId={id}
         /// </remarks>
         [HttpPut("boards")]
         public async Task UpdateBoardName([FromBody] UpdateBoardDto updateBoard, [FromQuery] int boardId)
@@ -52,7 +52,7 @@ namespace API.Controllers
         /// Returns a list of boards 
         /// </returns>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/boards
+        /// GET flobird.azurewebsites.net/boards
         /// </remarks>
         [HttpGet("boards")]
         public async Task<List<ResponseBoardDto>> GetBoards()
@@ -66,7 +66,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="boardId">Board id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/boards/{id}
+        /// GET flobird.azurewebsites.net/boards/{id}
         /// </remarks>
         [HttpGet("boards/{boardId}")]
         public async Task<ResponseBoardDto> GetBoard([FromRoute] int boardId)
@@ -80,7 +80,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="boardId">Board id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/boards?boardId={id}
+        /// DELETE flobird.azurewebsites.net/boards?boardId={id}
         /// </remarks>
         [HttpDelete("boards")]
         public async Task DeleteBoard([FromQuery] int boardId)
@@ -94,7 +94,7 @@ namespace API.Controllers
         /// <param name="boardId">board id</param>
         /// <param name="userId">user id</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/members/boards/{boardId}?userId={userId}
+        /// POST flobird.azurewebsites.net/members/boards/{boardId}?userId={userId}
         /// </remarks>
         [HttpPost("members/boards/{boardId}")]
         public async Task AddBoardUsers([FromRoute] int boardId, [FromQuery] int userId)
@@ -109,7 +109,7 @@ namespace API.Controllers
         /// <param name="userId">user id</param>
         /// <param name="userRole">user role [0 - Admin, 1 - User]</param>
         /// <remarks>
-        /// PATCH cabanoss.azurewebsites.net/members/boards/{boardId}?userId={userId}
+        /// PATCH flobird.azurewebsites.net/members/boards/{boardId}?userId={userId}
         /// </remarks>
         [HttpPatch("members/boards/{boardId}")]
         public async Task SetUserRole([FromRoute] int boardId, [FromQuery] int userId, [FromBody] int userRole)
@@ -122,7 +122,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="boardId">board id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/members/boards?boardId={id}
+        /// GET flobird.azurewebsites.net/members/boards?boardId={id}
         /// </remarks>
         [HttpGet("members/boards")]
         public async Task<List<ResponseBoardUser>> GetBoardUsers([FromQuery] int boardId)
@@ -138,7 +138,7 @@ namespace API.Controllers
         /// <param name="boardId">board id</param>
         /// <param name="userId">user id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/members/{boardId}?userId={userId}
+        /// DELETE flobird.azurewebsites.net/members/{boardId}?userId={userId}
         /// </remarks>
         [HttpDelete("members/boards/{boardId}")]
         public async Task RemoveBoardUsers([FromRoute] int boardId, [FromQuery] int userId)

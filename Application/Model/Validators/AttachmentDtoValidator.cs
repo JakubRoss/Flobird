@@ -10,12 +10,12 @@ namespace Application.Model.Validators
             RuleFor(e => e.Name)
                 .Custom((value, context) =>
                 {
-                    var updateAttachment= context.InstanceToValidate;
+                    var updateAttachment = context.InstanceToValidate;
 
-                    if (updateAttachment.Path ==null && updateAttachment.Name == null)
-                            context.AddFailure("Name", "Name or path must be filled in");
+                    if (updateAttachment.Path == null && updateAttachment.Name == null)
+                        context.AddFailure("Name", "Name or path must be filled in");
 
-                    if(value != null)
+                    if (value != null)
                     {
                         if (value.Length < 3)
                             context.AddFailure("Name", "Name is too short");

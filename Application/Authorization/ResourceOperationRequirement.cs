@@ -8,7 +8,7 @@ namespace Application.Authorization
 
         public ResourceOperationRequirement(ResourceOperations resourceOperations) 
         {
-            this.ResourceOperations = resourceOperations;
+            ResourceOperations = resourceOperations;
         }
     }
 }

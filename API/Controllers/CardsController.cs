@@ -14,6 +14,10 @@ namespace API.Controllers
     {
         private readonly ICardService _cardService;
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="cardService"></param>
         public CardsController(ICardService cardService)
         {
             _cardService = cardService;
@@ -24,8 +28,9 @@ namespace API.Controllers
         /// </summary>
         /// <param name="listId">list Id</param>
         /// <param name="createCard">Request's payload</param>
+        /// <param name="cardId">We use this only when we want to move an already existing card to another list</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/cards/lists?listId={id} or transfer to another card POST cabanoss.azurewebsites.net/cards/lists?listId={id}?cardId={id}
+        /// POST flobird.azurewebsites.net/cards/lists?listId={id} or transfer to another card POST flobird.azurewebsites.net/cards/lists?listId={id}?cardId={id}
         /// </remarks>
         [HttpPost("cards/lists")]
         public async Task AddCard([FromQuery] int listId,[FromQuery] int? cardId, [FromBody] CreateCardDto createCard)
@@ -39,7 +44,7 @@ namespace API.Controllers
         /// <param name="cardId">card Id</param>
         /// <param name="createCard">Request's payload</param>
         /// <remarks>
-        /// PUT cabanoss.azurewebsites.net/cards?cardId={id}
+        /// PUT flobird.azurewebsites.net/cards?cardId={id}
         /// </remarks>
         [HttpPut("cards")]
         public async Task UpdateCard([FromQuery] int cardId, [FromBody] UpdateCardDto createCard)
@@ -53,7 +58,7 @@ namespace API.Controllers
         /// <param name="cardId">card Id</param>
         /// <param name="date">short date to set card deadline</param>
         /// <remarks>
-        /// PATCH cabanoss.azurewebsites.net/cards?cardId={id}
+        /// PATCH flobird.azurewebsites.net/cards?cardId={id}
         /// </remarks>
         [HttpPatch("cards")]
         public async Task SetDeadline([FromQuery] int cardId, [FromBody] DateOnly date)
@@ -66,7 +71,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="listId">list Id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/cards/lists?listId={id}
+        /// GET flobird.azurewebsites.net/cards/lists?listId={id}
         /// </remarks>
         [HttpGet("cards/lists")]
         public async Task<List<CardDto>> GetCards([FromQuery] int listId)
@@ -80,7 +85,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="cardId">card Id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/cards?cardId={id}
+        /// GET flobird.azurewebsites.net/cards?cardId={id}
         /// </remarks>
         /// <returns>Created card</returns>
         [HttpGet("cards")]
@@ -95,7 +100,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="cardId">card Id</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/cards?cardId={id}
+        /// DELETE flobird.azurewebsites.net/cards?cardId={id}
         /// </remarks>
         [HttpDelete("cards")]
         public async Task DeleteCard([FromQuery] int cardId)
@@ -108,7 +113,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="cardId">card id</param>
         /// <remarks>
-        /// GET cabanoss.azurewebsites.net/members/cards?cardId={id}
+        /// GET flobird.azurewebsites.net/members/cards?cardId={id}
         /// </remarks>
         [HttpGet("members/cards")]
         public async Task<List<ResponseUserDto>> GetCardUsers([FromQuery] int cardId)
@@ -121,8 +126,9 @@ namespace API.Controllers
         /// adds the specified user to the given card
         /// </summary>
         /// <param name="userId">user id</param>
+        /// <param name="cardId">card to which we want to add a user</param>
         /// <remarks>
-        /// POST cabanoss.azurewebsites.net/members/cards/{cardId}?userId={userId}
+        /// POST flobird.azurewebsites.net/members/cards/{cardId}?userId={userId}
         /// </remarks>
         [HttpPost("members/cards/{cardId}")]
         public async Task AddCardUsers([FromRoute] int cardId, [FromQuery] int userId)
@@ -134,8 +140,9 @@ namespace API.Controllers
         /// removes the specified user to the given card
         /// </summary>
         /// <param name="cardId">user id</param>
+        /// <param name="userId">the user you want to remove from a given card</param>
         /// <remarks>
-        /// DELETE cabanoss.azurewebsites.net/members/cards/{cardId}?userId={userId}
+        /// DELETE flobird.azurewebsites.net/members/cards/{cardId}?userId={userId}
         /// </remarks>
         [HttpDelete("members/cards/{cardId}")]
         public async Task RemoveCardUsers([FromRoute] int cardId, [FromQuery] int userId)

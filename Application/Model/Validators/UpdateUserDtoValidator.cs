@@ -1,12 +1,12 @@
-﻿using Application.Data;
-using Application.Model.User;
+﻿using Application.Model.User;
+using Domain.Repositories;
 using FluentValidation;
 
 namespace Application.Model.Validators
 {
     public class UpdateUserDtoValidator : AbstractValidator<UpdateUserDto>
     {
-        public UpdateUserDtoValidator(DatabaseContext dbContext)
+        public UpdateUserDtoValidator(IUserRepository userRepository)
         {
             RuleFor(e => e.Password)
                 .Custom((value, context) =>
@@ -22,10 +22,10 @@ namespace Application.Model.Validators
             RuleFor(e => e.Email)
                 .Custom((value, context) =>
                 {
-                    if(value!=null)
+                    if (value != null)
                     {
-                        var emailInUse = dbContext.Users.Any(x => x.Email == value);
-                        if (emailInUse)
+                        var emailInUse = userRepository.GetFirstAsync(x => x.Email == value).Result;
+                        if (emailInUse != null)
                         {
                             context.AddFailure("Email", "Adres email jest zajety");
                         }
@@ -36,8 +36,8 @@ namespace Application.Model.Validators
                 {
                     if (value != null)
                     {
-                        var emailInUse = dbContext.Users.Any(x => x.Login == value);
-                        if (emailInUse)
+                        var emailInUse = userRepository.GetFirstAsync(x => x.Login == value).Result;
+                        if (emailInUse != null)
                         {
                             context.AddFailure("Login", "Login jest zajety");
                         }
