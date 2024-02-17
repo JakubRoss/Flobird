@@ -66,8 +66,9 @@ namespace Application.Service.Impl
                 throw new UnauthorizedException("Unauthorized");
 
             var i = GetAllAsync(boardId).Result.Count;
-            var list = new List(name)
+            var list = new List
             {
+                Name = name,
                 CreatedAt = DateTime.Now,
                 BoardId = boardId,
                 Position = i++

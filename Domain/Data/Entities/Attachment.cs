@@ -2,10 +2,6 @@
 {
     public class Attachment : BaseEntity
     {
-        public Attachment(string path)
-        {
-            Path = path;
-        }
         /// <summary>
         /// Ogólnie rzecz biorąc, zastosowanie new do właściwości Id może być interpretowane
         /// jako sposób na ukrycie tej właściwości, aby była ona dostępna tylko
@@ -13,7 +9,7 @@
         /// </summary>
         public new int Id { get; set; } 
         public string? Name { get; set; }
-        public string Path { get; set; }
+        public string Path { get; set; } = default!;
         public DateTime DateCreated { get; set; } 
 
         //Navigation

@@ -75,8 +75,9 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var newAttachment = new Attachment(attachment.Path)
+            var newAttachment = new Attachment
             {
+                Path = attachment.Path,
                 Name = attachment.Name,
                 DateCreated = DateTime.UtcNow,
                 CardId = cardId,

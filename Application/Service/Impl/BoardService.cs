@@ -62,9 +62,10 @@ namespace Application.Service.Impl
             var board = _mapper.Map<Board>(createBoardDto);
             board.CreatedAt = DateTime.Now;
             var sboard = await _boardRepository.AddAsync(board);
-
-            var newBoardUser = new BoardUser(sboard.Id, userDb.Id)
+            var newBoardUser = new BoardUser
             {
+                UserId = userDb!.Id,
+                BoardId = sboard.Id,
                 Roles = Roles.Creator
         };
             await _boardUsersBaseRepository.AddAsync(newBoardUser);
@@ -134,8 +135,10 @@ namespace Application.Service.Impl
             if (!authorizationResult.Succeeded)
                 throw new UnauthorizedException("Unauthorized");
 
-            var newBoardUser = new BoardUser(boardId, userId)
+            var newBoardUser = new BoardUser
             {
+                BoardId = boardId,
+                UserId = userId,
                 Roles = Roles.User
             };
             await _boardUsersBaseRepository.AddAsync(newBoardUser);

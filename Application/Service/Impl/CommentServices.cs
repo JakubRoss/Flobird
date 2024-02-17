@@ -88,8 +88,9 @@ namespace Application.Service.Impl
 
             var userId = (int)_httpUserContextService.UserId!;
 
-            var comment = new Comment(text)
+            var comment = new Comment
             {
+                Text = text,
                 CreatedAt = DateTime.Now,
                 UserId = userId,
                 CardId = cardId
