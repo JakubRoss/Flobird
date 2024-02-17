@@ -92,7 +92,7 @@ namespace Application.Service.Impl
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpUserContextService.User, board, new ResourceOperationRequirement(ResourceOperations.Update));
             var attachment = await _attachmentRepository.GetFirstAsync(p => p.Id == attachmentId);
 
-            if (_httpUserContextService.UserId == attachment.UserId || authorizationResult.Succeeded)
+            if (attachment != null && (_httpUserContextService.UserId == attachment.UserId || authorizationResult.Succeeded))
             {
                 if (attachment.Path != null)
                     attachment.Path = attachmentDto.Path;
@@ -110,7 +110,7 @@ namespace Application.Service.Impl
 
             var attachment = await _attachmentRepository.GetFirstAsync(p => p.Id == attachmentId);
 
-            if (_httpUserContextService.UserId == attachment.UserId || authorizationResult.Succeeded)
+            if (attachment !=null && (_httpUserContextService.UserId == attachment.UserId || authorizationResult.Succeeded))
                 await _attachmentRepository.DeleteAsync(attachment);
             else
                 throw new UnauthorizedException("Unauthorized");
