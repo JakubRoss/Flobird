@@ -17,15 +17,6 @@ namespace Application.Model.Validators
                         if (value.Length > 249)
                             context.AddFailure("Name", "Name is too long");
                     }
-
-                });
-            RuleFor(e => e.IsComplete)
-                .Custom((value, context) =>
-                {
-                    var updateAttachment = context.InstanceToValidate;
-
-                    if (updateAttachment.Description == null && updateAttachment.IsComplete == null)
-                        context.AddFailure("Description", "Description or check must be filled in");
                 });
         }
     }
