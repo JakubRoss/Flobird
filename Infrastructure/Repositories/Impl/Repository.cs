@@ -35,6 +35,18 @@ namespace Infrastructure.Repositories.Impl
             return await _dbSet.Where(predicate).ToListAsync();
         }
 
+        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        {
+            var query = _dbSet.Where(predicate);
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task<TEntity?> GetFirstAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _dbSet.Where(predicate).FirstOrDefaultAsync();
