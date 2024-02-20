@@ -1,37 +1,127 @@
-## WebAPI Project<p/>
+# Flobird API
 
-Welcome to my API for kanban applications! This project provides a set of application programming interfaces (APIs)
-that allow you to integrate your kanban application with other tools and access data inside your application.
+## About the project
 
-## Technologies
+Flobird API is a **learning-focused backend project** created to practice building REST APIs in **ASP.NET Core**.
 
-* [ASP.NET Core 6](https://docs.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-6.0?view=aspnetcore-6.0)
-* [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
+The main goal of this project was to:
 
-## Features
-* **Boards** - tasks grouped into projects, each is independent - has other 
-users, list of cards and tasks
-* **Board sharing** - ability to assign other users to the board. 
-* **List of cards** - will allow to organize the content allowing easier categorization of
-desired tasks. Each board has separate, independent card lists. Card lists can contain 
-multiple cards.
-* **Card** -will allow you to organize the chronology of tasks. Each card will consist of 
-elements, will have its own independent list of users assigned to it from the 
-common area of the board. The card will also have dates indicating the time for 
-execution of all elements from a given card and attachments. Directly in the card will be
-comments can be placed.
-* **Elements** - components of the cards, which will symbolize task stages to which it will be possible to
-directly assign users responsible for the stage and will have
-an in-depth description of the problem.
-* **Comments** - adding comments to individual cards, they are to enable 
-communication between users.
-* **Roles** - will allow you to manage permissions to the project. A member role allows you to 
-adding entries and comments. The administrator role allows you to have total control over 
-the project and the content of other users.
-* **Description** - each component of the board will have a description to accurately describe the 
-problem and approach.
+- understand how backend systems are structured,
+- learn how to design REST endpoints,
+- work with authentication, authorization and databases,
+- apply basic clean code and layering principles.
 
+The project is **not a production system**, but a practical playground for backend development.
 
-(further under construction/improvement)
+---
 
-![datbase diagram](DbDiagram.jpg)
+## What I focused on
+
+During development I focused mainly on backend fundamentals:
+
+- designing RESTful APIs
+- JWT authentication and role-based authorization
+- separation of responsibilities (controllers, services, repositories)
+- working with relational databases using Entity Framework Core
+- basic error handling using middleware
+- writing readable and maintainable code
+
+---
+
+## Key features
+
+- User authentication (JWT)
+- Boards, lists and cards management (Kanban-style domain)
+- Role-based access to resources
+- CRUD operations with validation
+- File uploads (Azure Blob Storage)
+- API documentation using Swagger
+
+---
+
+## Tech stack
+
+### Backend
+
+- ASP.NET Core Web API (.NET 8)
+- Entity Framework Core
+- FluentValidation
+- AutoMapper
+
+### Security
+
+- JWT authentication
+- Role-based authorization
+
+### Other
+
+- Swagger / OpenAPI
+- Azure Blob Storage
+- SQL Server
+
+---
+
+## Project structure
+
+The application is divided into several logical layers:
+
+- **API** – controllers, middleware, application configuration
+- **Application** – business logic, services, DTOs, validation
+- **Domain** – domain models and contracts
+- **Infrastructure** – database access and external services
+
+This structure was chosen to better understand how backend projects are commonly organized in real applications.
+
+---
+
+## API overview
+
+The API exposes endpoints for:
+
+- authentication (`/accounts`)
+- managing boards, lists and cards
+- managing users and permissions
+- attachments and comments
+
+Full endpoint documentation is available via **Swagger UI** after running the application.
+
+---
+
+## Development notes
+
+This project was developed **individually** and served as a backend learning project.
+I am aware that:
+
+- real-world projects involve teamwork,
+- code reviews,
+- shared standards and communication.
+
+That is why I am currently looking for a **junior backend position**, where I can gain team experience and grow further.
+
+---
+
+## Running the project
+
+### Requirements
+
+- .NET 8 SDK
+- SQL Server
+- Azure Storage account (optional – for file uploads)
+
+### Configuration
+
+Application settings are stored in `appsettings.json` and environment variables.
+
+---
+
+## Author
+
+Jakub Ros  
+GitHub: https://github.com/JakubRoss
+
+## License
+
+This repository is **source-available**.
+The code is provided for **review and evaluation purposes only**.
+
+© 2023–2025 Jakub Klonowski-Rosploch. All rights reserved.
