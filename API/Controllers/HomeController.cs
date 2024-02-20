@@ -6,24 +6,23 @@ namespace API.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
-        //private readonly IHttpContextAccessor _httpContextAccessor;
-        //private readonly string _serverAddress;
+        private readonly string _serverAddress;
 
-        //public HomeController(IHttpContextAccessor httpContextAccessor)
-        //{
-        //    _httpContextAccessor = httpContextAccessor;
-        //    _serverAddress = $"{_httpContextAccessor.HttpContext!.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
-        //}
+        public HomeController(IHttpContextAccessor httpContextAccessor)
+        {
+            var httpContextAccessor1 = httpContextAccessor;
+            _serverAddress = $"{httpContextAccessor1.HttpContext!.Request.Scheme}://{httpContextAccessor1.HttpContext.Request.Host}";
+        }
 
         /// <summary>
-        /// Index redirect us to project on GitHub
+        /// Index redirect us to swagger documentation
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
         public IActionResult Index()
         {
-            return new RedirectResult("https://github.com/JakubRoss/flobird");
+            return new RedirectResult($"{_serverAddress}/swagger");
         }
     }
 }

@@ -1,11 +1,16 @@
 ## WebAPI Project<p/>
 
-Welcome to my API for kanban applications! This project provides a set of application programming interfaces (APIs)
-that allow you to integrate your kanban application with other tools and access data inside your application.
+Welcome to the interface (API) for Kanban applications!
+
+The interface provides a simple, flexible way to manage your Kanban-style tasks. With our API, you can easily create, view, update and delete task cards, organizing your project in an intuitive and efficient way.
+
+To test the API right now, just visit the front-end section that supports our API. You can find it at https://gitify.net, where the finished user interface is waiting for you.
+
+If you want to take a look at the API documentation, you can visit https://flobird.azurewebsites.net/swagger, where you will find detailed documentation.
 
 ## Technologies
 
-* [ASP.NET Core 6](https://docs.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-6.0?view=aspnetcore-6.0)
+* [ASP.NET Core 8](https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-8.0?view=aspnetcore-8.0)
 * [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
 
 ## Features
@@ -33,5 +38,3 @@ problem and approach.
 
 
 (further under construction/improvement)
-
-![datbase diagram](DbDiagram.jpg)
