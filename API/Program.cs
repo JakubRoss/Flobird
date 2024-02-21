@@ -5,7 +5,7 @@ using Infrastructure.Extension;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using Application.Middleware;
+using Application.MIddleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

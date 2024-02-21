@@ -1,7 +1,7 @@
 ﻿using Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Middleware
+namespace Application.MIddleware
 {
     public class ErrorHandlingMiddleware : IMiddleware
     {
