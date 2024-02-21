@@ -7,7 +7,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Application.Common;
 using Application.Authorization;
-using Application.Middleware;
+using Application.MIddleware;
 using Domain.Extension;
 using Microsoft.AspNetCore.Authorization;
 
