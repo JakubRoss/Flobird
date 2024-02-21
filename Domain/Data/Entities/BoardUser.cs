@@ -2,7 +2,7 @@
 
 namespace Domain.Data.Entities
 {
-    public class BoardUser : BaseEntity
+    public class BoardUser
     {
         public virtual Roles Roles { get; set; }
 

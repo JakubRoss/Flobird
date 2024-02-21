@@ -1,6 +1,6 @@
 ﻿namespace Domain.Data.Entities
 {
-    public class Card : BaseEntity
+    public class Card
     {
         /// <summary>
         /// Ogólnie rzecz biorąc, zastosowanie new do właściwości Id może być interpretowane
