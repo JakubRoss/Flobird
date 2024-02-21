@@ -3,7 +3,7 @@ using Domain.Data;
 
 namespace Domain.Repositories
 {
-    public interface IRepository<TEntity> where TEntity : BaseEntity
+    public interface IRepository<TEntity>
     {
         Task<TEntity> AddAsync(TEntity entity);
         Task<TEntity> DeleteAsync(TEntity entity);

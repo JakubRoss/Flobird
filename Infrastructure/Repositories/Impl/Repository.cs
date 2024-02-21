@@ -1,11 +1,10 @@
-﻿using System.Linq.Expressions;
-using Domain.Data;
-using Domain.Repositories;
+﻿using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories.Impl
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected DatabaseContext Context { get; }
         private readonly DbSet<TEntity> _dbSet;

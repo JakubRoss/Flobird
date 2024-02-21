@@ -1,6 +1,6 @@
 ﻿namespace Domain.Data.Entities
 {
-    public class ElementUsers : BaseEntity
+    public class ElementUsers
     {
         public int UserId { get; set; }
         public User User { get; set; } = null!;
