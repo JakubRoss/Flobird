@@ -2,6 +2,7 @@
 using Application.Model.User;
 using AutoMapper;
 using Domain.Authentication;
+using Domain.Common;
 using Domain.Data.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
@@ -42,11 +43,29 @@ namespace Application.Service.Impl
 
         public async Task AddUserAsync(CreateUserDto userDto)
         {
-            var user = _mapper.Map<User>(userDto);
-            var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
-            user.PasswordHash = hashedPassword;
-            user.CreatedAt = DateTime.Now;
-            await _userRepository.AddAsync(user);
+            // tutaj musze zrobic tranzakcje przy seedowaniu (dodawanie usera i seedowanie tablicy)!
+
+             var user = _mapper.Map<User>(userDto);
+             var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
+             user.PasswordHash = hashedPassword;
+             user.CreatedAt = DateTime.Now;
+
+             // Dodanie użytkownika do repozytorium
+             var userAdded =await _userRepository.AddAsync(user);
+
+             // Teraz możemy uzyskać Id nowo utworzonego użytkownika
+             // i przypisać mu tablicę
+             var board = RegistrationDataSeeder.RegistrationDataSeeder.RegistrationBoardSeeder($"{user.Login} Board", userAdded.Id);
+             user.BoardUsers.Add(new BoardUser()
+             {
+                 Roles = Roles.Creator,
+                 Board = board
+             });
+
+             // Aktualizacja użytkownika w repozytorium
+             await _userRepository.UpdateAsync(user);
+
+            
         }
         public async Task<UserDto> GetUserAsync()
         {
