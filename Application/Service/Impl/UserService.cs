@@ -17,19 +17,22 @@ namespace Application.Service.Impl
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IHttpUserContextService _httpUserContextService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IBoardRepository _boardRepository;
 
         public UserService(
             IUserRepository userRepository,
             IMapper mapper,
             IPasswordHasher<User>passwordHasher,
             IHttpUserContextService httpUserContextService,
-            IAuthenticationService authenticationService)
+            IAuthenticationService authenticationService,
+            IBoardRepository boardRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _httpUserContextService = httpUserContextService;
             _authenticationService = authenticationService;
+            _boardRepository = boardRepository;
         }
         #region Utils
         private async Task<User> GetUser()
@@ -97,6 +100,12 @@ namespace Application.Service.Impl
         public async Task RemoveUserAsync()
         {
             var user = await GetUser();
+            var boards = await _boardRepository.GetAllAsync(p => p.Id == user.Id,
+                pi => pi.BoardUsers.Where(pr => pr.Roles == Roles.Creator));
+            var boardsToDelete = boards.Where(pi => pi.BoardUsers.Any(pr => pr.Roles == Roles.Creator)).ToList();
+
+            // Tranzakcja tutaj musi byc albo Task when all?
+            await _boardRepository.DeleteRangeAsync(boardsToDelete);
             await _userRepository.DeleteAsync(user);
         }
 
