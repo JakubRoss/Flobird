@@ -29,6 +29,11 @@ namespace Infrastructure.Repositories.Impl
             return removedEntity;
         }
 
+        public async Task DeleteRangeAsync(List<TEntity> entities)
+        {
+            _dbSet.RemoveRange(entities);
+        }
+
         public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _dbSet.Where(predicate).ToListAsync();
