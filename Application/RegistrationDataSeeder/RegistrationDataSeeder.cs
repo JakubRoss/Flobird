@@ -107,5 +107,15 @@ namespace Application.RegistrationDataSeeder
             };
             return board;
         }
+
+        public static string AvatarPathSeeder()
+        {
+            string url = "https://gitify.net/img/avatars/";
+
+            // Utwórz nowy generator liczb pseudolosowych
+            Random random = new Random();
+
+            return $"{url}av-{random.Next(1,18)}.png";
+        }
     }
 }
