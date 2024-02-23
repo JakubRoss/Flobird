@@ -62,8 +62,9 @@ namespace Application.Service.Impl
              user.BoardUsers.Add(new BoardUser()
              {
                  Roles = Roles.Creator,
-                 Board = board
+                 Board = board,
              });
+             user.AvatarPath = RegistrationDataSeeder.RegistrationDataSeeder.AvatarPathSeeder();
 
              // Aktualizacja użytkownika w repozytorium
              await _userRepository.UpdateAsync(user);
