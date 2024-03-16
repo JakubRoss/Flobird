@@ -1,7 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace Application.Authorization
 {
@@ -10,7 +9,7 @@ namespace Application.Authorization
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceOperationRequirement requirement, Board board)
         {
-            var userId = int.Parse(context.User.Claims.FirstOrDefault(t => t.Type == ClaimTypes.NameIdentifier)!.Value);
+            var userId = int.Parse(context.User.Claims.FirstOrDefault(t => t.Type == "NameIdentifier")!.Value);
             var boardUser = board.BoardUsers.FirstOrDefault(p => p.UserId == userId);
 
             switch (requirement.ResourceOperations)

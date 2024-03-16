@@ -35,7 +35,7 @@ namespace Domain.Extension
 
                     ValidIssuer = authenticationSettings.JwtIssuer,
 
-                    ValidAudience = authenticationSettings.JwtIssuer,
+                    ValidAudience = authenticationSettings.JwtAudience,
 
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
                 };

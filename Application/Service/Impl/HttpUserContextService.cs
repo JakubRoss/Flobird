@@ -14,7 +14,7 @@ namespace Application.Service.Impl
 
         public ClaimsPrincipal User => _httpContextAccessor.HttpContext!.User;
 
-        public int? UserId => false ? null : int.Parse(User.FindFirst(t => t.Type == ClaimTypes.NameIdentifier)!.Value);
-        public string UserLogin => User?.FindFirst(t => t.Type == ClaimTypes.Name)?.Value ?? string.Empty;
+        public int? UserId => int.Parse(User.FindFirst(t => t.Type == "NameIdentifier")!.Value);
+        public string UserLogin => User.FindFirst(t => t.Type == "Name")?.Value ?? string.Empty;
     }
 }
