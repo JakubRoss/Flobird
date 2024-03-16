@@ -7,38 +7,24 @@ using Domain.Data.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Identity;
+using System.Transactions;
 
 namespace Application.Service.Impl
 {
-    public class UserService : IUserService
+    public class UserService(
+        IUserRepository userRepository,
+        IMapper mapper,
+        IPasswordHasher<User> passwordHasher,
+        IHttpUserContextService httpUserContextService,
+        IAuthenticationService authenticationService,
+        IBoardRepository boardRepository)
+        : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-        private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IHttpUserContextService _httpUserContextService;
-        private readonly IAuthenticationService _authenticationService;
-        private readonly IBoardRepository _boardRepository;
-
-        public UserService(
-            IUserRepository userRepository,
-            IMapper mapper,
-            IPasswordHasher<User>passwordHasher,
-            IHttpUserContextService httpUserContextService,
-            IAuthenticationService authenticationService,
-            IBoardRepository boardRepository)
-        {
-            _userRepository = userRepository;
-            _mapper = mapper;
-            _passwordHasher = passwordHasher;
-            _httpUserContextService = httpUserContextService;
-            _authenticationService = authenticationService;
-            _boardRepository = boardRepository;
-        }
         #region Utils
         private async Task<User> GetUser()
         {
-            var id = _httpUserContextService.UserId;
-            var user = await _userRepository.GetFirstAsync(p => p.Id == id);
+            var id = httpUserContextService.UserId;
+            var user = await userRepository.GetFirstAsync(p => p.Id == id);
             return user ?? throw new ResourceNotFoundException("User don't exists");
         }
 
@@ -48,13 +34,13 @@ namespace Application.Service.Impl
         {
             // tutaj musze zrobic tranzakcje przy seedowaniu (dodawanie usera i seedowanie tablicy)!
 
-             var user = _mapper.Map<User>(userDto);
-             var hashedPassword = _passwordHasher.HashPassword(user, userDto.Password);
+             var user = mapper.Map<User>(userDto);
+             var hashedPassword = passwordHasher.HashPassword(user, userDto.Password);
              user.PasswordHash = hashedPassword;
              user.CreatedAt = DateTime.Now;
 
              // Dodanie użytkownika do repozytorium
-             var userAdded =await _userRepository.AddAsync(user);
+             var userAdded =await userRepository.AddAsync(user);
 
              // Teraz możemy uzyskać Id nowo utworzonego użytkownika
              // i przypisać mu tablicę
@@ -67,14 +53,14 @@ namespace Application.Service.Impl
              user.AvatarPath = RegistrationDataSeeder.RegistrationDataSeeder.AvatarPathSeeder();
 
              // Aktualizacja użytkownika w repozytorium
-             await _userRepository.UpdateAsync(user);
+             await userRepository.UpdateAsync(user);
 
             
         }
         public async Task<UserDto> GetUserAsync()
         {
             var user = await GetUser();
-            var userDto = _mapper.Map<UserDto>(user);
+            var userDto = mapper.Map<UserDto>(user);
             return userDto;
         }
         public async Task<UserDto> UpdateUserAsync(UpdateUserDto userDto)
@@ -85,7 +71,7 @@ namespace Application.Service.Impl
                 user.Login = userDto.Login;
             if (userDto.Password != null)
             {
-                var hashedPassword = _passwordHasher.HashPassword(user,userDto.Password);
+                var hashedPassword = passwordHasher.HashPassword(user,userDto.Password);
                 user.PasswordHash = hashedPassword;
             }
             if (userDto.Email != null)
@@ -93,43 +79,55 @@ namespace Application.Service.Impl
             user.UpdatedAt = DateTime.Now;
             #endregion
 
-            var updated = await _userRepository.UpdateAsync(user);
-            var updatedDto = _mapper.Map<UserDto>(updated);
+            var updated = await userRepository.UpdateAsync(user);
+            var updatedDto = mapper.Map<UserDto>(updated);
             return updatedDto;
         }
 
         public async Task RemoveUserAsync()
         {
             var user = await GetUser();
-            var boards = await _boardRepository.GetAllAsync(p => p.Id == user.Id,
-                pi => pi.BoardUsers.Where(pr => pr.Roles == Roles.Creator));
-            var boardsToDelete = boards.Where(pi => pi.BoardUsers.Any(pr => pr.Roles == Roles.Creator)).ToList();
 
-            // Tranzakcja tutaj musi byc albo Task when all?
-            await _boardRepository.DeleteRangeAsync(boardsToDelete);
-            await _userRepository.DeleteAsync(user);
+            // Pobierz wszystkie tablice powiązane z użytkownikiem w ktorych jest on w roli creatora danej tablicy
+            var boards = await boardRepository.GetAllAsync(b => b.BoardUsers.Any(bu => bu.UserId == user.Id && bu.Roles == Roles.Creator), 
+                i => i.BoardUsers);
+
+            // Wykonaj operacje w ramach jednej transakcji
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+
+                // Usuń boards (kaskadowo usuwa boardUsers i listy)
+                await boardRepository.DeleteRangeAsync(boards); 
+
+                // Usuń user (kaskadowo usuwa boardUsers)
+                await userRepository.DeleteAsync(user); 
+
+                // Jeśli wszystko przebiegło pomyślnie, zatwierdź transakcję
+                scope.Complete();
+            }
+
         }
 
         public async Task<List<ResponseUserDto>> GetUsersAsync(string? searchingPhrase)
         {
-            var users = await _userRepository.GetUsersAsync(searchingPhrase);
+            var users = await userRepository.GetUsersAsync(searchingPhrase);
             if(users is null)
                 throw new ResourceNotFoundException("The application has no users");
             var usersDto = new List<ResponseUserDto>();
             foreach (var user in users)
             {
-                var userDto = _mapper.Map<ResponseUserDto>(user);
+                var userDto = mapper.Map<ResponseUserDto>(user);
                 usersDto.Add(userDto);
             }
             return usersDto;
         }
         public async Task<LoginResult> LogIn(UserLoginDto userLoginDto)
         {
-            var user = await _userRepository.GetFirstAsync(u => u.Login.ToLower() == userLoginDto.Login.ToLower());
+            var user = await userRepository.GetFirstAsync(u => u.Login.ToLower() == userLoginDto.Login.ToLower());
 
-            string tokenText = _authenticationService.GenerateJwt(user!, userLoginDto.Password);
+            string tokenText = authenticationService.GenerateJwt(user!, userLoginDto.Password);
 
-            var userDto = _mapper.Map<ResponseUserDto>(user);
+            var userDto = mapper.Map<ResponseUserDto>(user);
             var loginResult = new LoginResult(tokenText, userDto);
             return loginResult;
         }
