@@ -32,7 +32,6 @@ namespace Application.Service.Impl
 
         public async Task AddUserAsync(CreateUserDto userDto)
         {
-            // tutaj musze zrobic tranzakcje przy seedowaniu (dodawanie usera i seedowanie tablicy)!
 
              var user = mapper.Map<User>(userDto);
              var hashedPassword = passwordHasher.HashPassword(user, userDto.Password);
@@ -42,20 +41,25 @@ namespace Application.Service.Impl
              // Dodanie użytkownika do repozytorium
              var userAdded =await userRepository.AddAsync(user);
 
-             // Teraz możemy uzyskać Id nowo utworzonego użytkownika
-             // i przypisać mu tablicę
-             var board = RegistrationDataSeeder.RegistrationDataSeeder.RegistrationBoardSeeder($"{user.Login} Board", userAdded.Id);
-             user.BoardUsers.Add(new BoardUser()
-             {
-                 Roles = Roles.Creator,
-                 Board = board,
-             });
-             user.AvatarPath = RegistrationDataSeeder.RegistrationDataSeeder.AvatarPathSeeder();
+            // Teraz możemy uzyskać Id nowo utworzonego użytkownika
+            // i przypisać mu tablicę
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
 
-             // Aktualizacja użytkownika w repozytorium
-             await userRepository.UpdateAsync(user);
+                var board = RegistrationDataSeeder.RegistrationDataSeeder.RegistrationBoardSeeder($"{user.Login} Board",
+                    userAdded.Id);
+                user.BoardUsers.Add(new BoardUser()
+                {
+                    Roles = Roles.Creator,
+                    Board = board,
+                });
+                user.AvatarPath = RegistrationDataSeeder.RegistrationDataSeeder.AvatarPathSeeder();
 
-            
+                // Aktualizacja użytkownika w repozytorium
+                await userRepository.UpdateAsync(user);
+
+                scope.Complete();
+            }
         }
         public async Task<UserDto> GetUserAsync()
         {
