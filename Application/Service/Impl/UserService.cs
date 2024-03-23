@@ -7,6 +7,7 @@ using Domain.Data.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using System.Transactions;
 
 namespace Application.Service.Impl
@@ -128,8 +129,20 @@ namespace Application.Service.Impl
         public async Task<LoginResult> LogIn(UserLoginDto userLoginDto)
         {
             var user = await userRepository.GetFirstAsync(u => u.Login.ToLower() == userLoginDto.Login.ToLower());
+            if (user == null)
+                throw new UnauthorizedException("Invalid User name or password");
 
-            string tokenText = authenticationService.GenerateJwt(user!, userLoginDto.Password);
+            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userLoginDto.Password);
+            if (result == PasswordVerificationResult.Failed)
+                throw new ResourceNotFoundException("Invalid User name or password");
+
+            var claims = new List<Claim>()
+            {
+                new("NameIdentifier", user.Id.ToString()),
+                new("Name", user.Login)
+            };
+
+            string tokenText = authenticationService.GenerateJwt(claims);
 
             var userDto = mapper.Map<ResponseUserDto>(user);
             var loginResult = new LoginResult(tokenText, userDto);
