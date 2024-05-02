@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Domain.Data;
 
 namespace Domain.Repositories
 {
@@ -7,7 +6,7 @@ namespace Domain.Repositories
     {
         Task<TEntity> AddAsync(TEntity entity);
         Task<TEntity> DeleteAsync(TEntity entity);
-        Task DeleteRangeAsync(List<TEntity> entities);
+        void DeleteRange(List<TEntity> entities);
         Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate);
 
         Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate,

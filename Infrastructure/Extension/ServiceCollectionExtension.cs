@@ -14,9 +14,9 @@ namespace Infrastructure.Extension
         {
             service.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseSqlServer(app.IsDevelopment()
-                    ? configuration.GetConnectionString("LocalDbConnection")
-                    : configuration.GetConnectionString("AzureDbConnection"));
+                options.UseSqlite(app.IsDevelopment()
+                    ? "Data Source=sqlite.db"
+                    :configuration.GetConnectionString("sqliteConnectionString"));
             });
 
             service.AddScoped<DatabaseSeeder>();

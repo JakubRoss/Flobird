@@ -5,6 +5,19 @@ namespace Infrastructure
 {
     public class DatabaseContext : DbContext
     {
+        public DbSet<Attachment> Attachments { get; set; }
+        public DbSet<Board> Boards { get; set; }
+        public DbSet<BoardUser> BoardUsers { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<CardUser> CardUsers { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Element> Elements { get; set; }
+        public DbSet<ElementUsers> ElementUsers { get; set; }
+        public DbSet<List> Lists { get; set; }
+        public DbSet<Tasks> Tasks { get; set; }
+        public DbSet<User> Users { get; set; }
+
+
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,7 +69,6 @@ namespace Infrastructure
             #endregion
 
             #region Set_Keys
-
             modelBuilder.Entity<BoardUser>()
                 .HasKey(bu => new { bu.BoardId, bu.UserId });
 

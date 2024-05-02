@@ -44,10 +44,11 @@ namespace Application.Service.Impl
 
             // Teraz możemy uzyskać Id nowo utworzonego użytkownika
             // i przypisać mu tablicę
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
+            //SQLite nie obsluguje tranzakcji
+            //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            //{
 
-                var board = RegistrationDataSeeder.RegistrationDataSeeder.RegistrationBoardSeeder($"{user.Login} Board",
+            var board = RegistrationDataSeeder.RegistrationDataSeeder.RegistrationBoardSeeder($"{user.Login} Board",
                     userAdded.Id);
                 user.BoardUsers.Add(new BoardUser()
                 {
@@ -59,8 +60,8 @@ namespace Application.Service.Impl
                 // Aktualizacja użytkownika w repozytorium
                 await userRepository.UpdateAsync(user);
 
-                scope.Complete();
-            }
+                //scope.Complete();
+            //}
         }
         public async Task<UserDto> GetUserAsync()
         {
@@ -98,18 +99,19 @@ namespace Application.Service.Impl
                 i => i.BoardUsers);
 
             // Wykonaj operacje w ramach jednej transakcji
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
+            //SQLite nie obsluguje tranzakcji
+            //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            //{
 
                 // Usuń boards (kaskadowo usuwa boardUsers i listy)
-                await boardRepository.DeleteRangeAsync(boards); 
+                 boardRepository.DeleteRange(boards); 
 
                 // Usuń user (kaskadowo usuwa boardUsers)
                 await userRepository.DeleteAsync(user); 
 
                 // Jeśli wszystko przebiegło pomyślnie, zatwierdź transakcję
-                scope.Complete();
-            }
+                //scope.Complete();
+            //}
 
         }
 

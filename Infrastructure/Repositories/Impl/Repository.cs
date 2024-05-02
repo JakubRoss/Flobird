@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories.Impl
             return removedEntity;
         }
 
-        public async Task DeleteRangeAsync(List<TEntity> entities)
+        public void DeleteRange(List<TEntity> entities)
         {
             _dbSet.RemoveRange(entities);
         }
